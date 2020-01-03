@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,21 +23,47 @@ namespace Cuture.Http.Test.Server.Controllers
         [HttpPost]
         public async Task<JsonResult> UpdateAsync()
         {
-            var mpReader = new MultipartReader(Request.GetMultipartBoundary(), Request.Body);
-            var section1 = await mpReader.ReadNextSectionAsync();
-            var json1 = await section1.ReadAsStringAsync();
-            var section2 = await mpReader.ReadNextSectionAsync();
-            var json2 = await section2.ReadAsStringAsync();
+            var userJsons = new List<string>();
 
-            var user1 = JsonConvert.DeserializeObject<UserInfo>(json1);
-            var user2 = JsonConvert.DeserializeObject<UserInfo>(json2);
+            var mpReader = new MultipartReader(Request.GetMultipartBoundary(), Request.Body);
+
+            while (await mpReader.ReadNextSectionAsync() is MultipartSection section)
+            {
+                userJsons.Add(await section.ReadAsStringAsync());
+            }
+
+            var users = userJsons.Select(m => JsonConvert.DeserializeObject<UserInfo>(m)).ToArray();
 
             return new JsonResult(new HttpRequestInfo()
             {
                 Header = Request.Headers.ToDictionary(m => m.Key, m => m.Value.ToString()),
                 Method = Request.Method,
                 Url = Request.GetEncodedUrl(),
-                Content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new UserInfo[] { user1, user2 })),
+                Content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(users)),
+            });
+        }
+
+        [Route("post2")]
+        [HttpPost]
+        public async Task<JsonResult> UpdateFormedAsync()
+        {
+            var userJsons = new Dictionary<string, string>();
+
+            var mpReader = new MultipartReader(Request.GetMultipartBoundary(), Request.Body);
+
+            while (await mpReader.ReadNextSectionAsync() is MultipartSection section)
+            {
+                userJsons.Add(section.GetContentDispositionHeader().Name.Value, await section.ReadAsStringAsync());
+            }
+
+            var users = userJsons.Select(m => new KeyValuePair<string, UserInfo>(m.Key, JsonConvert.DeserializeObject<UserInfo>(m.Value))).ToDictionary(m => m.Key, m => m.Value);
+
+            return new JsonResult(new HttpRequestInfo()
+            {
+                Header = Request.Headers.ToDictionary(m => m.Key, m => m.Value.ToString()),
+                Method = Request.Method,
+                Url = Request.GetEncodedUrl(),
+                Content = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(users)),
             });
         }
 

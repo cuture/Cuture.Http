@@ -1,8 +1,13 @@
 # Cuture.Http
 
-源于自用的http请求辅助库整理, 基于System.Net.Http.HttpClient做了一些简单封装和拓展方法, 用于进行http请求;
+源于自用的http请求辅助库整理, 基于System.Net.Http.HttpClient做了一些简单封装和拓展方法, 用于进行http请求; 目标框架为```.NetStandard2.0```;
 
 ## 如何使用
+
+安装Nuget包
+```PowerShell
+Install-Package Cuture.Http
+```
 
 1. 创建请求
 ```C#
@@ -15,7 +20,7 @@ var request = "http://www.domain.com/api".ToHttpRequest();
         .AddHeader("header1", "header1Value")
         .UsePost()
         .TimeOut(3000)
-        .WithCancellationToken(CancellationToken.None)
+        .WithCancellationToken(token)
         //进行其他的一些请求设置等
         .WithFormConent("key1=value1".UrlEncode());
 ```
