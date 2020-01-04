@@ -36,7 +36,7 @@ namespace Cuture.Http.Test
 
         #region 方法
 
-        public override IHttpTurboRequest GetRequest() => $"{TestServer.TestHost}/api/user/update/form".ToHttpRequest().WithFormConent(_user).UsePost();
+        public override IHttpTurboRequest GetRequest() => $"{TestServer.TestHost}/api/user/update/form".ToHttpRequest().WithFormContent(_user).UsePost();
 
         public override int GetRequestCount() => 10_000;
 

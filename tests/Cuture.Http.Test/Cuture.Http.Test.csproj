@@ -10,7 +10,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.0.0" />
     <PackageReference Include="MSTest.TestFramework" Version="2.0.0" />
-    <PackageReference Include="Titanium.Web.Proxy" Version="3.1.1254" />
+    <PackageReference Include="Titanium.Web.Proxy" Version="3.1.1270" />
   </ItemGroup>
 
   <ItemGroup>

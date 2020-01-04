@@ -22,7 +22,7 @@ var request = "http://www.domain.com/api".ToHttpRequest();
         .TimeOut(3000)
         .WithCancellationToken(token)
         //进行其他的一些请求设置等
-        .WithFormConent("key1=value1".UrlEncode());
+        .WithFormContent($"key={value.UrlEncode()}");
 ```
 
 3. 请求并获取结果
@@ -72,4 +72,25 @@ catch (Exception ex)
 {
     Console.WriteLine($"下载失败:{ex}");
 }
+```
+
+### 其它工具拓展等
+
+```C#
+"https://dotnet.microsoft.com/".EncodeBase64();
+//aHR0cHM6Ly9kb3RuZXQubWljcm9zb2Z0LmNvbS8=
+"aHR0cHM6Ly9kb3RuZXQubWljcm9zb2Z0LmNvbS8=".DecodeBase64();
+//https://dotnet.microsoft.com/
+
+"keyword关键词".UrlEncode();
+//keyword%e5%85%b3%e9%94%ae%e8%af%8d
+"keyword%e5%85%b3%e9%94%ae%e8%af%8d".UrlDecode();
+//keyword关键词
+
+UserAgents.RandomUserAgent();
+//随机的UA
+
+var cookie = "lang=en-US; Path=/; Max-Age=2147483647 i_like_gogs=d38e69bb16e9080d; Path=/; HttpOnly _csrf=Zxnf2GNhwYoZUONx6ylflfFS0CI6MTU3ODExNzU2NzU4MDM0NjEzMg%3D%3D; Path=/; Expires=Sun, 05 Jan 2020 05:59:27 GMT; HttpOnly";
+CookieUtility.Clean(cookie);
+//lang=en-US; i_like_gogs=d38e69bb16e9080d; _csrf=Zxnf2GNhwYoZUONx6ylflfFS0CI6MTU3ODExNzU2NzU4MDM0NjEzMg%3D%3D;
 ```

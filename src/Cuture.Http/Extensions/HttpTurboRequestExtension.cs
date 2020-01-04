@@ -287,13 +287,13 @@ namespace Cuture.Http
 
         /// <summary>
         /// 使用FormContent
-        /// <paramref name="content"/>将会自动进行Form化
+        /// <paramref name="content"/>为已经urlencode的字符串
         /// </summary>
         /// <param name="request"></param>
         /// <param name="content"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest WithFormConent(this IHttpTurboRequest request, object content)
+        public static IHttpTurboRequest WithFormContent(this IHttpTurboRequest request, string content)
         {
             request.Content = new FormContent(content);
             return request;
@@ -301,13 +301,13 @@ namespace Cuture.Http
 
         /// <summary>
         /// 使用FormContent
-        /// <paramref name="content"/>为已经urlencode的字符串
+        /// <paramref name="content"/>将会自动进行Form化
         /// </summary>
         /// <param name="request"></param>
         /// <param name="content"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest WithFormConent(this IHttpTurboRequest request, string content)
+        public static IHttpTurboRequest WithFormContent(this IHttpTurboRequest request, object content)
         {
             request.Content = new FormContent(content);
             return request;
@@ -322,6 +322,20 @@ namespace Cuture.Http
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest WithJsonContent(this IHttpTurboRequest request, object content)
+        {
+            request.Content = new JsonContent(content);
+            return request;
+        }
+
+        /// <summary>
+        /// 使用JsonHttpContent
+        /// <paramref name="content"/>为json字符串
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest WithJsonContent(this IHttpTurboRequest request, string content)
         {
             request.Content = new JsonContent(content);
             return request;
