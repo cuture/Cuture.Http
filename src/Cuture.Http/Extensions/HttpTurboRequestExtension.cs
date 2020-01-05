@@ -668,7 +668,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<JObject> GetAsJsonAsync(this IHttpTurboRequest request) => request.ExecuteAsync().ReceiveAsObjectAsync();
+        public static Task<JObject> GetAsJsonAsync(this IHttpTurboRequest request) => request.ExecuteAsync().ReceiveAsJsonAsync();
 
         /// <summary>
         /// 执行请求并尝试以 json 接收返回数据，并解析为
@@ -678,7 +678,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<TextHttpOperationResult<JObject>> TryGetAsJsonAsync(this IHttpTurboRequest request) => request.ExecuteAsync().TryReceiveAsObjectAsync();
+        public static Task<TextHttpOperationResult<JObject>> TryGetAsJsonAsync(this IHttpTurboRequest request) => request.ExecuteAsync().TryReceiveAsJsonAsync();
 
         #endregion json an JsonObject
 

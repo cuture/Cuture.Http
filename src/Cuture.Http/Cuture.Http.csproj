@@ -5,7 +5,7 @@
 
     <LangVersion>latest</LangVersion>
     <Platforms>AnyCPU</Platforms>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>CA1062;CA1200;CA1303</NoWarn>
 
@@ -20,7 +20,7 @@ var response = await url.ToHttpRequest()
                         .UsePost()
                         .TimeOut(3000)
                         .WithCancellationToken(token)
-                        .WithFormContent("key1=value1".UrlEncode())
+                        .WithFormContent($"key={value.UrlEncode()}")
                         //Some Other Options
                         .TryGetAsStringAsync();
     </Description>
@@ -29,8 +29,8 @@ var response = await url.ToHttpRequest()
     <RepositoryUrl>https://github.com/StratosBlue/Cuture.Http.git</RepositoryUrl>
     <PackageTags>http httpclient httphelper</PackageTags>
     <PackageProjectUrl>https://github.com/StratosBlue/Cuture.Http.git</PackageProjectUrl>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
-    <FileVersion>1.0.2.0</FileVersion>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+    <FileVersion>1.0.3.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -19,6 +19,18 @@ namespace Cuture.Http.Test.Server.Controllers
     {
         #region 方法
 
+        [Route("get")]
+        [HttpGet]
+        public JsonResult GetAsync()
+        {
+            return new JsonResult(new HttpRequestInfo()
+            {
+                Header = Request.Headers.ToDictionary(m => m.Key, m => m.Value.ToString()),
+                Method = Request.Method,
+                Url = Request.GetEncodedUrl(),
+            });
+        }
+
         [Route("post")]
         [HttpPost]
         public async Task<JsonResult> UpdateAsync()

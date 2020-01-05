@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Cuture.Http
@@ -45,6 +47,7 @@ namespace Cuture.Http
         /// 随机Chrome版本
         /// </summary>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomChromeVersion()
         {
             return $"Chrome/{s_random.Next(49, 85)}.0.{s_random.Next(3000, 5000)}.{s_random.Next(50, 200)}";
@@ -54,6 +57,7 @@ namespace Cuture.Http
         /// 随机的Edge版本
         /// </summary>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomEdgeVersion()
         {
             return $"Edge/{s_random.Next(15, 18)}.{s_random.Next(10240, 19200)}";
@@ -67,12 +71,13 @@ namespace Cuture.Http
         /// 随机附加字段
         /// </summary>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomAddOn()
         {
             return (s_random.Next(2)) switch
             {
                 1 => string.Empty,
-                _ => "AppleWebKit/537.36 ",
+                _ => "AppleWebKit/537.36",
             };
         }
 
@@ -80,6 +85,7 @@ namespace Cuture.Http
         /// 随机浏览器
         /// </summary>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomBrowser()
         {
             return (s_random.Next(4)) switch
@@ -90,16 +96,36 @@ namespace Cuture.Http
         }
 
         /// <summary>
+        /// 随机火狐平台
+        /// </summary>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static string RandomFirefoxPlatform(int version)
+        {
+            return (s_random.Next(7)) switch
+            {
+                1 => $"(Windows NT 10.0; rv:{version}.0)",
+                2 => $"(Windows NT 6.1; Win64; x64; rv:{version}.0)",
+                3 => $"(Windows NT 6.1; Win64; rv:{version}.0)",
+                4 => $"(Windows NT 6.1; rv:{version}.0)",
+                5 => $"(Windows NT 10.0; Win64; x64; rv:{version}.0)",
+                6 => $"(Windows NT 10.0; Win64; rv:{version}.0)",
+                _ => $"(Windows NT 10.0; Win64; x64; rv:{version}.0)",
+            };
+        }
+
+        /// <summary>
         /// 随机UA尾部附加
         /// </summary>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomLast()
         {
             return (s_random.Next(4)) switch
             {
                 1 => RandomEdgeVersion(),
-                2 => $" Safari/537.36 {RandomEdgeVersion()}",
-                _ => " Safari/537.36",
+                2 => $"Safari/537.36 {RandomEdgeVersion()}",
+                _ => "Safari/537.36",
             };
         }
 
@@ -153,17 +179,18 @@ namespace Cuture.Http
         /// 随机平台
         /// </summary>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomPlatform()
         {
             return (s_random.Next(7)) switch
             {
-                1 => "Windows NT 10.0",
-                2 => "Windows NT 6.1; Win64; x64",
-                3 => "Windows NT 6.1; Win64;",
-                4 => "Windows NT 6.1",
-                5 => "Windows NT 10.0; Win64; x64",
-                6 => "Windows NT 10.0; Win64;",
-                _ => "Windows NT 10.0; Win64; x64",
+                1 => "(Windows NT 10.0)",
+                2 => "(Windows NT 6.1; Win64; x64)",
+                3 => "(Windows NT 6.1; Win64;)",
+                4 => "(Windows NT 6.1)",
+                5 => "(Windows NT 10.0; Win64; x64)",
+                6 => "(Windows NT 10.0; Win64;)",
+                _ => "(Windows NT 10.0; Win64; x64)",
             };
         }
 
@@ -171,6 +198,7 @@ namespace Cuture.Http
         /// 随机核心标记
         /// </summary>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomTag()
         {
             return (s_random.Next(3)) switch
@@ -188,48 +216,91 @@ namespace Cuture.Http
         /// <summary>
         /// 随机Chrome版本UA
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string RandomChromeUserAgent()
         {
-            return $"Mozilla/5.0 ({RandomPlatform()}) AppleWebKit/537.36 (KHTML, like Gecko) {RandomChromeVersion()} Safari/537.36";
+            return $"Mozilla/5.0 {RandomPlatform()} AppleWebKit/537.36 (KHTML, like Gecko) {RandomChromeVersion()} Safari/537.36";
         }
 
         /// <summary>
         /// 随机Firefox版本UA
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string RandomFirefoxUserAgent()
         {
             var version = s_random.Next(50, 75);
-            return $"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:{version}.0) Gecko/20100101 Firefox/{version}.0";
+            return $"Mozilla/5.0 {RandomFirefoxPlatform(version)} Gecko/20100101 Firefox/{version}.0";
         }
 
         /// <summary>
         /// 随机移动UserAgent
         /// </summary>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string RandomMobileUserAgent()
         {
-            return $"Mozilla/5.0 ({RandomPlatform()}) {RandomAddOn()}{RandomTag()} {RandomBrowser()}{RandomLast()} {RandomModified()} Mobile".TrimEnd();
+            return BuildUserAgent(new string[] {
+                RandomPlatform(),
+                RandomAddOn(),
+                RandomTag(),
+                RandomBrowser(),
+                RandomLast(),
+                RandomModified(),
+                "Mobile",
+            });
         }
 
         /// <summary>
         /// 随机国内魔改UserAgent
         /// </summary>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string RandomModifiedUserAgent()
         {
-            return $"Mozilla/5.0 ({RandomPlatform()}) AppleWebKit/537.36 (KHTML, like Gecko) {RandomModified()} Safari/537.36 {RandomModified()}".TrimEnd();
+            return BuildUserAgent(new string[] {
+                RandomPlatform(),
+                "AppleWebKit/537.36 (KHTML, like Gecko)",
+                RandomModified(),
+                "Safari/537.36",
+                RandomModified(),
+            });
         }
 
         /// <summary>
         /// 随机UserAgent
         /// </summary>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string RandomUserAgent()
         {
-            return $"Mozilla/5.0 ({RandomPlatform()}) {RandomAddOn()}{RandomTag()} {RandomBrowser()}{RandomLast()} {RandomModified()}".TrimEnd();
+            return BuildUserAgent(new string[] {
+                RandomPlatform(),
+                RandomAddOn(),
+                RandomTag(),
+                RandomBrowser(),
+                RandomLast(),
+                RandomModified(),
+            });
         }
 
         #endregion FullUserAgent
+
+        private static string BuildUserAgent(IEnumerable<string> parts)
+        {
+            var uaBuilder = new StringBuilder("Mozilla/5.0 ", 512);
+            foreach (var item in parts)
+            {
+                if (!string.IsNullOrWhiteSpace(item))
+                {
+                    uaBuilder.Append(item);
+                    uaBuilder.Append(' ');
+                }
+            }
+
+            uaBuilder.Remove(uaBuilder.Length - 1, 1);
+
+            return uaBuilder.ToString();
+        }
 
         #endregion 方法
     }

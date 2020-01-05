@@ -111,7 +111,7 @@ namespace Cuture.Http
         /// <param name="requestTask"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<JObject> ReceiveAsObjectAsync(this Task<HttpResponseMessage> requestTask)
+        public static async Task<JObject> ReceiveAsJsonAsync(this Task<HttpResponseMessage> requestTask)
         {
             var response = await requestTask.ConfigureAwait(false);
 
@@ -126,7 +126,7 @@ namespace Cuture.Http
         /// <param name="requestTask"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<TextHttpOperationResult<JObject>> TryReceiveAsObjectAsync(this Task<HttpResponseMessage> requestTask)
+        public static async Task<TextHttpOperationResult<JObject>> TryReceiveAsJsonAsync(this Task<HttpResponseMessage> requestTask)
         {
             var result = new TextHttpOperationResult<JObject>();
             try
