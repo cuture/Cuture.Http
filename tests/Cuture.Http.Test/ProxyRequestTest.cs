@@ -13,19 +13,43 @@ namespace Cuture.Http.Test
     [TestClass]
     public class ProxyRequestTest : WebServerHostWithProxyTestBase
     {
-        #region 字段
-
-        private readonly Uri _proxyUri = new Uri($"http://{IPAddress.Loopback}:{ProxyTestServer.ProxyPort}");
-
-        #endregion 字段
-
         #region 方法
 
         [TestMethod]
-        public async Task ParallelProxyRequestTestAsync()
+        public async Task DisableProxyRequestTestAsync()
         {
-            HttpDefaultSetting.DefaultConnectionLimit = 200;
+            var count = 2_000;
 
+            ProxyServer.SetAsSystemProxy();
+
+            static void AssertAction(HttpOperationResult<string> result)
+            {
+                Assert.IsFalse(result.ResponseMessage.Headers.Contains(ProxyTestServer.ThroughProxy));
+                Assert.AreEqual(Resource.Index, result.Data);
+            }
+
+            await ParallelRequestAsync(count,
+                                       () => GetRequest().UseSystemProxy().DisableProxy().TryGetAsStringAsync(),
+                                       AssertAction);
+
+            Assert.AreEqual(0, ProxyServer.SystemProxyInfo.RequestTime);
+
+            HttpDefaultSetting.DisableUseDefaultProxyByDefault = true;
+
+            await ParallelRequestAsync(count,
+                                       () => GetRequest().TryGetAsStringAsync(),
+                                       AssertAction);
+
+            HttpDefaultSetting.DisableUseDefaultProxyByDefault = false;
+
+            Assert.AreEqual(0, ProxyServer.SystemProxyInfo.RequestTime);
+
+            ProxyServer.DisableSystemProxy();
+        }
+
+        [TestMethod]
+        public async Task ProxyRequestTestAsync()
+        {
             var proxyCount = 20;
             var everyRequestCount = 100;
 
@@ -56,6 +80,7 @@ namespace Cuture.Http.Test
 
             tasks.ForEach(m =>
             {
+                Assert.IsTrue(m.Result.ResponseMessage.Headers.Contains(ProxyTestServer.ThroughProxy));
                 Assert.AreEqual(Resource.Index, m.Result.Data);
             });
 
@@ -65,7 +90,11 @@ namespace Cuture.Http.Test
             });
         }
 
+        #region Base
+
         private IHttpTurboRequest GetRequest() => TestServer.TestHost.ToHttpRequest();
+
+        #endregion Base
 
         #endregion 方法
     }

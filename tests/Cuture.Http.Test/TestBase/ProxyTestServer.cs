@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+
+using Cuture.Http.Test.Server;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -35,11 +38,18 @@ namespace Cuture.Http.Test
         #region 字段
 
         public const int ProxyPort = 3277;
+        public const string ThroughProxy = "Through-Proxy";
+        private readonly ExplicitProxyEndPoint _explicitProxy = new ExplicitProxyEndPoint(IPAddress.Loopback, ProxyPort, false);
+
         private readonly ProxyServer _proxyServer = new ProxyServer(false, false, false)
         {
             ThreadPoolWorkerThread = 100,
             MaxCachedConnections = 100,
         };
+
+        public bool IsSystemProxy { get; set; } = false;
+
+        public ProxyAuthenticateInfo SystemProxyInfo { get; set; }
 
         #endregion 字段
 
@@ -51,17 +61,37 @@ namespace Cuture.Http.Test
 
         #region 方法
 
+        public void DisableSystemProxy()
+        {
+            _proxyServer.DisableSystemProxy(ProxyProtocolType.Http);
+            _proxyServer.ProxyBasicAuthenticateFunc = BasicAuthenticate;
+            IsSystemProxy = false;
+            Debug.WriteLine(nameof(DisableSystemProxy));
+        }
+
+        public void SetAsSystemProxy()
+        {
+            SystemProxyInfo = new ProxyAuthenticateInfo();
+            _proxyServer.SetAsSystemProxy(_explicitProxy, ProxyProtocolType.Http);
+            _proxyServer.ProxyBasicAuthenticateFunc = null;
+            IsSystemProxy = true;
+            Debug.WriteLine(nameof(SetAsSystemProxy));
+        }
+
         public void StartProxyServer()
         {
-            _proxyServer.AddEndPoint(new ExplicitProxyEndPoint(IPAddress.Loopback, ProxyPort, false));
+            _proxyServer.AddEndPoint(_explicitProxy);
             _proxyServer.ProxyBasicAuthenticateFunc = BasicAuthenticate;
             _proxyServer.BeforeRequest += BeforeRequest;
+            _proxyServer.BeforeResponse += BeforeResponse;
             _proxyServer.Start();
+            Debug.WriteLine(nameof(StartProxyServer));
         }
 
         public void StopProxyServer()
         {
             _proxyServer.Stop();
+            Debug.WriteLine(nameof(StopProxyServer));
         }
 
         private async Task<bool> BasicAuthenticate(SessionEventArgsBase session, string username, string password)
@@ -86,6 +116,17 @@ namespace Cuture.Http.Test
 
         private Task BeforeRequest(object sender, SessionEventArgs e)
         {
+            if (IsSystemProxy)
+            {
+                if (e.HttpClient.Request.Url.StartsWith(TestServer.TestHost))
+                {
+                    lock (SystemProxyInfo)
+                    {
+                        SystemProxyInfo.RequestTime++;
+                    }
+                }
+                return Task.CompletedTask;
+            }
             var authorizationHeader = e.HttpClient.Request.Headers.Headers["Proxy-Authorization"].Value;
             var authorizationBase64String = authorizationHeader.Split(' ')[1];
             var authorization = Encoding.UTF8.GetString(Convert.FromBase64String(authorizationBase64String));
@@ -104,6 +145,12 @@ namespace Cuture.Http.Test
 
             Assert.Fail();
 
+            return Task.CompletedTask;
+        }
+
+        private Task BeforeResponse(object sender, SessionEventArgs e)
+        {
+            e.HttpClient.Response.Headers.AddHeader(ThroughProxy, "1");
             return Task.CompletedTask;
         }
 

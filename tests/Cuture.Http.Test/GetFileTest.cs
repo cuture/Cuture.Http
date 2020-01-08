@@ -38,40 +38,26 @@ namespace Cuture.Http.Test
         /// 获取请求
         /// </summary>
         /// <returns></returns>
-        public IHttpTurboRequest GetRequest()
-        {
-            return _url.ToHttpRequest()
-                        .UseGet()
-                        .AddHeader("Cache-Control", "no-cache");
-        }
+        public IHttpTurboRequest GetRequest() => _url.ToHttpRequest().UseGet().AddHeader("Cache-Control", "no-cache");
 
         [TestMethod]
         public async Task ParallelRequestTestAsync()
         {
             HttpDefaultSetting.DefaultConnectionLimit = 500;
 
-            var count = 10_000;
-            var all = Enumerable.Range(0, count);
-
-            var tasks = all.Select(m => GetRequest().TryGetAsBytesAsync()).ToArray();
+            var tasks = Array(10_000).Select(m => GetRequest().TryGetAsBytesAsync()).ToList();
 
             await Task.WhenAll(tasks);
 
-            var fails = tasks.Where(m =>
+            tasks.ForEach(m =>
             {
                 var result = m.Result.Data;
-                if (result != null)
-                {
-                    using var sha = SHA256.Create();
-                    var hash = BitConverter.ToString(sha.ComputeHash(result));
-                    Assert.AreEqual(_hash, hash);
+                Assert.IsNotNull(result, m.Result?.ResponseMessage?.ToString());
 
-                    return false;
-                }
-                return true;
-            }).ToArray();
-
-            Assert.AreEqual(0, fails.Length);
+                using var sha = SHA256.Create();
+                var hash = BitConverter.ToString(sha.ComputeHash(result));
+                Assert.AreEqual(_hash, hash);
+            });
         }
 
         #endregion 方法

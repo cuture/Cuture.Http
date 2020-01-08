@@ -39,12 +39,7 @@ namespace Cuture.Http.Test
         /// ªÒ»°«Î«Û
         /// </summary>
         /// <returns></returns>
-        public IHttpTurboRequest GetRequest()
-        {
-            return _url.ToHttpRequest()
-                        .UseGet()
-                        .AddHeader("Cache-Control", "no-cache");
-        }
+        public IHttpTurboRequest GetRequest() => _url.ToHttpRequest().UseGet().AddHeader("Cache-Control", "no-cache");
 
         [TestMethod]
         public async Task ParallelRequestTestAsync()
@@ -52,32 +47,25 @@ namespace Cuture.Http.Test
             HttpDefaultSetting.DefaultConnectionLimit = 500;
 
             var count = 500;
-            var all = Enumerable.Range(0, count);
             int progressCount = 0;
 
-            var tasks = all.Select(m => GetRequest().DownloadWithProgressAsync((count, downloaded) =>
+            var tasks = Array(count).Select(m => GetRequest().DownloadWithProgressAsync((count, downloaded) =>
             {
                 Interlocked.Increment(ref progressCount);
-            }, 40960)).ToArray();
+            }, 40960)).ToList();
 
             await Task.WhenAll(tasks);
             Assert.IsTrue(progressCount > count * 10);
 
-            var fails = tasks.Where(m =>
+            tasks.ForEach(m =>
             {
                 var result = m.Result;
-                if (result != null)
-                {
-                    using var sha = SHA256.Create();
-                    var hash = BitConverter.ToString(sha.ComputeHash(result));
-                    Assert.AreEqual(_hash, hash);
+                Assert.IsNotNull(result);
 
-                    return false;
-                }
-                return true;
-            }).ToArray();
-
-            Assert.AreEqual(0, fails.Length);
+                using var sha = SHA256.Create();
+                var hash = BitConverter.ToString(sha.ComputeHash(result));
+                Assert.AreEqual(_hash, hash);
+            });
         }
 
         [TestMethod]
@@ -91,8 +79,8 @@ namespace Cuture.Http.Test
             }, 40960);
 
             Debug.WriteLine($"progressCount:{progressCount}");
-            Assert.IsTrue(progressCount > 10);
 
+            Assert.IsTrue(progressCount > 10);
             Assert.IsNotNull(result);
 
             using var sha = SHA256.Create();

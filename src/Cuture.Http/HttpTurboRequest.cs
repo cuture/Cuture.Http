@@ -21,6 +21,12 @@ namespace Cuture.Http
         public bool AllowRedirection { get; set; } = false;
 
         /// <summary>
+        /// 禁用Proxy
+        /// <para/>初始值为 <see cref="HttpDefaultSetting.DisableUseDefaultProxyByDefault"/>
+        /// </summary>
+        public bool DisableProxy { get; set; } = HttpDefaultSetting.DisableUseDefaultProxyByDefault;
+
+        /// <summary>
         /// Web代理
         /// </summary>
         public IWebProxy Proxy { get; set; }

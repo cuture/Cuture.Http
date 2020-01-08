@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -43,40 +42,27 @@ namespace Cuture.Http.Test
         [TestMethod]
         public async Task MultipartContentTestAsync()
         {
-            HttpDefaultSetting.DefaultConnectionLimit = 500;
+            await ParallelRequestAsync(10_000,
+                                        () => GetMultipartContentRequest().TryGetAsObjectAsync<HttpRequestInfo>(),
+                                        result =>
+                                        {
+                                            var requestInfo = result?.Data;
+                                            Assert.IsNotNull(requestInfo, result?.ResponseMessage?.ToString());
 
-            var count = 10_000;
-            var all = Enumerable.Range(0, count);
+                                            var content = JArray.Parse(Encoding.UTF8.GetString(requestInfo.Content));
+                                            var headers = requestInfo.Header;
+                                            Assert.AreEqual(true, _user1.Equals(content[0].ToObject<UserInfo>()));
+                                            Assert.AreEqual(true, _user2.Equals(content[1].ToObject<UserInfo>()));
+                                            Assert.AreEqual(true, _user3.Equals(content[2].ToObject<UserInfo>()));
+                                            Assert.AreEqual("POST", requestInfo.Method);
+                                            Assert.AreEqual(_urlMultipartContent.ToLowerInvariant(), requestInfo.Url.ToLowerInvariant());
 
-            var tasks = all.Select(m => GetMultipartContentRequest().TryGetAsObjectAsync<HttpRequestInfo>()).ToArray();
-
-            await Task.WhenAll(tasks);
-
-            var fails = tasks.Where(m =>
-            {
-                var result = m.Result.Data;
-                if (result != null)
-                {
-                    var content = JArray.Parse(Encoding.UTF8.GetString(result.Content));
-                    var headers = result.Header;
-                    Assert.AreEqual(true, _user1.Equals(content[0].ToObject<UserInfo>()));
-                    Assert.AreEqual(true, _user2.Equals(content[1].ToObject<UserInfo>()));
-                    Assert.AreEqual(true, _user3.Equals(content[2].ToObject<UserInfo>()));
-                    Assert.AreEqual("POST", result.Method);
-                    Assert.AreEqual(_urlMultipartContent.ToLowerInvariant(), result.Url.ToLowerInvariant());
-
-                    Assert.AreEqual("Header1Value, Header1ValueNew", headers["Header1"]);
-                    Assert.AreEqual("Header2Value", headers["Header2"]);
-                    Assert.AreEqual("Header3Value", headers["Header3"]);
-                    Assert.AreEqual(false, headers.TryGetValue("Header4", out _));
-                    Assert.AreEqual("Header5ValueNew", headers["Header5"]);
-
-                    return false;
-                }
-                return true;
-            }).ToArray();
-
-            Assert.AreEqual(0, fails.Length);
+                                            Assert.AreEqual("Header1Value, Header1ValueNew", headers["Header1"]);
+                                            Assert.AreEqual("Header2Value", headers["Header2"]);
+                                            Assert.AreEqual("Header3Value", headers["Header3"]);
+                                            Assert.AreEqual(false, headers.TryGetValue("Header4", out _));
+                                            Assert.AreEqual("Header5ValueNew", headers["Header5"]);
+                                        });
         }
 
         /// <summary>
@@ -112,40 +98,27 @@ namespace Cuture.Http.Test
         [TestMethod]
         public async Task MultipartFormDataContentTestAsync()
         {
-            HttpDefaultSetting.DefaultConnectionLimit = 500;
+            await ParallelRequestAsync(10_000,
+                                        () => GetMultipartFormDataContentRequest().TryGetAsObjectAsync<HttpRequestInfo>(),
+                                        result =>
+                                        {
+                                            var requestInfo = result?.Data;
+                                            Assert.IsNotNull(requestInfo, result?.ResponseMessage?.ToString());
 
-            var count = 10_000;
-            var all = Enumerable.Range(0, count);
+                                            var content = JObject.Parse(Encoding.UTF8.GetString(requestInfo.Content));
+                                            var headers = requestInfo.Header;
+                                            Assert.AreEqual(true, _user1.Equals(content["user1"].ToObject<UserInfo>()));
+                                            Assert.AreEqual(true, _user2.Equals(content["user2"].ToObject<UserInfo>()));
+                                            Assert.AreEqual(true, _user3.Equals(content["user3"].ToObject<UserInfo>()));
+                                            Assert.AreEqual("POST", requestInfo.Method);
+                                            Assert.AreEqual(_urlMultipartFormDataContent.ToLowerInvariant(), requestInfo.Url.ToLowerInvariant());
 
-            var tasks = all.Select(m => GetMultipartFormDataContentRequest().TryGetAsObjectAsync<HttpRequestInfo>()).ToArray();
-
-            await Task.WhenAll(tasks);
-
-            var fails = tasks.Where(m =>
-            {
-                var result = m.Result.Data;
-                if (result != null)
-                {
-                    var content = JObject.Parse(Encoding.UTF8.GetString(result.Content));
-                    var headers = result.Header;
-                    Assert.AreEqual(true, _user1.Equals(content["user1"].ToObject<UserInfo>()));
-                    Assert.AreEqual(true, _user2.Equals(content["user2"].ToObject<UserInfo>()));
-                    Assert.AreEqual(true, _user3.Equals(content["user3"].ToObject<UserInfo>()));
-                    Assert.AreEqual("POST", result.Method);
-                    Assert.AreEqual(_urlMultipartFormDataContent.ToLowerInvariant(), result.Url.ToLowerInvariant());
-
-                    Assert.AreEqual("Header1Value, Header1ValueNew", headers["Header1"]);
-                    Assert.AreEqual("Header2Value", headers["Header2"]);
-                    Assert.AreEqual("Header3Value", headers["Header3"]);
-                    Assert.AreEqual(false, headers.TryGetValue("Header4", out _));
-                    Assert.AreEqual("Header5ValueNew", headers["Header5"]);
-
-                    return false;
-                }
-                return true;
-            }).ToArray();
-
-            Assert.AreEqual(0, fails.Length);
+                                            Assert.AreEqual("Header1Value, Header1ValueNew", headers["Header1"]);
+                                            Assert.AreEqual("Header2Value", headers["Header2"]);
+                                            Assert.AreEqual("Header3Value", headers["Header3"]);
+                                            Assert.AreEqual(false, headers.TryGetValue("Header4", out _));
+                                            Assert.AreEqual("Header5ValueNew", headers["Header5"]);
+                                        });
         }
 
         /// <summary>

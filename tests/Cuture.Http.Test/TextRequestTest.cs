@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 using Cuture.Http.Test.Server;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -5,15 +7,19 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Cuture.Http.Test
 {
     [TestClass]
-    public class TextRequestTest : TextResultRequestTest
+    public class TextRequestTest : WebServerHostTestBase
     {
         #region 方法
 
-        public override IHttpTurboRequest GetRequest() => TestServer.TestHost.ToHttpRequest();
+        public IHttpTurboRequest GetRequest() => TestServer.TestHost.ToHttpRequest();
 
-        public override int GetRequestCount() => 10_000;
-
-        public override string GetTargetResult() => Resource.Index;
+        [TestMethod]
+        public async Task ParallelRequestTestAsync()
+        {
+            await ParallelRequestAsync(10_000,
+                                       () => GetRequest().TryGetAsStringAsync(),
+                                       result => Assert.AreEqual(Resource.Index, result.Data));
+        }
 
         #endregion 方法
     }

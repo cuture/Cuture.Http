@@ -55,8 +55,7 @@ namespace Cuture.Http.Test
 
             #region 允许重定向请求
 
-            request = url.ToHttpRequest()
-                            .AllowRedirection();
+            request = url.ToHttpRequest().AllowRedirection();
 
             for (int i = 0; i < count; i++)
             {

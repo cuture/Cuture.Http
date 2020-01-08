@@ -12,15 +12,6 @@ namespace Cuture.Http.Test
     [TestClass]
     public class RandomUserAgentTest : WebServerHostTestBase
     {
-        #region 构造函数
-
-        public RandomUserAgentTest()
-        {
-            HttpDefaultSetting.DefaultConnectionLimit = 200;
-        }
-
-        #endregion 构造函数
-
         #region 方法
 
         public IHttpTurboRequest GetRequest() => $"{TestServer.TestHost}/api/customrequest/get".ToHttpRequest();
@@ -62,11 +53,9 @@ namespace Cuture.Http.Test
         [TestMethod]
         private async Task ParallelRequestAsync(Func<IHttpTurboRequest> getRequest, Func<string> getUserAgent)
         {
-            var count = GetRequestCount();
             var target = GetTargetResult();
-            var all = Enumerable.Range(0, count);
 
-            var tasksWithUA = all.Select(m =>
+            var tasksWithUA = Array(GetRequestCount()).Select(m =>
             {
                 var userAgent = getUserAgent();
                 return new Tuple<Task<TextHttpOperationResult<HttpRequestInfo>>, string>(

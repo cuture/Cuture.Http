@@ -15,16 +15,6 @@ namespace Cuture.Http
         #region 字段
 
         /// <summary>
-        /// 允许自动重定向的代理的HttpTurboClient
-        /// </summary>
-        private ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> _allowRedirectionProxyTurboClients = new ConcurrentDictionary<int, WeakReference<IHttpTurboClient>>();
-
-        /// <summary>
-        /// 允许自动重定向的HttpTurboClient
-        /// </summary>
-        private WeakReference<IHttpTurboClient> _allowRedirectionTurboClient = new WeakReference<IHttpTurboClient>(null);
-
-        /// <summary>
         ///
         /// </summary>
         private ConcurrentBag<IHttpTurboClient> _holdedClients = new ConcurrentBag<IHttpTurboClient>();
@@ -34,15 +24,43 @@ namespace Cuture.Http
         /// </summary>
         private bool _isHoldClient = true;
 
+        #region Client
+
         /// <summary>
-        /// 代理的HttpTurboClient
+        /// 禁用Proxy的, 允许自动重定向的HttpTurboClient
         /// </summary>
-        private ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> _proxyTurboClients = new ConcurrentDictionary<int, WeakReference<IHttpTurboClient>>();
+        private WeakReference<IHttpTurboClient> _allowRedirectionDirectlyTurboClient = new WeakReference<IHttpTurboClient>(null);
+
+        /// <summary>
+        /// 允许自动重定向的HttpTurboClient
+        /// </summary>
+        private WeakReference<IHttpTurboClient> _allowRedirectionTurboClient = new WeakReference<IHttpTurboClient>(null);
 
         /// <summary>
         /// HttpTurboClient
         /// </summary>
         private WeakReference<IHttpTurboClient> _turboClient = new WeakReference<IHttpTurboClient>(null);
+
+        /// <summary>
+        /// 禁用Proxy的HttpTurboClient
+        /// </summary>
+        private WeakReference<IHttpTurboClient> _turboDirectlyClient = new WeakReference<IHttpTurboClient>(null);
+
+        #endregion Client
+
+        #region Client Dictionary
+
+        /// <summary>
+        /// 允许自动重定向的代理的HttpTurboClient
+        /// </summary>
+        private ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> _allowRedirectionProxyTurboClients = new ConcurrentDictionary<int, WeakReference<IHttpTurboClient>>();
+
+        /// <summary>
+        /// 代理的HttpTurboClient
+        /// </summary>
+        private ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> _proxyTurboClients = new ConcurrentDictionary<int, WeakReference<IHttpTurboClient>>();
+
+        #endregion Client Dictionary
 
         #endregion 字段
 
@@ -61,6 +79,8 @@ namespace Cuture.Http
 
             ReleaseWeakReferenceClient(_allowRedirectionTurboClient);
             ReleaseWeakReferenceClient(_turboClient);
+            ReleaseWeakReferenceClient(_allowRedirectionDirectlyTurboClient);
+            ReleaseWeakReferenceClient(_turboDirectlyClient);
 
             DisposeClients(allAllowRedirectionProxyTurboClients);
             DisposeClients(allProxyTurboClients);
@@ -80,6 +100,8 @@ namespace Cuture.Http
 
             ReleaseWeakReferenceClient(_allowRedirectionTurboClient);
             ReleaseWeakReferenceClient(_turboClient);
+            ReleaseWeakReferenceClient(_allowRedirectionDirectlyTurboClient);
+            ReleaseWeakReferenceClient(_turboDirectlyClient);
 
             _allowRedirectionProxyTurboClients = null;
             _allowRedirectionTurboClient = null;
@@ -90,6 +112,8 @@ namespace Cuture.Http
             DisposeClients(proxyTurboClients.Values);
         }
 
+#pragma warning disable CA2000 // 丢失范围之前释放对象
+
         /// <summary>
         /// 通过Uri判定获取一个HttpTurboClient
         /// </summary>
@@ -99,7 +123,13 @@ namespace Cuture.Http
         {
             IHttpTurboClient turboClient = null;
 
-            if (request.AllowRedirection)
+            if (request.DisableProxy)
+            {
+                turboClient = request.AllowRedirection ?
+                    GetTurboClientInWeakReference(_allowRedirectionDirectlyTurboClient, () => HoldClient(new HttpTurboClient(HttpTurboClient.CreateDefaultAllowRedirectionClientHandler().DisableProxy())))
+                    : GetTurboClientInWeakReference(_turboDirectlyClient, () => HoldClient(new HttpTurboClient(HttpTurboClient.CreateDefaultClientHandler().DisableProxy())));
+            }
+            else if (request.AllowRedirection)
             {
                 if (request.Proxy is null)
                 {
@@ -136,6 +166,8 @@ namespace Cuture.Http
             return turboClient;
         }
 
+#pragma warning restore CA2000 // 丢失范围之前释放对象
+
         /// <summary>
         /// 保持所有Client的引用,不被释放
         /// </summary>
@@ -161,75 +193,6 @@ namespace Cuture.Http
             {
                 ReleaseWeakReferenceClient(item);
             }
-        }
-
-        /// <summary>
-        /// 从弱引用字典中获取
-        /// <see cref="IHttpTurboClient"/>
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="weakReferenceDictionary"></param>
-        /// <param name="createFunc"></param>
-        /// <returns></returns>
-        private static IHttpTurboClient GetProxyTurboClientInWeakReferenceDictionary(IHttpTurboRequest request,
-                                                                                     ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> weakReferenceDictionary,
-                                                                                     Func<IWebProxy, IHttpTurboClient> createFunc)
-        {
-            IHttpTurboClient turboClient = null;
-
-            //HACK 此处是否可能有问题?
-            var proxy = request.Proxy;
-            int proxyHash = -1261813833;
-
-            if (proxy is WebProxy webProxy)
-            {
-                proxyHash = proxyHash * -1521134295 + webProxy.Address.OriginalString.GetHashCode();
-            }
-            else
-            {
-                var proxyUri = proxy.GetProxy(request.RequestUri);
-                proxyHash = proxyHash * -1521134295 + proxyUri.OriginalString.GetHashCode();
-            }
-
-            if (proxy.Credentials?.GetCredential(request.RequestUri, string.Empty) is NetworkCredential credential)
-            {
-                proxyHash = proxyHash * -1521134295 + credential.UserName.GetHashCode();
-                proxyHash = proxyHash * -1521134295 + credential.Password.GetHashCode();
-                proxyHash = proxyHash * -1521134295 + credential.Domain.GetHashCode();
-            }
-
-#pragma warning disable CA2000 // 丢失范围之前释放对象
-
-            if (!weakReferenceDictionary.TryGetValue(proxyHash, out WeakReference<IHttpTurboClient> turboClientWR))
-            {
-                lock (weakReferenceDictionary)
-                {
-                    if (!weakReferenceDictionary.TryGetValue(proxyHash, out turboClientWR))
-                    {
-                        turboClient = createFunc(proxy);
-                        turboClientWR = new WeakReference<IHttpTurboClient>(turboClient);
-#if DEBUG
-                        Debug.WriteLine($"new HttpTurboClient:{turboClient.GetHashCode()} ProxyHash:{proxyHash} AllowRedirection:{request.AllowRedirection}");
-#endif
-                        weakReferenceDictionary.AddOrUpdate(proxyHash, turboClientWR, (k, oldClientWR) =>
-                        {
-                            ReleaseWeakReferenceClient(oldClientWR);
-                            return turboClientWR;
-                        });
-                    }
-                    else
-                    {
-                        turboClient = GetTurboClientInWeakReference(turboClientWR, () => createFunc(proxy));
-                    }
-                }
-            }
-            else
-            {
-                turboClient = GetTurboClientInWeakReference(turboClientWR, () => createFunc(proxy));
-            }
-#pragma warning restore CA2000 // 丢失范围之前释放对象
-
-            return turboClient;
         }
 
         /// <summary>
@@ -275,6 +238,78 @@ namespace Cuture.Http
                 client.Dispose();
             }
             turboClientWR.SetTarget(null);
+        }
+
+        /// <summary>
+        /// 从弱引用字典中获取
+        /// <see cref="IHttpTurboClient"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="weakReferenceDictionary"></param>
+        /// <param name="createFunc"></param>
+        /// <returns></returns>
+        private IHttpTurboClient GetProxyTurboClientInWeakReferenceDictionary(IHttpTurboRequest request,
+                                                                                     ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> weakReferenceDictionary,
+                                                                                     Func<IWebProxy, IHttpTurboClient> createFunc)
+        {
+            IHttpTurboClient turboClient = null;
+
+            //HACK 此处是否可能有问题?
+            var proxy = request.Proxy;
+            int proxyHash = -1261813833;
+
+            if (proxy is WebProxy webProxy)
+            {
+                proxyHash = proxyHash * -1521134295 + webProxy.Address.OriginalString.GetHashCode();
+            }
+            else
+            {
+                var proxyUri = proxy.GetProxy(request.RequestUri);
+                if (proxyUri is null)
+                {
+                    return request.AllowRedirection
+                        ? GetTurboClientInWeakReference(_allowRedirectionTurboClient, () => HoldClient(new HttpTurboClient(true)))
+                        : GetTurboClientInWeakReference(_turboClient, () => HoldClient(new HttpTurboClient(false)));
+                }
+                proxyHash = proxyHash * -1521134295 + proxyUri.OriginalString.GetHashCode();
+            }
+
+            if (proxy.Credentials?.GetCredential(request.RequestUri, string.Empty) is NetworkCredential credential)
+            {
+                proxyHash = proxyHash * -1521134295 + credential.UserName.GetHashCode();
+                proxyHash = proxyHash * -1521134295 + credential.Password.GetHashCode();
+                proxyHash = proxyHash * -1521134295 + credential.Domain.GetHashCode();
+            }
+
+            if (!weakReferenceDictionary.TryGetValue(proxyHash, out WeakReference<IHttpTurboClient> turboClientWR))
+            {
+                lock (weakReferenceDictionary)
+                {
+                    if (!weakReferenceDictionary.TryGetValue(proxyHash, out turboClientWR))
+                    {
+                        turboClient = createFunc(proxy);
+                        turboClientWR = new WeakReference<IHttpTurboClient>(turboClient);
+#if DEBUG
+                        Debug.WriteLine($"new HttpTurboClient:{turboClient.GetHashCode()} ProxyHash:{proxyHash} AllowRedirection:{request.AllowRedirection}");
+#endif
+                        weakReferenceDictionary.AddOrUpdate(proxyHash, turboClientWR, (k, oldClientWR) =>
+                        {
+                            ReleaseWeakReferenceClient(oldClientWR);
+                            return turboClientWR;
+                        });
+                    }
+                    else
+                    {
+                        turboClient = GetTurboClientInWeakReference(turboClientWR, () => createFunc(proxy));
+                    }
+                }
+            }
+            else
+            {
+                turboClient = GetTurboClientInWeakReference(turboClientWR, () => createFunc(proxy));
+            }
+
+            return turboClient;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

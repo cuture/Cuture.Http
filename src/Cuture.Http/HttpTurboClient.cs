@@ -21,17 +21,24 @@ namespace Cuture.Http
         /// </summary>
         private readonly HttpClient _httpClient = null;
 
+        /// <summary>
+        /// 外部HttpClient
+        /// </summary>
+        private readonly bool _outerClient = false;
+
         #endregion 字段
 
         #region 构造函数
 
         /// <summary>
+        /// http快速访问客户端
         /// 封装System.Net.Http.HttpClient
         /// 用于http请求
         /// </summary>
         /// <param name="httpClient">内部使用的HttpClient</param>
         public HttpTurboClient(HttpClient httpClient)
         {
+            _outerClient = true;
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
@@ -47,6 +54,7 @@ namespace Cuture.Http
         }
 
         /// <summary>
+        /// http快速访问客户端
         /// 封装System.Net.Http.HttpClient
         /// 用于http请求
         /// </summary>
@@ -59,26 +67,25 @@ namespace Cuture.Http
         /// 用于http请求
         /// </summary>
         /// <param name="allowRedirection">是否允许自动重定向</param>
-        public HttpTurboClient(bool allowRedirection)
+        /// <param name="maxAutomaticRedirections">允许自动重定向时的最大重定向次数</param>
+        public HttpTurboClient(bool allowRedirection, int maxAutomaticRedirections = 10)
         {
 #pragma warning disable CA2000 // 丢失范围之前释放对象
-            if (allowRedirection)
-            {
-                _httpClient = new HttpClient(CreateDefaultAllowRedirectionClientHandler());
-            }
-            else
-            {
-                _httpClient = new HttpClient(CreateDefaultClientHandler());
-            }
+            _httpClient = allowRedirection
+                ? new HttpClient(CreateDefaultAllowRedirectionClientHandler(maxAutomaticRedirections))
+                : new HttpClient(CreateDefaultClientHandler());
 #pragma warning restore CA2000 // 丢失范围之前释放对象
 
-            var defaultSettings = HttpDefaultSetting.DefaultHttpHeaders;
             var defaultHeaders = _httpClient.DefaultRequestHeaders;
-            foreach (var item in defaultSettings)
+            foreach (var item in HttpDefaultSetting.DefaultHttpHeaders)
             {
                 SetHeader(defaultHeaders, item.Key, item.Value);
             }
         }
+
+        #endregion 构造函数
+
+        #region 析构函数
 
         /// <summary>
         ///
@@ -86,10 +93,14 @@ namespace Cuture.Http
         ~HttpTurboClient()
         {
             Debug.WriteLine($"终结器:{nameof(HttpTurboClient)}_{this.GetHashCode()}");
-            _httpClient.Dispose();
+
+            if (!_outerClient)
+            {
+                _httpClient.Dispose();
+            }
         }
 
-        #endregion 构造函数
+        #endregion 析构函数
 
         #region 方法
 
@@ -98,7 +109,10 @@ namespace Cuture.Http
         /// </summary>
         public void Dispose()
         {
-            _httpClient.Dispose();
+            if (!_outerClient)
+            {
+                _httpClient.Dispose();
+            }
             GC.SuppressFinalize(this);
         }
 
@@ -134,22 +148,33 @@ namespace Cuture.Http
         #region 静态方法
 
         /// <summary>
-        /// 创建默认的HttpClientHandler
+        /// 创建默认的允许重定向HttpClientHandler
+        /// <para/><see cref="HttpClientHandler.UseProxy"/> = true
+        /// <para/><see cref="HttpClientHandler.UseCookies"/> = false
+        /// <para/><see cref="HttpClientHandler.AllowAutoRedirect"/> = false
+        /// <para/><see cref="HttpClientHandler.AutomaticDecompression"/> = <see cref="DecompressionMethods.GZip"/> | <see cref="DecompressionMethods.Deflate"/>
+        /// <para/><see cref="HttpClientHandler.AllowAutoRedirect"/> = true
+        /// <para/><see cref="HttpClientHandler.MaxAutomaticRedirections"/> = 10
         /// </summary>
+        /// <param name="maxAutomaticRedirections">最大重定向次数</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static HttpClientHandler CreateDefaultAllowRedirectionClientHandler()
+        public static HttpClientHandler CreateDefaultAllowRedirectionClientHandler(int maxAutomaticRedirections = 10)
         {
-            var allowRedirectionClientHandler = CreateDefaultClientHandler();
+            var httpClientHandler = CreateDefaultClientHandler();
 
-            allowRedirectionClientHandler.AllowAutoRedirect = true;
-            allowRedirectionClientHandler.MaxAutomaticRedirections = 10;
+            httpClientHandler.AllowAutoRedirect = true;
+            httpClientHandler.MaxAutomaticRedirections = maxAutomaticRedirections;
 
-            return allowRedirectionClientHandler;
+            return httpClientHandler;
         }
 
         /// <summary>
         /// 创建默认的HttpClientHandler
+        /// <para/><see cref="HttpClientHandler.UseProxy"/> = true
+        /// <para/><see cref="HttpClientHandler.UseCookies"/> = false
+        /// <para/><see cref="HttpClientHandler.AllowAutoRedirect"/> = false
+        /// <para/><see cref="HttpClientHandler.AutomaticDecompression"/> = <see cref="DecompressionMethods.GZip"/> | <see cref="DecompressionMethods.Deflate"/>
         /// </summary>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -157,6 +182,7 @@ namespace Cuture.Http
         {
             return new HttpClientHandler()
             {
+                UseProxy = true,
                 UseCookies = false,
                 AllowAutoRedirect = false,
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,

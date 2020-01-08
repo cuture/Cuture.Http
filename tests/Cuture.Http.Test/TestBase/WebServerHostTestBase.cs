@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 using Cuture.Http.Test.Server;
 
@@ -27,6 +30,7 @@ namespace Cuture.Http.Test
             {
                 await ServerHost?.StopAsync();
             }
+            HttpDefaultSetting.DefaultTurboClientFactory.Clear();
         }
 
         [TestInitialize]
@@ -36,6 +40,104 @@ namespace Cuture.Http.Test
             {
                 ServerHost = await TestServer.CreateHostBuilder(new string[0]).StartAsync();
             }
+            HttpDefaultSetting.DefaultConnectionLimit = 200;
+        }
+
+        /// <summary>
+        /// 获取一个大小为 <paramref name="count"/> 的数组
+        /// </summary>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        protected int[] Array(int count) => new int[count];
+
+        /// <summary>
+        /// 并行请求
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="requestCount">请求总数</param>
+        /// <param name="getRequestFunc">获取请求的方法</param>
+        /// <param name="assertAction">对每个请求的断言委托</param>
+        /// <returns></returns>
+        protected virtual async Task ParallelRequestAsync<T>(int requestCount,
+                                                             Func<Task<HttpOperationResult<T>>> getRequestFunc,
+                                                             Action<HttpOperationResult<T>> assertAction)
+        {
+            if (requestCount < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(requestCount));
+            }
+
+            if (getRequestFunc is null)
+            {
+                throw new ArgumentNullException(nameof(getRequestFunc));
+            }
+
+            if (assertAction is null)
+            {
+                throw new ArgumentNullException(nameof(assertAction));
+            }
+
+            Debug.WriteLine($"Start Request, Count: {requestCount}");
+
+            var sw = Stopwatch.StartNew();
+
+            var tasks = Array(requestCount).Select(m => getRequestFunc()).ToList();
+
+            await Task.WhenAll(tasks);
+
+            sw.Stop();
+
+            Debug.WriteLine($"Total Time: {sw.Elapsed.TotalSeconds} s");
+
+            tasks.ForEach(m =>
+            {
+                assertAction(m.Result);
+            });
+        }
+
+        /// <summary>
+        /// 并行请求
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="requestCount">请求总数</param>
+        /// <param name="getRequestFunc">获取请求的方法</param>
+        /// <param name="assertAction">对每个请求的断言委托</param>
+        /// <returns></returns>
+        protected virtual async Task ParallelRequestAsync<T>(int requestCount,
+                                                             Func<Task<TextHttpOperationResult<T>>> getRequestFunc,
+                                                             Action<TextHttpOperationResult<T>> assertAction)
+        {
+            if (requestCount < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(requestCount));
+            }
+
+            if (getRequestFunc is null)
+            {
+                throw new ArgumentNullException(nameof(getRequestFunc));
+            }
+
+            if (assertAction is null)
+            {
+                throw new ArgumentNullException(nameof(assertAction));
+            }
+
+            Debug.WriteLine($"Start Request, Count: {requestCount}");
+
+            var sw = Stopwatch.StartNew();
+
+            var tasks = Array(requestCount).Select(m => getRequestFunc()).ToList();
+
+            await Task.WhenAll(tasks);
+
+            sw.Stop();
+
+            Debug.WriteLine($"Total Time: {sw.Elapsed.TotalSeconds} s");
+
+            tasks.ForEach(m =>
+            {
+                assertAction(m.Result);
+            });
         }
 
         #endregion 方法

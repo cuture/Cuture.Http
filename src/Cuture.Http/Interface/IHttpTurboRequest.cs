@@ -26,6 +26,11 @@ namespace Cuture.Http
         HttpContent Content { get; set; }
 
         /// <summary>
+        /// 禁用Proxy
+        /// </summary>
+        bool DisableProxy { get; set; }
+
+        /// <summary>
         /// Headers
         /// </summary>
         HttpRequestHeaders Headers { get; }

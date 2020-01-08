@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 using Cuture.Http.Test.Server;
 using Cuture.Http.Test.Server.Entity;
@@ -8,39 +10,62 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Cuture.Http.Test
 {
     [TestClass]
-    public class FormRequestTest : TextResultRequestTest
+    public class FormRequestTest : WebServerHostTestBase
     {
-        #region 字段
+        #region 方法
 
-        private readonly string _form = null;
-        private readonly UserInfo _user = null;
-
-        #endregion 字段
-
-        #region 构造函数
-
-        public FormRequestTest()
+        [TestMethod]
+        public async Task ContentTypeChangeTestAsync()
         {
-            _user = new UserInfo()
+            var (user, form) = NewUserWithForm();
+
+            var contentType = "application/x-www-form-urlencoded; charset=utf-8; test=true";
+            await ParallelRequestAsync(10_000,
+                                       () => GetRequest().WithContent(new FormContent(form, contentType)).TryGetAsStringAsync(),
+                                       result =>
+                                       {
+                                           Assert.AreEqual(contentType, result.ResponseMessage.Headers.GetValues("R-Content-Type").First().ToString());
+                                           Assert.AreEqual(form, result.Data);
+                                       });
+        }
+
+        [TestMethod]
+        public async Task FromFormTestAsync()
+        {
+            var (user, form) = NewUserWithForm();
+
+            await ParallelRequestAsync(10_000,
+                                       () => GetRequest().WithFormContent(form).TryGetAsStringAsync(),
+                                       result => Assert.AreEqual(form, result.Data));
+        }
+
+        [TestMethod]
+        public async Task FromObjectTestAsync()
+        {
+            var (user, form) = NewUserWithForm();
+
+            await ParallelRequestAsync(10_000,
+                                       () => GetRequest().WithFormContent(user).TryGetAsStringAsync(),
+                                       result => Assert.AreEqual(form, result.Data));
+        }
+
+        public IHttpTurboRequest GetRequest() => $"{TestServer.TestHost}/api/user/update/form".ToHttpRequest().UsePost();
+
+        private (UserInfo user, string form) NewUserWithForm()
+        {
+            var user = new UserInfo()
             {
                 Age = 10,
                 Name = "TestUser中文😂😂😂"
             };
 
-            _form = _user.ToForm();
+            var form = user.ToForm();
+            var encodedForm = user.ToEncodedForm();
 
-            Debug.WriteLine(_form);
+            Debug.WriteLine($"New UserInfo: {form}\nEncodedForm: {encodedForm}");
+
+            return (user, form);
         }
-
-        #endregion 构造函数
-
-        #region 方法
-
-        public override IHttpTurboRequest GetRequest() => $"{TestServer.TestHost}/api/user/update/form".ToHttpRequest().WithFormContent(_user).UsePost();
-
-        public override int GetRequestCount() => 10_000;
-
-        public override string GetTargetResult() => _form;
 
         #endregion 方法
     }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Net.Http;
-using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Cuture.Http
@@ -13,9 +13,9 @@ namespace Cuture.Http
         #region 字段
 
         /// <summary>
-        /// json httpcontent的MIME
+        /// <see cref="FormContent"/> 的默认ContentType
         /// </summary>
-        public static readonly string MIME = "application/x-www-form-urlencoded";
+        public const string ContentType = "application/x-www-form-urlencoded";
 
         /// <summary>
         /// 空的Content
@@ -30,25 +30,81 @@ namespace Cuture.Http
         /// HttpFormContent
         /// </summary>
         /// <param name="content">已编码的from内容</param>
-        public FormContent(string content) : base(GetBytes(content))
+        public FormContent(string content) : this(content, ContentType, Encoding.UTF8)
         {
-            Headers.ContentType = new MediaTypeHeaderValue(MIME);
+        }
+
+        /// <summary>
+        /// HttpFormContent
+        /// </summary>
+        /// <param name="content">已编码的from内容</param>
+        /// <param name="encoding">指定编码类型</param>
+        public FormContent(string content, Encoding encoding) : this(content, ContentType, encoding)
+        {
+        }
+
+        /// <summary>
+        /// HttpFormContent
+        /// </summary>
+        /// <param name="content">已编码的from内容</param>
+        /// <param name="contentType">指定ContentType</param>
+        public FormContent(string content, string contentType) : this(content, contentType, Encoding.UTF8)
+        {
+        }
+
+        /// <summary>
+        /// HttpFormContent
+        /// </summary>
+        /// <param name="content">已编码的from内容</param>
+        /// <param name="contentType">指定ContentType</param>
+        /// <param name="encoding">指定编码类型</param>
+        public FormContent(string content, string contentType, Encoding encoding) : base(GetBytes(content, encoding))
+        {
+            Headers.TryAddWithoutValidation(HttpHeaders.ContentType, contentType);
         }
 
         /// <summary>
         /// HttpFormContent
         /// </summary>
         /// <param name="content">用于转换为form的对象</param>
-        public FormContent(object content) : base(GetBytes(content))
+        public FormContent(object content) : this(content, ContentType, Encoding.UTF8)
         {
-            Headers.ContentType = new MediaTypeHeaderValue(MIME);
+        }
+
+        /// <summary>
+        /// HttpFormContent
+        /// </summary>
+        /// <param name="content">用于转换为form的对象</param>
+        /// <param name="encoding">指定编码类型</param>
+        public FormContent(object content, Encoding encoding) : this(content, ContentType, encoding)
+        {
+        }
+
+        /// <summary>
+        /// HttpFormContent
+        /// </summary>
+        /// <param name="content">用于转换为form的对象</param>
+        /// <param name="contentType">指定ContentType</param>
+        public FormContent(object content, string contentType) : this(content, contentType, Encoding.UTF8)
+        {
+        }
+
+        /// <summary>
+        /// HttpFormContent
+        /// </summary>
+        /// <param name="content">用于转换为form的对象</param>
+        /// <param name="contentType">指定ContentType</param>
+        /// <param name="encoding">指定编码类型</param>
+        public FormContent(object content, string contentType, Encoding encoding) : base(GetBytes(content, encoding))
+        {
+            Headers.TryAddWithoutValidation(HttpHeaders.ContentType, contentType);
         }
 
         #endregion 构造函数
 
         #region 方法
 
-        private static byte[] GetBytes(object content)
+        private static byte[] GetBytes(object content, Encoding encoding)
         {
             if (content is null)
             {
@@ -56,7 +112,7 @@ namespace Cuture.Http
             }
             else if (content is string str)
             {
-                return GetBytes(str);
+                return GetBytes(str, encoding);
             }
 
             var data = string.Empty;
@@ -66,17 +122,18 @@ namespace Cuture.Http
                 data = content.ToEncodedForm();
             }
 
-            return Encoding.UTF8.GetBytes(data);
+            return encoding.GetBytes(data);
         }
 
-        private static byte[] GetBytes(string data)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static byte[] GetBytes(string data, Encoding encoding)
         {
             if (string.IsNullOrEmpty(data))
             {
                 return EmptyContent;
             }
 
-            return Encoding.UTF8.GetBytes(data.Replace("%20", "+"));
+            return encoding.GetBytes(data.Replace("%20", "+"));
         }
 
         #endregion 方法

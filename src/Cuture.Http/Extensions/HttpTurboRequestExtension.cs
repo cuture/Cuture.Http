@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 namespace Cuture.Http
 {
     /// <summary>
-    /// http请求
+    /// <see cref="IHttpTurboRequest"/> 请求拓展类
     /// </summary>
     public static class HttpTurboRequestExtension
     {
@@ -22,8 +22,7 @@ namespace Cuture.Http
         static HttpTurboRequestExtension()
         {
 #if NETSTANDARD2_0
-            EncodingProvider provider = CodePagesEncodingProvider.Instance;
-            Encoding.RegisterProvider(provider);
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 #endif
         }
 
@@ -348,6 +347,35 @@ namespace Cuture.Http
         #region Proxy
 
         /// <summary>
+        /// 禁用系统代理
+        /// <para/>设置 <see cref="IHttpTurboRequest.DisableProxy"/> 为 true
+        /// <para/>默认实现下, 将不使用任何代理进行请求
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest DisableProxy(this IHttpTurboRequest request)
+        {
+            request.DisableProxy = true;
+            request.Proxy = null;
+            return request;
+        }
+
+        /// <summary>
+        /// 使用默认Web代理（理论上默认情况下就是这种状态）
+        /// <para/>设置 <see cref="IHttpTurboRequest.Proxy"/> 为 <see cref="WebRequest.DefaultWebProxy"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest UseDefaultWebProxy(this IHttpTurboRequest request)
+        {
+            request.DisableProxy = false;
+            request.Proxy = WebRequest.DefaultWebProxy;
+            return request;
+        }
+
+        /// <summary>
         /// 使用指定的代理
         /// </summary>
         /// <param name="request"></param>
@@ -383,6 +411,20 @@ namespace Cuture.Http
         public static IHttpTurboRequest UseProxy(this IHttpTurboRequest request, Uri proxyUri)
         {
             request.Proxy = proxyUri is null ? null : new WebProxy(proxyUri);
+            return request;
+        }
+
+        /// <summary>
+        /// 使用系统代理
+        /// <para/>设置 <see cref="IHttpTurboRequest.Proxy"/> 为 <see cref="WebRequest.GetSystemWebProxy()"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest UseSystemProxy(this IHttpTurboRequest request)
+        {
+            request.DisableProxy = false;
+            request.Proxy = WebRequest.GetSystemWebProxy();
             return request;
         }
 
@@ -463,6 +505,7 @@ namespace Cuture.Http
         /// <param name="httpClient"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("建议使用 UseTurboClient 或 UseTurboClientFactory 替代此方法调用")]
         public static IHttpTurboRequest UseHttpClient(this IHttpTurboRequest request, HttpClient httpClient)
         {
             request.TurboClient = new HttpTurboClient(httpClient);
