@@ -21,6 +21,11 @@ namespace Cuture.Http
         /// </summary>
         private static IHttpTurboClientFactory s_defaultTurboClientFactory = new SimpleHttpTurboClientFactory();
 
+        /// <summary>
+        /// 默认Request工厂
+        /// </summary>
+        private static IHttpTurboRequestFactory s_defaultTurboRequestFactory = new DefaultRequestFactory();
+
         #endregion 字段
 
         #region 属性
@@ -58,6 +63,28 @@ namespace Cuture.Http
                 }
                 var oldFactory = s_defaultTurboClientFactory;
                 s_defaultTurboClientFactory = value;
+                oldFactory.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// 默认Request工厂
+        /// </summary>
+        public static IHttpTurboRequestFactory DefaultTurboRequestFactory
+        {
+            get => s_defaultTurboRequestFactory;
+            set
+            {
+                if (value is null)
+                {
+                    throw new NullReferenceException($"{nameof(DefaultTurboRequestFactory)} can not be null");
+                }
+                if (ReferenceEquals(value, s_defaultTurboRequestFactory))
+                {
+                    return;
+                }
+                var oldFactory = s_defaultTurboRequestFactory;
+                s_defaultTurboRequestFactory = value;
                 oldFactory.Dispose();
             }
         }

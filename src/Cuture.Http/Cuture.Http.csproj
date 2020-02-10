@@ -5,9 +5,9 @@
 
     <LangVersion>latest</LangVersion>
     <Platforms>AnyCPU</Platforms>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>CA1062;CA1200;CA1303</NoWarn>
+    <NoWarn>CA1062;CA1200;CA1303;CA1054;CA2234</NoWarn>
 
     <Authors>Stratos</Authors>
     <Description>基于System.Net.Http.HttpClient的简单封装,用于进行Http请求。
