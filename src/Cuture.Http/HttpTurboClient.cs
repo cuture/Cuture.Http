@@ -7,6 +7,8 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Cuture.Http.Util;
+
 namespace Cuture.Http
 {
     /// <summary>
@@ -55,10 +57,13 @@ namespace Cuture.Http
 
         /// <summary>
         /// http快速访问客户端
-        /// 封装System.Net.Http.HttpClient
-        /// 用于http请求
+        /// <para/>
+        /// 使用无参构造替代
         /// </summary>
-        public HttpTurboClient() : this(false)
+        /// <param name="allowRedirection"></param>
+        /// <param name="maxAutomaticRedirections"></param>
+        [Obsolete("使用无参构造替代", true)]
+        public HttpTurboClient(bool allowRedirection, int maxAutomaticRedirections = 10)
         { }
 
         /// <summary>
@@ -66,14 +71,10 @@ namespace Cuture.Http
         /// 封装System.Net.Http.HttpClient
         /// 用于http请求
         /// </summary>
-        /// <param name="allowRedirection">是否允许自动重定向</param>
-        /// <param name="maxAutomaticRedirections">允许自动重定向时的最大重定向次数</param>
-        public HttpTurboClient(bool allowRedirection, int maxAutomaticRedirections = 10)
+        public HttpTurboClient()
         {
 #pragma warning disable CA2000 // 丢失范围之前释放对象
-            _httpClient = allowRedirection
-                ? new HttpClient(CreateDefaultAllowRedirectionClientHandler(maxAutomaticRedirections))
-                : new HttpClient(CreateDefaultClientHandler());
+            _httpClient = new HttpClient(CreateDefaultClientHandler());
 #pragma warning restore CA2000 // 丢失范围之前释放对象
 
             var defaultHeaders = _httpClient.DefaultRequestHeaders;
@@ -137,37 +138,74 @@ namespace Cuture.Http
             {
                 using var cts = CancellationTokenSource.CreateLinkedTokenSource(request.Token);
                 cts.CancelAfter(request.Timeout.Value);
-                return await _httpClient.SendAsync(request.AsRequest(), completionOption, cts.Token).ConfigureAwait(false);
+                return await InternalExecuteAsync(request, completionOption, cts.Token).ConfigureAwait(false);
             }
             else
             {
-                return await _httpClient.SendAsync(request.AsRequest(), completionOption, request.Token).ConfigureAwait(false);
+                return await InternalExecuteAsync(request, completionOption, request.Token).ConfigureAwait(false);
             }
         }
 
-        #region 静态方法
+        #region Internal
 
-        /// <summary>
-        /// 创建默认的允许重定向HttpClientHandler
-        /// <para/><see cref="HttpClientHandler.UseProxy"/> = true
-        /// <para/><see cref="HttpClientHandler.UseCookies"/> = false
-        /// <para/><see cref="HttpClientHandler.AllowAutoRedirect"/> = false
-        /// <para/><see cref="HttpClientHandler.AutomaticDecompression"/> = <see cref="DecompressionMethods.GZip"/> | <see cref="DecompressionMethods.Deflate"/>
-        /// <para/><see cref="HttpClientHandler.AllowAutoRedirect"/> = true
-        /// <para/><see cref="HttpClientHandler.MaxAutomaticRedirections"/> = 10
-        /// </summary>
-        /// <param name="maxAutomaticRedirections">最大重定向次数</param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static HttpClientHandler CreateDefaultAllowRedirectionClientHandler(int maxAutomaticRedirections = 10)
+        private async Task<HttpResponseMessage> InternalExecuteAsync(IHttpTurboRequest request, HttpCompletionOption completionOption, CancellationToken token)
         {
-            var httpClientHandler = CreateDefaultClientHandler();
+            if (request.AllowRedirection)
+            {
+                Uri redirectUri;
+                HttpResponseMessage tmpResponse = null;
+                var innerRequest = request.AsRequest();
 
-            httpClientHandler.AllowAutoRedirect = true;
-            httpClientHandler.MaxAutomaticRedirections = maxAutomaticRedirections;
+                //TODO 限制最大重定向次数
+                for (int i = 0; i < 10; i++)
+                {
+                    tmpResponse = await _httpClient.SendAsync(innerRequest, completionOption, token).ConfigureAwait(false);
 
-            return httpClientHandler;
+                    if ((redirectUri = tmpResponse.GetUriForRedirect(request.RequestUri)) != null)
+                    {
+                        var redirectRequest = new HttpRequestMessage(HttpMethod.Get, redirectUri);
+
+                        foreach (var item in innerRequest.Headers)
+                        {
+                            redirectRequest.Headers.Add(item.Key, item.Value);
+                        }
+
+                        if (tmpResponse.TryGetCookie(out var setCookie))
+                        {
+                            if (innerRequest.TryGetCookie(out var cookie)
+                                && !string.IsNullOrWhiteSpace(cookie))
+                            {
+                                cookie = CookieUtility.Merge(cookie, setCookie);
+                            }
+                            else
+                            {
+                                cookie = CookieUtility.Clean(setCookie);
+                            }
+
+                            redirectRequest.Headers.Remove(HttpHeaders.Cookie);
+                            redirectRequest.Headers.TryAddWithoutValidation(HttpHeaders.Cookie, cookie);
+                        }
+
+                        innerRequest.Dispose();
+                        tmpResponse.Dispose();
+
+                        innerRequest = redirectRequest;
+                        continue;
+                    }
+                    innerRequest.Dispose();
+                    break;
+                }
+                return tmpResponse;
+            }
+            else
+            {
+                return await _httpClient.SendAsync(request.AsRequest(), completionOption, token).ConfigureAwait(false);
+            }
         }
+
+        #endregion Internal
+
+        #region 静态方法
 
         /// <summary>
         /// 创建默认的HttpClientHandler

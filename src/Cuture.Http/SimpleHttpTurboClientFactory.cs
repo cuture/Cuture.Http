@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 namespace Cuture.Http
 {
     /// <summary>
-    /// 简单的HttpTurboClientFactory
+    /// 简单的ClientFactory
     /// </summary>
     public sealed class SimpleHttpTurboClientFactory : IHttpTurboClientFactory
     {
@@ -27,38 +27,23 @@ namespace Cuture.Http
         #region Client
 
         /// <summary>
-        /// 禁用Proxy的, 允许自动重定向的HttpTurboClient
+        /// 默认的Client
         /// </summary>
-        private WeakReference<IHttpTurboClient> _allowRedirectionDirectlyTurboClient = new WeakReference<IHttpTurboClient>(null);
+        private WeakReference<IHttpTurboClient> _client = new WeakReference<IHttpTurboClient>(null);
 
         /// <summary>
-        /// 允许自动重定向的HttpTurboClient
+        /// 禁用Proxy的Client
         /// </summary>
-        private WeakReference<IHttpTurboClient> _allowRedirectionTurboClient = new WeakReference<IHttpTurboClient>(null);
-
-        /// <summary>
-        /// HttpTurboClient
-        /// </summary>
-        private WeakReference<IHttpTurboClient> _turboClient = new WeakReference<IHttpTurboClient>(null);
-
-        /// <summary>
-        /// 禁用Proxy的HttpTurboClient
-        /// </summary>
-        private WeakReference<IHttpTurboClient> _turboDirectlyClient = new WeakReference<IHttpTurboClient>(null);
+        private WeakReference<IHttpTurboClient> _directlyClient = new WeakReference<IHttpTurboClient>(null);
 
         #endregion Client
 
         #region Client Dictionary
 
         /// <summary>
-        /// 允许自动重定向的代理的HttpTurboClient
+        /// 有代理信息的Client
         /// </summary>
-        private ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> _allowRedirectionProxyTurboClients = new ConcurrentDictionary<int, WeakReference<IHttpTurboClient>>();
-
-        /// <summary>
-        /// 代理的HttpTurboClient
-        /// </summary>
-        private ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> _proxyTurboClients = new ConcurrentDictionary<int, WeakReference<IHttpTurboClient>>();
+        private ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> _proxyClients = new ConcurrentDictionary<int, WeakReference<IHttpTurboClient>>();
 
         #endregion Client Dictionary
 
@@ -67,23 +52,18 @@ namespace Cuture.Http
         #region 方法
 
         /// <summary>
-        /// 清空所有的HttpClient缓存
+        /// 清空所有的Client缓存
         /// </summary>
         public void Clear()
         {
-            var allAllowRedirectionProxyTurboClients = _allowRedirectionProxyTurboClients.Values;
-            var allProxyTurboClients = _proxyTurboClients.Values;
+            var proxyClients = _proxyClients.Values;
 
-            _allowRedirectionProxyTurboClients.Clear();
-            _proxyTurboClients.Clear();
+            _proxyClients.Clear();
 
-            ReleaseWeakReferenceClient(_allowRedirectionTurboClient);
-            ReleaseWeakReferenceClient(_turboClient);
-            ReleaseWeakReferenceClient(_allowRedirectionDirectlyTurboClient);
-            ReleaseWeakReferenceClient(_turboDirectlyClient);
+            ReleaseWeakReferenceClient(_client);
+            ReleaseWeakReferenceClient(_directlyClient);
 
-            DisposeClients(allAllowRedirectionProxyTurboClients);
-            DisposeClients(allProxyTurboClients);
+            DisposeClients(proxyClients);
 
             _holdedClients = new ConcurrentBag<IHttpTurboClient>();
         }
@@ -95,27 +75,20 @@ namespace Cuture.Http
         {
             _holdedClients = null;
 
-            var allowRedirectionProxyTurboClients = _allowRedirectionProxyTurboClients;
-            var proxyTurboClients = _proxyTurboClients;
+            var proxyClients = _proxyClients;
 
-            ReleaseWeakReferenceClient(_allowRedirectionTurboClient);
-            ReleaseWeakReferenceClient(_turboClient);
-            ReleaseWeakReferenceClient(_allowRedirectionDirectlyTurboClient);
-            ReleaseWeakReferenceClient(_turboDirectlyClient);
+            ReleaseWeakReferenceClient(_client);
+            ReleaseWeakReferenceClient(_directlyClient);
 
-            _allowRedirectionProxyTurboClients = null;
-            _allowRedirectionTurboClient = null;
-            _proxyTurboClients = null;
-            _turboClient = null;
+            _proxyClients = null;
+            _client = null;
+            _directlyClient = null;
 
-            DisposeClients(allowRedirectionProxyTurboClients.Values);
-            DisposeClients(proxyTurboClients.Values);
+            DisposeClients(proxyClients.Values);
         }
 
-#pragma warning disable CA2000 // 丢失范围之前释放对象
-
         /// <summary>
-        /// 通过Uri判定获取一个HttpTurboClient
+        /// 通过Uri判定获取一个Client
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -125,36 +98,17 @@ namespace Cuture.Http
 
             if (request.DisableProxy)
             {
-                turboClient = request.AllowRedirection ?
-                    GetTurboClientInWeakReference(_allowRedirectionDirectlyTurboClient, () => HoldClient(new HttpTurboClient(HttpTurboClient.CreateDefaultAllowRedirectionClientHandler().DisableProxy())))
-                    : GetTurboClientInWeakReference(_turboDirectlyClient, () => HoldClient(new HttpTurboClient(HttpTurboClient.CreateDefaultClientHandler().DisableProxy())));
-            }
-            else if (request.AllowRedirection)
-            {
-                if (request.Proxy is null)
-                {
-                    turboClient = GetTurboClientInWeakReference(_allowRedirectionTurboClient, () => HoldClient(new HttpTurboClient(true)));
-                }
-                else
-                {
-                    turboClient = GetProxyTurboClientInWeakReferenceDictionary(request, _allowRedirectionProxyTurboClients, proxy =>
-                    {
-                        var httpClientHandler = HttpTurboClient.CreateDefaultAllowRedirectionClientHandler();
-                        httpClientHandler.UseProxy = true;
-                        httpClientHandler.Proxy = proxy;
-                        return HoldClient(new HttpTurboClient(httpClientHandler));
-                    });
-                }
+                turboClient = GetClientInWeakReference(_directlyClient, () => HoldClient(new HttpTurboClient(HttpTurboClient.CreateDefaultClientHandler().DisableProxy())));
             }
             else
             {
                 if (request.Proxy is null)
                 {
-                    turboClient = GetTurboClientInWeakReference(_turboClient, () => HoldClient(new HttpTurboClient(false)));
+                    turboClient = GetClientInWeakReference(_client, () => HoldClient(new HttpTurboClient()));
                 }
                 else
                 {
-                    turboClient = GetProxyTurboClientInWeakReferenceDictionary(request, _proxyTurboClients, proxy =>
+                    turboClient = GetProxyClientInWeakReferenceDictionary(request, _proxyClients, proxy =>
                     {
                         var httpClientHandler = HttpTurboClient.CreateDefaultClientHandler();
                         httpClientHandler.UseProxy = true;
@@ -165,8 +119,6 @@ namespace Cuture.Http
             }
             return turboClient;
         }
-
-#pragma warning restore CA2000 // 丢失范围之前释放对象
 
         /// <summary>
         /// 保持所有Client的引用,不被释放
@@ -202,8 +154,8 @@ namespace Cuture.Http
         /// <param name="weakReference"></param>
         /// <param name="createFunc"></param>
         /// <returns></returns>
-        private static IHttpTurboClient GetTurboClientInWeakReference(WeakReference<IHttpTurboClient> weakReference,
-                                                                      Func<IHttpTurboClient> createFunc)
+        private static IHttpTurboClient GetClientInWeakReference(WeakReference<IHttpTurboClient> weakReference,
+                                                                 Func<IHttpTurboClient> createFunc)
         {
             if (!weakReference.TryGetTarget(out IHttpTurboClient turboClient))
             {
@@ -212,9 +164,9 @@ namespace Cuture.Http
                     if (!weakReference.TryGetTarget(out turboClient))
                     {
                         turboClient = createFunc();
-#if DEBUG
+
                         Debug.WriteLine($"new HttpTurboClient:{turboClient.GetHashCode()}");
-#endif
+
                         weakReference.SetTarget(turboClient);
                     }
                 }
@@ -232,9 +184,8 @@ namespace Cuture.Http
         {
             if (turboClientWR.TryGetTarget(out var client))
             {
-#if DEBUG
                 Debug.WriteLine($"Dispose {nameof(IHttpTurboClient)}:{client.GetHashCode()}");
-#endif
+
                 client.Dispose();
             }
             turboClientWR.SetTarget(null);
@@ -248,11 +199,11 @@ namespace Cuture.Http
         /// <param name="weakReferenceDictionary"></param>
         /// <param name="createFunc"></param>
         /// <returns></returns>
-        private IHttpTurboClient GetProxyTurboClientInWeakReferenceDictionary(IHttpTurboRequest request,
-                                                                                     ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> weakReferenceDictionary,
-                                                                                     Func<IWebProxy, IHttpTurboClient> createFunc)
+        private IHttpTurboClient GetProxyClientInWeakReferenceDictionary(IHttpTurboRequest request,
+                                                                         ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> weakReferenceDictionary,
+                                                                         Func<IWebProxy, IHttpTurboClient> createFunc)
         {
-            IHttpTurboClient turboClient = null;
+            IHttpTurboClient client = null;
 
             //HACK 此处是否可能有问题?
             var proxy = request.Proxy;
@@ -267,9 +218,7 @@ namespace Cuture.Http
                 var proxyUri = proxy.GetProxy(request.RequestUri);
                 if (proxyUri is null)
                 {
-                    return request.AllowRedirection
-                        ? GetTurboClientInWeakReference(_allowRedirectionTurboClient, () => HoldClient(new HttpTurboClient(true)))
-                        : GetTurboClientInWeakReference(_turboClient, () => HoldClient(new HttpTurboClient(false)));
+                    return GetClientInWeakReference(_client, () => HoldClient(new HttpTurboClient()));
                 }
                 proxyHash = proxyHash * -1521134295 + proxyUri.OriginalString.GetHashCode();
             }
@@ -281,35 +230,35 @@ namespace Cuture.Http
                 proxyHash = proxyHash * -1521134295 + credential.Domain.GetHashCode();
             }
 
-            if (!weakReferenceDictionary.TryGetValue(proxyHash, out WeakReference<IHttpTurboClient> turboClientWR))
+            if (!weakReferenceDictionary.TryGetValue(proxyHash, out WeakReference<IHttpTurboClient> clientWR))
             {
                 lock (weakReferenceDictionary)
                 {
-                    if (!weakReferenceDictionary.TryGetValue(proxyHash, out turboClientWR))
+                    if (!weakReferenceDictionary.TryGetValue(proxyHash, out clientWR))
                     {
-                        turboClient = createFunc(proxy);
-                        turboClientWR = new WeakReference<IHttpTurboClient>(turboClient);
-#if DEBUG
-                        Debug.WriteLine($"new HttpTurboClient:{turboClient.GetHashCode()} ProxyHash:{proxyHash} AllowRedirection:{request.AllowRedirection}");
-#endif
-                        weakReferenceDictionary.AddOrUpdate(proxyHash, turboClientWR, (k, oldClientWR) =>
+                        client = createFunc(proxy);
+                        clientWR = new WeakReference<IHttpTurboClient>(client);
+
+                        Debug.WriteLine($"new HttpTurboClient:{client.GetHashCode()} ProxyHash:{proxyHash}");
+
+                        weakReferenceDictionary.AddOrUpdate(proxyHash, clientWR, (k, oldClientWR) =>
                         {
                             ReleaseWeakReferenceClient(oldClientWR);
-                            return turboClientWR;
+                            return clientWR;
                         });
                     }
                     else
                     {
-                        turboClient = GetTurboClientInWeakReference(turboClientWR, () => createFunc(proxy));
+                        client = GetClientInWeakReference(clientWR, () => createFunc(proxy));
                     }
                 }
             }
             else
             {
-                turboClient = GetTurboClientInWeakReference(turboClientWR, () => createFunc(proxy));
+                client = GetClientInWeakReference(clientWR, () => createFunc(proxy));
             }
 
-            return turboClient;
+            return client;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

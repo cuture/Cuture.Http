@@ -39,20 +39,6 @@ namespace Cuture.Http.Test
                 hashSet.Add(client.GetHashCode());
             }
 
-            #endregion 普通请求
-
-            #region 代理请求
-
-            request = url.ToHttpRequest()
-                         .UseProxy("http://127.0.0.1:8000");
-            for (int i = 0; i < count; i++)
-            {
-                var client = _factory.GetTurboClient(request);
-                hashSet.Add(client.GetHashCode());
-            }
-
-            #endregion 代理请求
-
             #region 允许重定向请求
 
             request = url.ToHttpRequest().AllowRedirection();
@@ -64,6 +50,18 @@ namespace Cuture.Http.Test
             }
 
             #endregion 允许重定向请求
+
+            #endregion 普通请求
+
+            #region 代理请求
+
+            request = url.ToHttpRequest()
+                         .UseProxy("http://127.0.0.1:8000");
+            for (int i = 0; i < count; i++)
+            {
+                var client = _factory.GetTurboClient(request);
+                hashSet.Add(client.GetHashCode());
+            }
 
             #region 代理允许重定向请求
 
@@ -79,6 +77,8 @@ namespace Cuture.Http.Test
 
             #endregion 代理允许重定向请求
 
+            #endregion 代理请求
+
             #region 有验证的代理请求
 
             request = url.ToHttpRequest()
@@ -92,9 +92,39 @@ namespace Cuture.Http.Test
                 hashSet.Add(client.GetHashCode());
             }
 
+            #region 有验证的代理允许重定向请求
+
+            request = url.ToHttpRequest()
+                         .AllowRedirection()
+                         .UseProxy(new WebProxy("http://127.0.0.1:8000")
+                         {
+                             Credentials = new NetworkCredential("proxy_user_name", "proxy_password")
+                         });
+
+            for (int i = 0; i < count; i++)
+            {
+                var client = _factory.GetTurboClient(request);
+                hashSet.Add(client.GetHashCode());
+            }
+
+            #endregion 有验证的代理允许重定向请求
+
             #endregion 有验证的代理请求
 
-            #region 有验证的代理允许重定向请求
+            #region 有验证的代理请求2
+
+            request = url.ToHttpRequest()
+                         .UseProxy(new WebProxy("http://127.0.0.1:8000")
+                         {
+                             Credentials = new NetworkCredential("proxy_user_name2", "proxy_password2")
+                         });
+            for (int i = 0; i < count; i++)
+            {
+                var client = _factory.GetTurboClient(request);
+                hashSet.Add(client.GetHashCode());
+            }
+
+            #region 有验证的代理允许重定向请求2
 
             request = url.ToHttpRequest()
                          .AllowRedirection()
@@ -109,9 +139,11 @@ namespace Cuture.Http.Test
                 hashSet.Add(client.GetHashCode());
             }
 
-            #endregion 有验证的代理允许重定向请求
+            #endregion 有验证的代理允许重定向请求2
 
-            Assert.AreEqual(6, hashSet.Count);
+            #endregion 有验证的代理请求2
+
+            Assert.AreEqual(4, hashSet.Count);
         }
 
         [TestInitialize]
@@ -130,7 +162,7 @@ namespace Cuture.Http.Test
             }
 
             var randomCount = InternalParallelGetClient(1_000_000, -1);
-            Assert.AreEqual(6, randomCount, $"随机类型失败");
+            Assert.AreEqual(4, randomCount, $"随机类型失败");
         }
 
         [TestMethod]

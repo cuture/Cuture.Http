@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -461,7 +462,58 @@ namespace Cuture.Http
         /// <param name="responseMessage"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string GetCookie(this HttpResponseMessage responseMessage) => responseMessage.Headers.TryGetValues(HttpHeaders.SetCookie, out var cookies) ? string.Join(" ", cookies) : string.Empty;
+        public static string GetCookie(this HttpResponseMessage responseMessage) => responseMessage.Headers.TryGetValues(HttpHeaders.SetCookie, out var cookies) ? string.Join("; ", cookies) : string.Empty;
+
+        /// <summary>
+        /// 获取获取响应的重定向Uri
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="requestUri">请求的Uri</param>
+        /// <returns></returns>
+        public static Uri GetUriForRedirect(this HttpResponseMessage response, Uri requestUri)
+        {
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.Moved:
+                case HttpStatusCode.Found:
+                case HttpStatusCode.SeeOther:
+                case HttpStatusCode.TemporaryRedirect:
+                case HttpStatusCode.MultipleChoices:
+                    break;
+
+                default:
+                    return null;
+            }
+
+            Uri location = response.Headers.Location;
+            if (location == null)
+            {
+                return null;
+            }
+
+            if (string.Equals(requestUri.Scheme, "https", StringComparison.OrdinalIgnoreCase)
+                && string.Equals(location.Scheme, "https", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            if (!location.IsAbsoluteUri)
+            {
+                location = new Uri(requestUri, location);
+            }
+
+            string requestFragment = requestUri.Fragment;
+            if (!string.IsNullOrEmpty(requestFragment))
+            {
+                string redirectFragment = location.Fragment;
+                if (string.IsNullOrEmpty(redirectFragment))
+                {
+                    location = new UriBuilder(location) { Fragment = requestFragment }.Uri;
+                }
+            }
+
+            return location;
+        }
 
         /// <summary>
         /// 获取请求返回的字符串
@@ -511,6 +563,27 @@ namespace Cuture.Http
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static async Task<string> ReceiveAsStringAsync(this HttpResponseMessage responseMessage) => await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+        /// <summary>
+        /// 获取请求返回头的 Set-Cookie 字符串内容
+        /// </summary>
+        /// <param name="responseMessage"></param>
+        /// <param name="cookie"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryGetCookie(this HttpResponseMessage responseMessage, out string cookie)
+        {
+            if (responseMessage.Headers.TryGetValues(HttpHeaders.SetCookie, out var cookies))
+            {
+                cookie = string.Join("; ", cookies);
+                return true;
+            }
+            else
+            {
+                cookie = string.Empty;
+                return false;
+            }
+        }
 
         #endregion HttpResponseMessage
     }
