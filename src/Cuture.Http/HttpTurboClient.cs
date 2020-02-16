@@ -156,8 +156,7 @@ namespace Cuture.Http
                 HttpResponseMessage tmpResponse = null;
                 var innerRequest = request.AsRequest();
 
-                //TODO 限制最大重定向次数
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i <= request.MaxAutomaticRedirections; i++)
                 {
                     tmpResponse = await _httpClient.SendAsync(innerRequest, completionOption, token).ConfigureAwait(false);
 

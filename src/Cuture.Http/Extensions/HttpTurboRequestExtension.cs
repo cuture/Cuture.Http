@@ -468,6 +468,19 @@ namespace Cuture.Http
         }
 
         /// <summary>
+        /// 设置最大重定向次数
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="maxAutomaticRedirections"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest MaxAutoRedirections(this IHttpTurboRequest request, int maxAutomaticRedirections)
+        {
+            request.MaxAutomaticRedirections = maxAutomaticRedirections;
+            return request;
+        }
+
+        /// <summary>
         /// 超时时间
         /// </summary>
         /// <param name="request"></param>

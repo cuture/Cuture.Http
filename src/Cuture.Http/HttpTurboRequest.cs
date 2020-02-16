@@ -27,6 +27,11 @@ namespace Cuture.Http
         public bool DisableProxy { get; set; } = HttpDefaultSetting.DisableUseDefaultProxyByDefault;
 
         /// <summary>
+        /// 自动循环处理的最大重定向次数
+        /// </summary>
+        public int MaxAutomaticRedirections { get; set; } = HttpDefaultSetting.MaxAutomaticRedirections;
+
+        /// <summary>
         /// Web代理
         /// </summary>
         public IWebProxy Proxy { get; set; }

@@ -17,6 +17,11 @@ namespace Cuture.Http
         public const int DefaultDownloadBufferSize = 10240;
 
         /// <summary>
+        /// 默认的自动循环处理的最大重定向次数
+        /// </summary>
+        public const int DefaultMaxAutomaticRedirections = 50;
+
+        /// <summary>
         /// 默认HttpTurbo构造器
         /// </summary>
         private static IHttpTurboClientFactory s_defaultTurboClientFactory = new SimpleHttpTurboClientFactory();
@@ -25,6 +30,8 @@ namespace Cuture.Http
         /// 默认Request工厂
         /// </summary>
         private static IHttpTurboRequestFactory s_defaultTurboRequestFactory = new DefaultRequestFactory();
+
+        private static int s_maxAutomaticRedirections = DefaultMaxAutomaticRedirections;
 
         #endregion 字段
 
@@ -98,6 +105,11 @@ namespace Cuture.Http
         /// 不满足上述条件时, 根据对应的具体实现来确定是否有效
         /// </summary>
         public static bool DisableUseDefaultProxyByDefault { get; set; } = false;
+
+        /// <summary>
+        /// 自动循环处理的最大重定向次数
+        /// </summary>
+        public static int MaxAutomaticRedirections { get => s_maxAutomaticRedirections; set => s_maxAutomaticRedirections = value > 0 ? value : throw new ArgumentOutOfRangeException($"{nameof(MaxAutomaticRedirections)} Must be greater than 0"); }
 
         #endregion 属性
     }

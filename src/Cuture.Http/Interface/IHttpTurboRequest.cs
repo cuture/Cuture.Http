@@ -36,6 +36,11 @@ namespace Cuture.Http
         HttpRequestHeaders Headers { get; }
 
         /// <summary>
+        /// 自动循环处理的最大重定向次数
+        /// </summary>
+        int MaxAutomaticRedirections { get; set; }
+
+        /// <summary>
         /// http方法
         /// </summary>
         HttpMethod Method { get; set; }

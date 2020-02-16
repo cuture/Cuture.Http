@@ -20,6 +20,18 @@ namespace Cuture.Http.Test
         }
 
         [TestMethod]
+        public async Task LimitedAutoRedirectionRequestTestAsync()
+        {
+            await ParallelRequestAsync(10_000,
+                                       () => GetRequest().AutoRedirection(true).MaxAutoRedirections(3).TryGetAsStringAsync(),
+                                       result =>
+                                       {
+                                           var location = result.ResponseMessage.Headers.Location.OriginalString.ToLowerInvariant();
+                                           Assert.AreEqual("/api/redirection/r4", location);
+                                       });
+        }
+
+        [TestMethod]
         public async Task NoRedirectionRequestTestAsync()
         {
             await ParallelRequestAsync(10_000,
