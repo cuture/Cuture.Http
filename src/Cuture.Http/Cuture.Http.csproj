@@ -1,15 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+  <Import Project="../../Common.props" />
+  
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-
-    <LangVersion>latest</LangVersion>
     <Platforms>AnyCPU</Platforms>
-    <Version>1.1.1</Version>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>CA1062;CA1200;CA1303;CA1054;CA2234</NoWarn>
-
-    <Authors>Stratos</Authors>
+    
     <Description>基于System.Net.Http.HttpClient的简单封装,用于进行Http请求。
 
 Example Usage:
@@ -24,13 +19,7 @@ var response = await url.ToHttpRequest()
                         //Some Other Options
                         .TryGetAsStringAsync();
     </Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/StratosBlue/Cuture.Http.git</RepositoryUrl>
     <PackageTags>http httpclient httphelper</PackageTags>
-    <PackageProjectUrl>https://github.com/StratosBlue/Cuture.Http.git</PackageProjectUrl>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cuture.Http", "src\Cuture.H
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cuture.Http.Test", "tests\Cuture.Http.Test\Cuture.Http.Test.csproj", "{D0923D42-8D04-48D8-88B9-1B652735CEDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cuture.Http.Test.Server", "tests\Cuture.Http.Test.Server\Cuture.Http.Test.Server.csproj", "{74200310-7C28-41F8-9484-4F27A59820FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cuture.Http.Test.Server", "tests\Cuture.Http.Test.Server\Cuture.Http.Test.Server.csproj", "{74200310-7C28-41F8-9484-4F27A59820FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1A0CDA63-1CDC-43AF-9DE9-BDDAAF65FA5A}"
+	ProjectSection(SolutionItems) = preProject
+		Common.props = Common.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
