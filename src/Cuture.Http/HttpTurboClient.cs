@@ -78,7 +78,7 @@ namespace Cuture.Http
 #pragma warning restore CA2000 // 丢失范围之前释放对象
 
             var defaultHeaders = _httpClient.DefaultRequestHeaders;
-            foreach (var item in HttpDefaultSetting.DefaultHttpHeaders)
+            foreach (var item in HttpRequestOptions.DefaultHttpHeaders)
             {
                 SetHeader(defaultHeaders, item.Key, item.Value);
             }

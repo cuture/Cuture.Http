@@ -43,7 +43,7 @@ namespace Cuture.Http.Test
         [TestMethod]
         public async Task ParallelRequestTestAsync()
         {
-            HttpDefaultSetting.DefaultConnectionLimit = 500;
+            HttpRequestOptions.DefaultConnectionLimit = 500;
 
             var tasks = Array(10_000).Select(m => GetRequest().TryGetAsBytesAsync()).ToList();
 

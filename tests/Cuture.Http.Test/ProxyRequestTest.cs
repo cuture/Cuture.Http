@@ -34,13 +34,13 @@ namespace Cuture.Http.Test
 
             Assert.AreEqual(0, ProxyServer.SystemProxyInfo.RequestTime);
 
-            HttpDefaultSetting.DisableUseDefaultProxyByDefault = true;
+            HttpRequestOptions.DisableUseDefaultProxyByDefault = true;
 
             await ParallelRequestAsync(count,
                                        () => GetRequest().TryGetAsStringAsync(),
                                        AssertAction);
 
-            HttpDefaultSetting.DisableUseDefaultProxyByDefault = false;
+            HttpRequestOptions.DisableUseDefaultProxyByDefault = false;
 
             Assert.AreEqual(0, ProxyServer.SystemProxyInfo.RequestTime);
 

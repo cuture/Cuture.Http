@@ -30,7 +30,7 @@ namespace Cuture.Http.Test
             {
                 await ServerHost?.StopAsync();
             }
-            HttpDefaultSetting.DefaultTurboClientFactory.Clear();
+            HttpRequestOptions.DefaultTurboClientFactory.Clear();
         }
 
         [TestInitialize]
@@ -40,7 +40,7 @@ namespace Cuture.Http.Test
             {
                 ServerHost = await TestServer.CreateHostBuilder(new string[0]).StartAsync();
             }
-            HttpDefaultSetting.DefaultConnectionLimit = 200;
+            HttpRequestOptions.DefaultConnectionLimit = 200;
         }
 
         /// <summary>

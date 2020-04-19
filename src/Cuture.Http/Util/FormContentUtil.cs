@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 using Newtonsoft.Json.Linq;
 
@@ -17,6 +18,7 @@ namespace Cuture.Http
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string Encode(string data)
         {
             if (string.IsNullOrEmpty(data))

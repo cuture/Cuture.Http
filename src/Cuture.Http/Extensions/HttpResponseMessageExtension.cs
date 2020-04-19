@@ -218,7 +218,7 @@ namespace Cuture.Http
         public static async Task DownloadToStreamAsync(this Task<HttpResponseMessage> requestTask,
                                                        Stream targetStream,
                                                        CancellationToken token,
-                                                       int bufferSize = HttpDefaultSetting.DefaultDownloadBufferSize)
+                                                       int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
         {
             if (requestTask is null)
             {
@@ -277,7 +277,7 @@ namespace Cuture.Http
                                                                    Stream targetStream,
                                                                    Func<long?, long, Task> progressCallback,
                                                                    CancellationToken token,
-                                                                   int bufferSize = HttpDefaultSetting.DefaultDownloadBufferSize)
+                                                                   int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
         {
             if (requestTask is null)
             {
@@ -338,7 +338,7 @@ namespace Cuture.Http
         public static async Task<byte[]> DownloadWithProgressAsync(this Task<HttpResponseMessage> requestTask,
                                                                    Func<long?, long, Task> progressCallback,
                                                                    CancellationToken token,
-                                                                   int bufferSize = HttpDefaultSetting.DefaultDownloadBufferSize)
+                                                                   int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
         {
             var result = new HttpOperationResult<byte[]>();
             using var mStream = new MemoryStream(512_000);
@@ -372,7 +372,7 @@ namespace Cuture.Http
                                                                    Stream targetStream,
                                                                    Action<long?, long> progressCallback,
                                                                    CancellationToken token,
-                                                                   int bufferSize = HttpDefaultSetting.DefaultDownloadBufferSize)
+                                                                   int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
         {
             if (requestTask is null)
             {
@@ -433,7 +433,7 @@ namespace Cuture.Http
         public static async Task<byte[]> DownloadWithProgressAsync(this Task<HttpResponseMessage> requestTask,
                                                                    Action<long?, long> progressCallback,
                                                                    CancellationToken token,
-                                                                   int bufferSize = HttpDefaultSetting.DefaultDownloadBufferSize)
+                                                                   int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
         {
             var result = new HttpOperationResult<byte[]>();
 

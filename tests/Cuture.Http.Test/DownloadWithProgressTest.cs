@@ -44,7 +44,7 @@ namespace Cuture.Http.Test
         [TestMethod]
         public async Task ParallelRequestTestAsync()
         {
-            HttpDefaultSetting.DefaultConnectionLimit = 500;
+            HttpRequestOptions.DefaultConnectionLimit = 500;
 
             var count = 500;
             int progressCount = 0;

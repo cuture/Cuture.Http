@@ -511,6 +511,34 @@ namespace Cuture.Http
             return request;
         }
 
+        #region RequestOptions
+
+        /// <summary>
+        /// 使用指定的HttpClient
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="client"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest UseClient(this IHttpTurboRequest request, HttpClient client)
+        {
+            request.Options.Client = client;
+            return request;
+        }
+
+        /// <summary>
+        /// 使用指定的HttpTurboClient
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="client"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest UseClient(this IHttpTurboRequest request, IHttpTurboClient client)
+        {
+            request.Options.TurboClient = client;
+            return request;
+        }
+
         /// <summary>
         /// 使用指定的HttpClient
         /// </summary>
@@ -518,12 +546,8 @@ namespace Cuture.Http
         /// <param name="httpClient"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Obsolete("建议使用 UseTurboClient 或 UseTurboClientFactory 替代此方法调用")]
-        public static IHttpTurboRequest UseHttpClient(this IHttpTurboRequest request, HttpClient httpClient)
-        {
-            request.TurboClient = new HttpTurboClient(httpClient);
-            return request;
-        }
+        [Obsolete("使用 UseClient 替代此方法调用")]
+        public static IHttpTurboRequest UseHttpClient(this IHttpTurboRequest request, HttpClient httpClient) => UseClient(request, httpClient);
 
         /// <summary>
         /// 使用指定的HttpTurboClient
@@ -532,11 +556,8 @@ namespace Cuture.Http
         /// <param name="turboClient"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseTurboClient(this IHttpTurboRequest request, IHttpTurboClient turboClient)
-        {
-            request.TurboClient = turboClient;
-            return request;
-        }
+        [Obsolete("使用 UseClient 替代此方法调用")]
+        public static IHttpTurboRequest UseTurboClient(this IHttpTurboRequest request, IHttpTurboClient turboClient) => UseClient(request, turboClient);
 
         /// <summary>
         /// 使用指定的TurboClientFactory
@@ -547,9 +568,24 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest UseTurboClientFactory(this IHttpTurboRequest request, IHttpTurboClientFactory turboClientFactory)
         {
-            request.TurboClientFactory = turboClientFactory;
+            request.Options.TurboClientFactory = turboClientFactory;
             return request;
         }
+
+        /// <summary>
+        /// 使用指定的请求选项
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest WithOption(this IHttpTurboRequest request, HttpRequestOptions options)
+        {
+            request.Options = options;
+            return request;
+        }
+
+        #endregion RequestOptions
 
         /// <summary>
         /// 使用取消标记
@@ -557,6 +593,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <param name="token"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest WithCancellationToken(this IHttpTurboRequest request, CancellationToken token)
         {
             request.Token = token;
@@ -575,7 +612,19 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<HttpResponseMessage> ExecuteAsync(this IHttpTurboRequest request) => InternalGetHttpTurboClient(request).ExecuteAsync(request);
+        public static Task<HttpResponseMessage> ExecuteAsync(this IHttpTurboRequest request)
+        {
+            if (request.IsSetOptions)
+            {
+                if (request.Options.Client != null)
+                {
+                    return request.Options.Client.SendAsync(request.AsRequest(), request.Token);
+                }
+                return InternalGetHttpTurboClient(request, request.Options).ExecuteAsync(request);
+            }
+
+            return InternalGetHttpTurboClient(request, HttpRequestOptions.Default).ExecuteAsync(request);
+        }
 
         /// <summary>
         /// 执行请求
@@ -584,7 +633,19 @@ namespace Cuture.Http
         /// <param name="completionOption"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<HttpResponseMessage> ExecuteAsync(this IHttpTurboRequest request, HttpCompletionOption completionOption) => InternalGetHttpTurboClient(request).ExecuteAsync(request, completionOption);
+        public static Task<HttpResponseMessage> ExecuteAsync(this IHttpTurboRequest request, HttpCompletionOption completionOption)
+        {
+            if (request.IsSetOptions)
+            {
+                if (request.Options.Client != null)
+                {
+                    return request.Options.Client.SendAsync(request.AsRequest(), completionOption, request.Token);
+                }
+                return InternalGetHttpTurboClient(request, request.Options).ExecuteAsync(request, completionOption);
+            }
+
+            return InternalGetHttpTurboClient(request, HttpRequestOptions.Default).ExecuteAsync(request, completionOption);
+        }
 
         #endregion Execute
 
@@ -605,7 +666,7 @@ namespace Cuture.Http
         {
             request.Content = new JsonContent(content);
             request.Method = HttpMethod.Post;
-            return InternalGetHttpTurboClient(request).ExecuteAsync(request);
+            return ExecuteAsync(request);
         }
 
         /// <summary>
@@ -623,7 +684,7 @@ namespace Cuture.Http
         {
             request.Content = new JsonContent(json);
             request.Method = HttpMethod.Post;
-            return InternalGetHttpTurboClient(request).ExecuteAsync(request);
+            return ExecuteAsync(request);
         }
 
         #endregion Json
@@ -643,7 +704,7 @@ namespace Cuture.Http
         {
             request.Content = new FormContent(content);
             request.Method = HttpMethod.Post;
-            return InternalGetHttpTurboClient(request).ExecuteAsync(request);
+            return ExecuteAsync(request);
         }
 
         /// <summary>
@@ -659,7 +720,7 @@ namespace Cuture.Http
         {
             request.Content = new FormContent(content);
             request.Method = HttpMethod.Post;
-            return InternalGetHttpTurboClient(request).ExecuteAsync(request);
+            return ExecuteAsync(request);
         }
 
         #endregion Form
@@ -778,7 +839,7 @@ namespace Cuture.Http
         /// <param name="targetStream"></param>
         /// <param name="bufferSize"></param>
         /// <returns></returns>
-        public static Task DownloadToStreamAsync(this IHttpTurboRequest request, Stream targetStream, int bufferSize = HttpDefaultSetting.DefaultDownloadBufferSize)
+        public static Task DownloadToStreamAsync(this IHttpTurboRequest request, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
             => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead).DownloadToStreamAsync(targetStream, request.Token, bufferSize);
 
         /// <summary>
@@ -794,7 +855,7 @@ namespace Cuture.Http
         /// <param name="targetStream"></param>
         /// <param name="bufferSize"></param>
         /// <returns></returns>
-        public static Task DownloadToStreamWithProgressAsync(this IHttpTurboRequest request, Func<long?, long, Task> progressCallback, Stream targetStream, int bufferSize = HttpDefaultSetting.DefaultDownloadBufferSize)
+        public static Task DownloadToStreamWithProgressAsync(this IHttpTurboRequest request, Func<long?, long, Task> progressCallback, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
             => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead).DownloadToStreamWithProgressAsync(targetStream, progressCallback, request.Token, bufferSize);
 
         /// <summary>
@@ -810,7 +871,7 @@ namespace Cuture.Http
         /// <param name="targetStream"></param>
         /// <param name="bufferSize"></param>
         /// <returns></returns>
-        public static Task DownloadToStreamWithProgressAsync(this IHttpTurboRequest request, Action<long?, long> progressCallback, Stream targetStream, int bufferSize = HttpDefaultSetting.DefaultDownloadBufferSize)
+        public static Task DownloadToStreamWithProgressAsync(this IHttpTurboRequest request, Action<long?, long> progressCallback, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
             => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead).DownloadToStreamWithProgressAsync(targetStream, progressCallback, request.Token, bufferSize);
 
         /// <summary>
@@ -823,7 +884,7 @@ namespace Cuture.Http
         /// <param name="progressCallback"></param>
         /// <param name="bufferSize"></param>
         /// <returns></returns>
-        public static Task<byte[]> DownloadWithProgressAsync(this IHttpTurboRequest request, Func<long?, long, Task> progressCallback, int bufferSize = HttpDefaultSetting.DefaultDownloadBufferSize)
+        public static Task<byte[]> DownloadWithProgressAsync(this IHttpTurboRequest request, Func<long?, long, Task> progressCallback, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
             => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead).DownloadWithProgressAsync(progressCallback, request.Token, bufferSize);
 
         /// <summary>
@@ -836,7 +897,7 @@ namespace Cuture.Http
         /// <param name="progressCallback"></param>
         /// <param name="bufferSize"></param>
         /// <returns></returns>
-        public static Task<byte[]> DownloadWithProgressAsync(this IHttpTurboRequest request, Action<long?, long> progressCallback, int bufferSize = HttpDefaultSetting.DefaultDownloadBufferSize)
+        public static Task<byte[]> DownloadWithProgressAsync(this IHttpTurboRequest request, Action<long?, long> progressCallback, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
             => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead).DownloadWithProgressAsync(progressCallback, request.Token, bufferSize);
 
         #endregion Download
@@ -857,7 +918,7 @@ namespace Cuture.Http
         /// <param name="url"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest ToHttpRequest(this string url) => ToHttpRequest(url, HttpDefaultSetting.DefaultTurboRequestFactory);
+        public static IHttpTurboRequest ToHttpRequest(this string url) => ToHttpRequest(url, HttpRequestOptions.DefaultTurboRequestFactory);
 
         /// <summary>
         /// 字符串转换为Http请求
@@ -893,7 +954,7 @@ namespace Cuture.Http
         /// <param name="uri"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest ToHttpRequest(this Uri uri) => ToHttpRequest(uri, HttpDefaultSetting.DefaultTurboRequestFactory);
+        public static IHttpTurboRequest ToHttpRequest(this Uri uri) => ToHttpRequest(uri, HttpRequestOptions.DefaultTurboRequestFactory);
 
         /// <summary>
         /// Uri转换为Http请求
@@ -920,10 +981,9 @@ namespace Cuture.Http
         /// <param name="request">本次请求</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static IHttpTurboClient InternalGetHttpTurboClient(IHttpTurboRequest request)
+        private static IHttpTurboClient InternalGetHttpTurboClient(IHttpTurboRequest request, HttpRequestOptions options)
         {
-            //HACK 支持TurboClientFactory会多那么几次判断
-            return request.TurboClient ?? request.TurboClientFactory?.GetTurboClient(request) ?? HttpDefaultSetting.DefaultTurboClientFactory.GetTurboClient(request);
+            return options.TurboClient ?? options.TurboClientFactory?.GetTurboClient(request);
         }
 
         #endregion 方法

@@ -13,6 +13,12 @@ namespace Cuture.Http
     /// </summary>
     public class HttpTurboRequest : HttpRequestMessage, IHttpTurboRequest
     {
+        #region Private 字段
+
+        private HttpRequestOptions _options;
+
+        #endregion Private 字段
+
         #region 属性
 
         /// <summary>
@@ -22,14 +28,33 @@ namespace Cuture.Http
 
         /// <summary>
         /// 禁用Proxy
-        /// <para/>初始值为 <see cref="HttpDefaultSetting.DisableUseDefaultProxyByDefault"/>
+        /// <para/>初始值为 <see cref="HttpRequestOptions.DisableUseDefaultProxyByDefault"/>
         /// </summary>
-        public bool DisableProxy { get; set; } = HttpDefaultSetting.DisableUseDefaultProxyByDefault;
+        public bool DisableProxy { get; set; } = HttpRequestOptions.DisableUseDefaultProxyByDefault;
+
+        public bool IsSetOptions => _options != null;
 
         /// <summary>
         /// 自动循环处理的最大重定向次数
         /// </summary>
-        public int MaxAutomaticRedirections { get; set; } = HttpDefaultSetting.MaxAutomaticRedirections;
+        public int MaxAutomaticRedirections { get; set; } = HttpRequestOptions.MaxAutomaticRedirections;
+
+        /// <summary>
+        /// 请求选项
+        /// </summary>
+        public HttpRequestOptions Options
+        {
+            get
+            {
+                if (_options is null)
+                {
+                    _options = HttpRequestOptions.Default.Copy();
+                }
+
+                return _options;
+            }
+            set => _options = value;
+        }
 
         /// <summary>
         /// Web代理
@@ -50,11 +75,6 @@ namespace Cuture.Http
         /// 请求使用的HttpTurbo
         /// </summary>
         public IHttpTurboClient TurboClient { get; set; }
-
-        /// <summary>
-        /// 用于请求的HttpTurboClientFactory
-        /// </summary>
-        public IHttpTurboClientFactory TurboClientFactory { get; set; }
 
         #endregion 属性
 

@@ -36,6 +36,11 @@ namespace Cuture.Http
         HttpRequestHeaders Headers { get; }
 
         /// <summary>
+        /// 是否设置了请求选项
+        /// </summary>
+        bool IsSetOptions { get; }
+
+        /// <summary>
         /// 自动循环处理的最大重定向次数
         /// </summary>
         int MaxAutomaticRedirections { get; set; }
@@ -44,6 +49,11 @@ namespace Cuture.Http
         /// http方法
         /// </summary>
         HttpMethod Method { get; set; }
+
+        /// <summary>
+        /// 请求选项
+        /// </summary>
+        HttpRequestOptions Options { get; set; }
 
         /// <summary>
         /// Web代理
@@ -64,16 +74,6 @@ namespace Cuture.Http
         /// 取消标记
         /// </summary>
         CancellationToken Token { get; set; }
-
-        /// <summary>
-        /// 用于请求的HttpTurbo
-        /// </summary>
-        IHttpTurboClient TurboClient { get; set; }
-
-        /// <summary>
-        /// 用于请求的HttpTurboClientFactory
-        /// </summary>
-        IHttpTurboClientFactory TurboClientFactory { get; set; }
 
         #endregion 属性
 

@@ -7,6 +7,7 @@ namespace Cuture.Http
     /// <summary>
     /// Http相关的默认设置
     /// </summary>
+    [Obsolete("使用 HttpRequestOptions 替换")]
     public static class HttpDefaultSetting
     {
         #region 字段
@@ -14,24 +15,12 @@ namespace Cuture.Http
         /// <summary>
         /// 默认下载时的buffer大小
         /// </summary>
-        public const int DefaultDownloadBufferSize = 10240;
+        public const int DefaultDownloadBufferSize = HttpRequestOptions.DefaultDownloadBufferSize;
 
         /// <summary>
         /// 默认的自动循环处理的最大重定向次数
         /// </summary>
-        public const int DefaultMaxAutomaticRedirections = 50;
-
-        /// <summary>
-        /// 默认HttpTurbo构造器
-        /// </summary>
-        private static IHttpTurboClientFactory s_defaultTurboClientFactory = new SimpleHttpTurboClientFactory();
-
-        /// <summary>
-        /// 默认Request工厂
-        /// </summary>
-        private static IHttpTurboRequestFactory s_defaultTurboRequestFactory = new DefaultRequestFactory();
-
-        private static int s_maxAutomaticRedirections = DefaultMaxAutomaticRedirections;
+        public const int DefaultMaxAutomaticRedirections = HttpRequestOptions.DefaultMaxAutomaticRedirections;
 
         #endregion 字段
 
@@ -43,35 +32,17 @@ namespace Cuture.Http
         /// </summary>
         public static int DefaultConnectionLimit
         {
-            get => ServicePointManager.DefaultConnectionLimit;
-            set => ServicePointManager.DefaultConnectionLimit = value;
+            get => HttpRequestOptions.DefaultConnectionLimit;
+            set => HttpRequestOptions.DefaultConnectionLimit = value;
         }
-
-        /// <summary>
-        /// 默认Http头
-        /// </summary>
-        public static Dictionary<string, string> DefaultHttpHeaders { get; } = new Dictionary<string, string>();
 
         /// <summary>
         /// 默认HttpTurbo构造器
         /// </summary>
         public static IHttpTurboClientFactory DefaultTurboClientFactory
         {
-            get => s_defaultTurboClientFactory;
-            set
-            {
-                if (value is null)
-                {
-                    throw new NullReferenceException($"{nameof(DefaultTurboClientFactory)} can not be null");
-                }
-                if (ReferenceEquals(value, s_defaultTurboClientFactory))
-                {
-                    return;
-                }
-                var oldFactory = s_defaultTurboClientFactory;
-                s_defaultTurboClientFactory = value;
-                oldFactory.Dispose();
-            }
+            get => HttpRequestOptions.DefaultTurboClientFactory;
+            set => HttpRequestOptions.DefaultTurboClientFactory = value;
         }
 
         /// <summary>
@@ -79,21 +50,8 @@ namespace Cuture.Http
         /// </summary>
         public static IHttpTurboRequestFactory DefaultTurboRequestFactory
         {
-            get => s_defaultTurboRequestFactory;
-            set
-            {
-                if (value is null)
-                {
-                    throw new NullReferenceException($"{nameof(DefaultTurboRequestFactory)} can not be null");
-                }
-                if (ReferenceEquals(value, s_defaultTurboRequestFactory))
-                {
-                    return;
-                }
-                var oldFactory = s_defaultTurboRequestFactory;
-                s_defaultTurboRequestFactory = value;
-                oldFactory.Dispose();
-            }
+            get => HttpRequestOptions.DefaultTurboRequestFactory;
+            set => HttpRequestOptions.DefaultTurboRequestFactory = value;
         }
 
         /// <summary>
@@ -104,12 +62,17 @@ namespace Cuture.Http
         /// <para/>
         /// 不满足上述条件时, 根据对应的具体实现来确定是否有效
         /// </summary>
-        public static bool DisableUseDefaultProxyByDefault { get; set; } = false;
+        public static bool DisableUseDefaultProxyByDefault { get => HttpRequestOptions.DisableUseDefaultProxyByDefault; set => HttpRequestOptions.DisableUseDefaultProxyByDefault = value; }
 
         /// <summary>
         /// 自动循环处理的最大重定向次数
         /// </summary>
-        public static int MaxAutomaticRedirections { get => s_maxAutomaticRedirections; set => s_maxAutomaticRedirections = value > 0 ? value : throw new ArgumentOutOfRangeException($"{nameof(MaxAutomaticRedirections)} Must be greater than 0"); }
+        public static int MaxAutomaticRedirections { get => HttpRequestOptions.MaxAutomaticRedirections; set => HttpRequestOptions.MaxAutomaticRedirections = value; }
+
+        /// <summary>
+        /// 默认Http头
+        /// </summary>
+        public static IDictionary<string, string> DefaultHttpHeaders => HttpRequestOptions.DefaultHttpHeaders;
 
         #endregion 属性
     }
