@@ -23,6 +23,11 @@ namespace Cuture.Http
         public const int DefaultMaxAutomaticRedirections = 50;
 
         /// <summary>
+        /// 默认json序列化器
+        /// </summary>
+        private static IJsonSerializer s_defaultJsonSerializer = new DefaultJsonSerializer();
+
+        /// <summary>
         /// 默认HttpTurbo构造器
         /// </summary>
         private static IHttpTurboClientFactory s_defaultTurboClientFactory = new SimpleHttpTurboClientFactory();
@@ -43,6 +48,7 @@ namespace Cuture.Http
         public static HttpRequestOptions Default { get; } = new HttpRequestOptions()
         {
             TurboClientFactory = DefaultTurboClientFactory,
+            JsonSerializer = DefaultJsonSerializer,
         };
 
         /// <summary>
@@ -59,6 +65,26 @@ namespace Cuture.Http
         /// 默认Http头
         /// </summary>
         public static IDictionary<string, string> DefaultHttpHeaders { get; } = new Dictionary<string, string>();
+
+        /// <summary>
+        /// 默认json序列化器
+        /// </summary>
+        public static IJsonSerializer DefaultJsonSerializer
+        {
+            get => s_defaultJsonSerializer;
+            set
+            {
+                if (value is null)
+                {
+                    throw new NullReferenceException($"{nameof(DefaultJsonSerializer)} can not be null");
+                }
+                if (ReferenceEquals(value, s_defaultJsonSerializer))
+                {
+                    return;
+                }
+                s_defaultJsonSerializer = value;
+            }
+        }
 
         /// <summary>
         /// 默认HttpTurbo构造器
@@ -133,6 +159,11 @@ namespace Cuture.Http
         /// <see cref="Client"/> > <see cref="TurboClient"/> > <see cref="TurboClientFactory"/>
         /// </summary>
         public HttpClient Client { get; set; }
+
+        /// <summary>
+        /// Json序列化器
+        /// </summary>
+        public IJsonSerializer JsonSerializer { get; set; }
 
         /// <summary>
         /// 用于请求的 <see cref="IHttpTurboClient"/>

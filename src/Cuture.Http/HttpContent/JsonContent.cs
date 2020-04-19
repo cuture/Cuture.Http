@@ -1,8 +1,6 @@
 ﻿using System.Net.Http;
 using System.Text;
 
-using Newtonsoft.Json;
-
 namespace Cuture.Http
 {
     /// <summary>
@@ -53,7 +51,18 @@ namespace Cuture.Http
         /// <param name="content">用于转换json的实体对象</param>
         /// <param name="contentType">指定ContentType</param>
         /// <param name="encoding">指定编码类型</param>
-        public JsonContent(object content, string contentType, Encoding encoding) : base(encoding.GetBytes(JsonConvert.SerializeObject(content)))
+        public JsonContent(object content, string contentType, Encoding encoding) : this(content, contentType, encoding, HttpRequestOptions.DefaultJsonSerializer)
+        {
+        }
+
+        /// <summary>
+        /// 提供基于json字符串的 HTTP 内容。
+        /// </summary>
+        /// <param name="content">用于转换json的实体对象</param>
+        /// <param name="contentType">指定ContentType</param>
+        /// <param name="encoding">指定编码类型</param>
+        /// <param name="jsonSerializer">指定json序列化器</param>
+        public JsonContent(object content, string contentType, Encoding encoding, IJsonSerializer jsonSerializer) : base(encoding.GetBytes(jsonSerializer.Serialize(content)))
         {
             Headers.TryAddWithoutValidation(HttpHeaders.ContentType, contentType);
         }
