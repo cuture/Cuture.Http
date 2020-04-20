@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Cuture.Http
@@ -105,9 +104,7 @@ namespace Cuture.Http
         #region json as JsonObject
 
         /// <summary>
-        /// 以 json 接收返回数据，并解析为
-        /// <see cref="JObject"/>
-        /// 对象
+        /// 以 json 接收返回数据，并解析为 <see cref="JObject"/> 对象
         /// </summary>
         /// <param name="requestTask"></param>
         /// <returns></returns>
@@ -116,13 +113,11 @@ namespace Cuture.Http
         {
             var response = await requestTask.ConfigureAwait(false);
 
-            return await response.ReceiveAsObjectAsync().ConfigureAwait(false);
+            return await response.ReceiveAsJsonAsync().ConfigureAwait(false);
         }
 
         /// <summary>
-        /// 尝试以 json 接收返回数据，并解析为
-        /// <see cref="JObject"/>
-        /// 对象
+        /// 尝试以 json 接收返回数据，并解析为 <see cref="JObject"/> 对象
         /// </summary>
         /// <param name="requestTask"></param>
         /// <returns></returns>
@@ -160,12 +155,13 @@ namespace Cuture.Http
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="requestTask"></param>
+        /// <param name="serializer"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<T> ReceiveAsObjectAsync<T>(this Task<HttpResponseMessage> requestTask)
+        public static async Task<T> ReceiveAsObjectAsync<T>(this Task<HttpResponseMessage> requestTask, ISerializer<string> serializer = null)
         {
             var response = await requestTask.ConfigureAwait(false);
-            return await response.ReceiveAsObjectAsync<T>().ConfigureAwait(false);
+            return await response.ReceiveAsObjectAsync<T>(serializer ?? HttpRequestOptions.DefaultJsonSerializer).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -175,9 +171,10 @@ namespace Cuture.Http
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="requestTask"></param>
+        /// <param name="serializer"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<TextHttpOperationResult<T>> TryReceiveAsObjectAsync<T>(this Task<HttpResponseMessage> requestTask)
+        public static async Task<TextHttpOperationResult<T>> TryReceiveAsObjectAsync<T>(this Task<HttpResponseMessage> requestTask, ISerializer<string> serializer = null)
         {
             var result = new TextHttpOperationResult<T>();
             try
@@ -188,7 +185,7 @@ namespace Cuture.Http
 
                 if (!string.IsNullOrEmpty(json))
                 {
-                    result.Data = JsonConvert.DeserializeObject<T>(json);
+                    result.Data = (serializer ?? HttpRequestOptions.DefaultJsonSerializer).Deserialize<T>(json);
                 }
             }
             catch (Exception ex)
@@ -524,29 +521,12 @@ namespace Cuture.Http
         public static async Task<byte[]> ReceiveAsBytesAsync(this HttpResponseMessage responseMessage) => await responseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
 
         /// <summary>
-        /// 获取请求返回的json对象
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="responseMessage"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<T> ReceiveAsObjectAsync<T>(this HttpResponseMessage responseMessage)
-        {
-            var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-            if (!string.IsNullOrEmpty(json))
-            {
-                return JsonConvert.DeserializeObject<T>(json);
-            }
-            return default;
-        }
-
-        /// <summary>
-        /// 获取请求返回的json对象
+        /// 获取请求返回的JObject对象
         /// </summary>
         /// <param name="responseMessage"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<JObject> ReceiveAsObjectAsync(this HttpResponseMessage responseMessage)
+        public static async Task<JObject> ReceiveAsJsonAsync(this HttpResponseMessage responseMessage)
         {
             var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
             if (!string.IsNullOrEmpty(json))
@@ -554,6 +534,24 @@ namespace Cuture.Http
                 return JObject.Parse(json);
             }
             return null;
+        }
+
+        /// <summary>
+        /// 获取请求返回的json对象
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="responseMessage"></param>
+        /// <param name="serializer"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static async Task<T> ReceiveAsObjectAsync<T>(this HttpResponseMessage responseMessage, ISerializer<string> serializer = null)
+        {
+            var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+            if (!string.IsNullOrEmpty(json))
+            {
+                return (serializer ?? HttpRequestOptions.DefaultJsonSerializer).Deserialize<T>(json);
+            }
+            return default;
         }
 
         /// <summary>

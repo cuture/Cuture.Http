@@ -51,7 +51,7 @@ namespace Cuture.Http
         HttpMethod Method { get; set; }
 
         /// <summary>
-        /// 请求选项
+        /// 请求选项（应该在构建请求早期进行设置）
         /// </summary>
         HttpRequestOptions Options { get; set; }
 

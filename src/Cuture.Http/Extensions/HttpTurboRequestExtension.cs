@@ -322,7 +322,15 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest WithJsonContent(this IHttpTurboRequest request, object content)
         {
-            request.Content = new JsonContent(content);
+            if (request.IsSetOptions
+                && request.Options.JsonSerializer != null)
+            {
+                request.Content = new JsonContent(content, JsonContent.ContentType, Encoding.UTF8, request.Options.JsonSerializer);
+            }
+            else
+            {
+                request.Content = new JsonContent(content);
+            }
             return request;
         }
 
@@ -573,7 +581,7 @@ namespace Cuture.Http
         }
 
         /// <summary>
-        /// 使用指定的请求选项
+        /// 使用指定的请求选项（将会覆盖之前的相关选项设置，应在构建请求的早期进行设置）
         /// </summary>
         /// <param name="request"></param>
         /// <param name="options"></param>
@@ -664,7 +672,15 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Task<HttpResponseMessage> PostJsonAsync(this IHttpTurboRequest request, object content)
         {
-            request.Content = new JsonContent(content);
+            if (request.IsSetOptions
+                && request.Options.JsonSerializer != null)
+            {
+                request.Content = new JsonContent(content, JsonContent.ContentType, Encoding.UTF8, request.Options.JsonSerializer);
+            }
+            else
+            {
+                request.Content = new JsonContent(content);
+            }
             request.Method = HttpMethod.Post;
             return ExecuteAsync(request);
         }
@@ -810,7 +826,18 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<T> GetAsObjectAsync<T>(this IHttpTurboRequest request) => request.ExecuteAsync().ReceiveAsObjectAsync<T>();
+        public static Task<T> GetAsObjectAsync<T>(this IHttpTurboRequest request)
+        {
+            if (request.IsSetOptions
+                && request.Options.JsonSerializer != null)
+            {
+                return request.ExecuteAsync().ReceiveAsObjectAsync<T>(request.Options.JsonSerializer);
+            }
+            else
+            {
+                return request.ExecuteAsync().ReceiveAsObjectAsync<T>(HttpRequestOptions.DefaultJsonSerializer);
+            }
+        }
 
         /// <summary>
         /// 执行请求并尝试以 json 接收返回数据，并解析为类型
@@ -821,7 +848,18 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<TextHttpOperationResult<T>> TryGetAsObjectAsync<T>(this IHttpTurboRequest request) => request.ExecuteAsync().TryReceiveAsObjectAsync<T>();
+        public static Task<TextHttpOperationResult<T>> TryGetAsObjectAsync<T>(this IHttpTurboRequest request)
+        {
+            if (request.IsSetOptions
+                && request.Options.JsonSerializer != null)
+            {
+                return request.ExecuteAsync().TryReceiveAsObjectAsync<T>(request.Options.JsonSerializer);
+            }
+            else
+            {
+                return request.ExecuteAsync().TryReceiveAsObjectAsync<T>(HttpRequestOptions.DefaultJsonSerializer);
+            }
+        }
 
         #endregion json as object
 
