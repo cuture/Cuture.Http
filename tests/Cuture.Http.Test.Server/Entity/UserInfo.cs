@@ -39,6 +39,9 @@ namespace Cuture.Http.Test.Server.Entity
         [JsonProperty("name")]
         public string Name { get; set; }
 
+        [JsonProperty("Sp_NM")]
+        public string SpecialName { get; set; }
+
         #endregion 属性
 
         #region 方法
@@ -55,6 +58,7 @@ namespace Cuture.Http.Test.Server.Entity
                 Field6 == other.Field6 &&
                 Field7 == other.Field7 &&
                 Field8 == other.Field8 &&
+                SpecialName == other.SpecialName &&
                 Name == other.Name;
         }
 

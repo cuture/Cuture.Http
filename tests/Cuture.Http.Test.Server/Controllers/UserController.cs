@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 using Cuture.Http.Test.Server.Entity;
 
 using Microsoft.AspNetCore.Mvc;
+
+using Newtonsoft.Json;
 
 namespace Cuture.Http.Test.Server.Controllers
 {
@@ -10,6 +13,12 @@ namespace Cuture.Http.Test.Server.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        #region Private 字段
+
+        private static readonly Random s_random = new Random();
+
+        #endregion Private 字段
+
         #region 方法
 
         [Route("update")]
@@ -27,6 +36,15 @@ namespace Cuture.Http.Test.Server.Controllers
             Response.Headers.Add("R-Content-Type", Request.ContentType);
             var form = string.Join("&", Request.Form.Select(m => $"{m.Key}={m.Value}"));
             return Content(form);
+        }
+
+        [Route("update/callback")]
+        [HttpPost]
+        public string UpdateCallback(UserInfo userInfo)
+        {
+            Response.Headers.Add("R-Content-Type", Request.ContentType);
+            var json = JsonConvert.SerializeObject(userInfo);
+            return $"callback_{s_random.Next(100, 20000)}({json})";
         }
 
         #endregion 方法

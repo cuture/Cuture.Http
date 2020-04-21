@@ -581,6 +581,19 @@ namespace Cuture.Http
         }
 
         /// <summary>
+        /// 使用指定的Json序列化器
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="jsonSerializer"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest UseJsonSerializer(this IHttpTurboRequest request, IJsonSerializer jsonSerializer)
+        {
+            request.Options.JsonSerializer = jsonSerializer;
+            return request;
+        }
+
+        /// <summary>
         /// 使用指定的请求选项（将会覆盖之前的相关选项设置，应在构建请求的早期进行设置）
         /// </summary>
         /// <param name="request"></param>
