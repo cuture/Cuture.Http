@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Cuture.Http.Test
 {
     [TestClass]
-    public class HttpTurboClientFactoryTest<T> where T : IHttpTurboClientFactory, new()
+    public abstract class HttpTurboClientFactoryTest<T> where T : IHttpTurboClientFactory
     {
         #region 字段
 
@@ -149,7 +149,7 @@ namespace Cuture.Http.Test
         [TestInitialize]
         public void Init()
         {
-            _factory = new T();
+            _factory = CreateFactory();
         }
 
         [TestMethod]
@@ -198,6 +198,8 @@ namespace Cuture.Http.Test
 
             Assert.AreEqual(7, hashSet.Count);
         }
+
+        protected abstract T CreateFactory();
 
         private int InternalParallelGetClient(int count, int type)
         {

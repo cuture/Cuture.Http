@@ -96,7 +96,7 @@ namespace Cuture.Http
         IHttpTurboRequest AddHeader(string key, IEnumerable<string> values);
 
         /// <summary>
-        /// 获取HttpRequestMessage
+        /// 获取 <see cref="HttpRequestMessage"/>
         /// </summary>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

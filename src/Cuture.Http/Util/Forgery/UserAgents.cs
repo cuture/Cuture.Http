@@ -13,9 +13,9 @@ namespace Cuture.Http
         #region 字段
 
         /// <summary>
-        /// Chrome 79
+        /// Chrome 81
         /// </summary>
-        public const string Chrome = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36";
+        public const string Chrome = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36";
 
         /// <summary>
         /// Edge
@@ -23,9 +23,14 @@ namespace Cuture.Http
         public const string Edge = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.18363";
 
         /// <summary>
-        /// FireFox 71
+        /// Edge on Chromium 84
         /// </summary>
-        public const string FireFox = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0";
+        public const string EdgeChromium = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4115.0 Safari/537.36 Edg/84.0.488.1";
+
+        /// <summary>
+        /// FireFox 75
+        /// </summary>
+        public const string FireFox = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0";
 
         /// <summary>
         /// IE 11
@@ -50,7 +55,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomChromeVersion()
         {
-            return $"Chrome/{s_random.Next(49, 85)}.0.{s_random.Next(3000, 5000)}.{s_random.Next(50, 200)}";
+            return $"Chrome/{s_random.Next(49, 87)}.0.{s_random.Next(3000, 5500)}.{s_random.Next(50, 200)}";
         }
 
         /// <summary>
@@ -60,7 +65,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomEdgeVersion()
         {
-            return $"Edge/{s_random.Next(15, 18)}.{s_random.Next(10240, 19200)}";
+            return $"Edge/{s_random.Next(15, 19)}.{s_random.Next(10240, 19200)}";
         }
 
         #endregion BrowserVersion

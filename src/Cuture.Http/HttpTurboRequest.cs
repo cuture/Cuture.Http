@@ -157,7 +157,7 @@ namespace Cuture.Http
         }
 
         /// <summary>
-        /// 获取HttpRequestMessage
+        /// 获取 <see cref="HttpRequestMessage"/>
         /// </summary>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -8,16 +8,16 @@ using System.Runtime.CompilerServices;
 namespace Cuture.Http
 {
     /// <summary>
-    /// 简单的ClientFactory
+    /// 简单实现的 <see cref="IHttpTurboClientFactory"/>
     /// </summary>
     public sealed class SimpleHttpTurboClientFactory : IHttpTurboClientFactory
     {
         #region 字段
 
         /// <summary>
-        ///
+        /// HoldClient的集合
         /// </summary>
-        private ConcurrentBag<IHttpTurboClient> _holdedClients = new ConcurrentBag<IHttpTurboClient>();
+        private ConcurrentBag<IHttpTurboClient> _holdedClients = null;
 
         /// <summary>
         /// 是否保持所有Client的引用
@@ -27,12 +27,12 @@ namespace Cuture.Http
         #region Client
 
         /// <summary>
-        /// 默认的Client
+        /// 默认的 <see cref="IHttpTurboClient"/>
         /// </summary>
         private WeakReference<IHttpTurboClient> _client = new WeakReference<IHttpTurboClient>(null);
 
         /// <summary>
-        /// 禁用Proxy的Client
+        /// 禁用Proxy的 <see cref="IHttpTurboClient"/>
         /// </summary>
         private WeakReference<IHttpTurboClient> _directlyClient = new WeakReference<IHttpTurboClient>(null);
 
@@ -41,13 +41,33 @@ namespace Cuture.Http
         #region Client Dictionary
 
         /// <summary>
-        /// 有代理信息的Client
+        /// 有代理信息的 <see cref="IHttpTurboClient"/>
         /// </summary>
-        private ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> _proxyClients = new ConcurrentDictionary<int, WeakReference<IHttpTurboClient>>();
+        private Lazy<ConcurrentDictionary<int, WeakReference<IHttpTurboClient>>> _proxyClients = new Lazy<ConcurrentDictionary<int, WeakReference<IHttpTurboClient>>>();
+
+        /// 有代理信息的 <see cref="IHttpTurboClient"/>
+        public ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> ProxyClients { get => _proxyClients.Value; }
 
         #endregion Client Dictionary
 
         #endregion 字段
+
+        #region Public 构造函数
+
+        /// <summary>
+        /// 简单实现的 <see cref="IHttpTurboClientFactory"/>
+        /// </summary>
+        /// <param name="holdClient">保持内部所有 <see cref="IHttpTurboClient"/> 的引用，不被回收</param>
+        public SimpleHttpTurboClientFactory(bool holdClient = true)
+        {
+            if (holdClient)
+            {
+                _holdedClients = new ConcurrentBag<IHttpTurboClient>();
+            }
+            _isHoldClient = holdClient;
+        }
+
+        #endregion Public 构造函数
 
         #region 方法
 
@@ -56,14 +76,17 @@ namespace Cuture.Http
         /// </summary>
         public void Clear()
         {
-            var proxyClients = _proxyClients.Values;
-
-            _proxyClients.Clear();
-
             ReleaseWeakReferenceClient(_client);
             ReleaseWeakReferenceClient(_directlyClient);
 
-            DisposeClients(proxyClients);
+            if (_proxyClients.IsValueCreated)
+            {
+                var proxyClients = ProxyClients.Values;
+
+                ProxyClients.Clear();
+
+                DisposeClients(proxyClients);
+            }
 
             _holdedClients = new ConcurrentBag<IHttpTurboClient>();
         }
@@ -75,16 +98,19 @@ namespace Cuture.Http
         {
             _holdedClients = null;
 
-            var proxyClients = _proxyClients;
-
             ReleaseWeakReferenceClient(_client);
             ReleaseWeakReferenceClient(_directlyClient);
 
-            _proxyClients = null;
             _client = null;
             _directlyClient = null;
 
-            DisposeClients(proxyClients.Values);
+            if (_proxyClients.IsValueCreated)
+            {
+                var proxyClients = ProxyClients;
+                _proxyClients = null;
+
+                DisposeClients(proxyClients.Values);
+            }
         }
 
         /// <summary>
@@ -108,7 +134,7 @@ namespace Cuture.Http
                 }
                 else
                 {
-                    turboClient = GetProxyClientInWeakReferenceDictionary(request, _proxyClients, proxy =>
+                    turboClient = GetProxyClientInWeakReferenceDictionary(request, ProxyClients, proxy =>
                     {
                         var httpClientHandler = HttpTurboClient.CreateDefaultClientHandler();
                         httpClientHandler.UseProxy = true;
@@ -124,13 +150,9 @@ namespace Cuture.Http
         /// 保持所有Client的引用,不被释放
         /// </summary>
         /// <param name="hold">是否保持</param>
+        [Obsolete("在创建对象时确定", true)]
         public void HoldAllClient(bool hold)
         {
-            if (!hold)
-            {
-                _holdedClients = new ConcurrentBag<IHttpTurboClient>();
-            }
-            _isHoldClient = hold;
         }
 
         /// <summary>

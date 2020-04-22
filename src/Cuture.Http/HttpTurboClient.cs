@@ -12,47 +12,49 @@ using Cuture.Http.Util;
 namespace Cuture.Http
 {
     /// <summary>
-    /// http快速访问客户端
+    /// http快速访问客户端<para/>
+    /// 封装 <see cref="HttpClient"/> 用于http请求
     /// </summary>
     public sealed class HttpTurboClient : IHttpTurboClient
     {
         #region 字段
 
         /// <summary>
+        /// 是否在dispose时释放HttpClient
+        /// </summary>
+        private readonly bool _disposeClient = false;
+
+        /// <summary>
         /// HttpClient
         /// </summary>
         private readonly HttpClient _httpClient = null;
-
-        /// <summary>
-        /// 外部HttpClient
-        /// </summary>
-        private readonly bool _outerClient = false;
 
         #endregion 字段
 
         #region 构造函数
 
         /// <summary>
-        /// http快速访问客户端
-        /// 封装System.Net.Http.HttpClient
-        /// 用于http请求
+        /// http快速访问客户端<para/>
+        /// 封装 <see cref="HttpClient"/> 用于http请求
         /// </summary>
-        /// <param name="httpClient">内部使用的HttpClient</param>
-        public HttpTurboClient(HttpClient httpClient)
+        /// <param name="httpClient">内部执行请求时使用的 <see cref="HttpClient"/></param>
+        /// <param name="disposeClient">是否在Dispose时释放 <paramref name="httpClient"/></param>
+        public HttpTurboClient(HttpClient httpClient, bool disposeClient = false)
         {
-            _outerClient = true;
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            _disposeClient = disposeClient;
         }
 
         /// <summary>
-        /// http快速访问客户端
-        /// 封装System.Net.Http.HttpClient
-        /// 用于http请求
+        /// http快速访问客户端<para/>
+        /// 封装 <see cref="HttpClient"/> 用于http请求
         /// </summary>
-        /// <param name="httpClientHandler">使用的HttpClientHandler</param>
-        public HttpTurboClient(HttpClientHandler httpClientHandler)
+        /// <param name="httpMessageHandler">内部 <see cref="HttpClient"/> 使用的 <see cref="HttpMessageHandler"/></param>
+        /// <param name="disposeHandler">是否在Dispose时释放 <paramref name="httpMessageHandler"/></param>
+        public HttpTurboClient(HttpMessageHandler httpMessageHandler, bool disposeHandler = true)
         {
-            _httpClient = new HttpClient(httpClientHandler);
+            _httpClient = new HttpClient(httpMessageHandler ?? throw new ArgumentNullException(nameof(httpMessageHandler)), disposeHandler);
+            _disposeClient = true;
         }
 
         /// <summary>
@@ -67,12 +69,13 @@ namespace Cuture.Http
         { }
 
         /// <summary>
-        /// http快速访问客户端
-        /// 封装System.Net.Http.HttpClient
-        /// 用于http请求
+        /// http快速访问客户端<para/>
+        /// 封装 <see cref="HttpClient"/> 用于http请求
         /// </summary>
         public HttpTurboClient()
         {
+            _disposeClient = true;
+
 #pragma warning disable CA2000 // 丢失范围之前释放对象
             _httpClient = new HttpClient(CreateDefaultClientHandler());
 #pragma warning restore CA2000 // 丢失范围之前释放对象
@@ -93,9 +96,9 @@ namespace Cuture.Http
         /// </summary>
         ~HttpTurboClient()
         {
-            Debug.WriteLine($"终结器:{nameof(HttpTurboClient)}_{this.GetHashCode()}");
+            Debug.WriteLine($"终结器:{nameof(HttpTurboClient)}_{GetHashCode()}");
 
-            if (!_outerClient)
+            if (_disposeClient)
             {
                 _httpClient.Dispose();
             }
@@ -110,7 +113,7 @@ namespace Cuture.Http
         /// </summary>
         public void Dispose()
         {
-            if (!_outerClient)
+            if (_disposeClient)
             {
                 _httpClient.Dispose();
             }
