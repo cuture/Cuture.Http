@@ -41,7 +41,7 @@ namespace Cuture.Http.Test
 
             #region 允许重定向请求
 
-            request = url.ToHttpRequest().AllowRedirection();
+            request = url.ToHttpRequest().AutoRedirection();
 
             for (int i = 0; i < count; i++)
             {
@@ -67,7 +67,7 @@ namespace Cuture.Http.Test
 
             request = url.ToHttpRequest()
                  .UseProxy("http://127.0.0.1:8000")
-                 .AllowRedirection();
+                 .AutoRedirection();
 
             for (int i = 0; i < count; i++)
             {
@@ -95,7 +95,7 @@ namespace Cuture.Http.Test
             #region 有验证的代理允许重定向请求
 
             request = url.ToHttpRequest()
-                         .AllowRedirection()
+                         .AutoRedirection()
                          .UseProxy(new WebProxy("http://127.0.0.1:8000")
                          {
                              Credentials = new NetworkCredential("proxy_user_name", "proxy_password")
@@ -127,7 +127,7 @@ namespace Cuture.Http.Test
             #region 有验证的代理允许重定向请求2
 
             request = url.ToHttpRequest()
-                         .AllowRedirection()
+                         .AutoRedirection()
                          .UseProxy(new WebProxy("http://127.0.0.1:8000")
                          {
                              Credentials = new NetworkCredential("proxy_user_name2", "proxy_password2")
@@ -224,12 +224,12 @@ namespace Cuture.Http.Test
                         break;
 
                     case 2:
-                        request.AllowRedirection();
+                        request.AutoRedirection();
                         break;
 
                     case 3:
                         request.UseProxy("http://127.0.0.1:8000")
-                               .AllowRedirection();
+                               .AutoRedirection();
                         break;
 
                     case 4:
@@ -240,7 +240,7 @@ namespace Cuture.Http.Test
                         break;
 
                     case 5:
-                        request.AllowRedirection()
+                        request.AutoRedirection()
                                .UseProxy(new WebProxy("http://127.0.0.1:8000")
                                {
                                    Credentials = new NetworkCredential("proxy_user_name2", "proxy_password2")

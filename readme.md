@@ -20,7 +20,7 @@ var request = "http://www.domain.com/api".ToHttpRequest();
         .AddHeader("header1", "header1Value")
         .UsePost()
         .TimeOut(3000)
-        .WithCancellationToken(token)
+        .WithCancellation(token)
         //进行其他的一些请求设置等
         .WithFormContent($"key={value.UrlEncode()}");
 ```

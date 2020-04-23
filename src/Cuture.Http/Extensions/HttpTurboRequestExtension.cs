@@ -186,6 +186,20 @@ namespace Cuture.Http
         /// <param name="httpMethod">Http动作</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest UseVerb(this IHttpTurboRequest request, HttpMethod httpMethod)
+        {
+            request.Method = httpMethod;
+            return request;
+        }
+
+        /// <summary>
+        /// 使用指定的Http动作
+        /// </summary>
+        /// <param name="request">请求</param>
+        /// <param name="httpMethod">Http动作</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("使用 UseVerb 替代此方法调用")]
         public static IHttpTurboRequest WithVerb(this IHttpTurboRequest request, HttpMethod httpMethod)
         {
             request.Method = httpMethod;
@@ -444,6 +458,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("使用 AutoRedirection 替代此方法调用")]
         public static IHttpTurboRequest AllowRedirection(this IHttpTurboRequest request)
         {
             request.AllowRedirection = true;
@@ -457,7 +472,7 @@ namespace Cuture.Http
         /// <param name="allowRedirection"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest AutoRedirection(this IHttpTurboRequest request, bool allowRedirection)
+        public static IHttpTurboRequest AutoRedirection(this IHttpTurboRequest request, bool allowRedirection = true)
         {
             request.AllowRedirection = allowRedirection;
             return request;
@@ -558,6 +573,19 @@ namespace Cuture.Http
         public static IHttpTurboRequest UseHttpClient(this IHttpTurboRequest request, HttpClient httpClient) => UseClient(request, httpClient);
 
         /// <summary>
+        /// 使用指定的Json序列化器
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="jsonSerializer"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest UseJsonSerializer(this IHttpTurboRequest request, IJsonSerializer jsonSerializer)
+        {
+            request.Options.JsonSerializer = jsonSerializer;
+            return request;
+        }
+
+        /// <summary>
         /// 使用指定的HttpTurboClient
         /// </summary>
         /// <param name="request"></param>
@@ -577,19 +605,6 @@ namespace Cuture.Http
         public static IHttpTurboRequest UseTurboClientFactory(this IHttpTurboRequest request, IHttpTurboClientFactory turboClientFactory)
         {
             request.Options.TurboClientFactory = turboClientFactory;
-            return request;
-        }
-
-        /// <summary>
-        /// 使用指定的Json序列化器
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="jsonSerializer"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseJsonSerializer(this IHttpTurboRequest request, IJsonSerializer jsonSerializer)
-        {
-            request.Options.JsonSerializer = jsonSerializer;
             return request;
         }
 
@@ -615,6 +630,20 @@ namespace Cuture.Http
         /// <param name="token"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest WithCancellation(this IHttpTurboRequest request, CancellationToken token)
+        {
+            request.Token = token;
+            return request;
+        }
+
+        /// <summary>
+        /// 使用取消标记
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("使用 WithCancellation 替代此方法调用")]
         public static IHttpTurboRequest WithCancellationToken(this IHttpTurboRequest request, CancellationToken token)
         {
             request.Token = token;
