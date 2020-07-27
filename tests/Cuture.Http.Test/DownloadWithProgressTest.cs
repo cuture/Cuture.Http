@@ -1,7 +1,9 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -86,6 +88,16 @@ namespace Cuture.Http.Test
             using var sha = SHA256.Create();
             var hash = BitConverter.ToString(sha.ComputeHash(result));
             Assert.AreEqual(_hash, hash);
+        }
+
+        [TestMethod]
+        public async Task DownloadWithUnexpectedContentTestAsync()
+        {
+            var request = TestServer.TestHost.ToHttpRequest();
+            using var stream = new MemoryStream();
+            await request.DownloadToStreamAsync(stream);
+
+            Assert.AreEqual(Resource.Index, Encoding.UTF8.GetString(stream.ToArray()));
         }
 
         #endregion ·½·¨

@@ -244,7 +244,11 @@ namespace Cuture.Http
             while (!token.IsCancellationRequested
                    && (contentLength == null || count < contentLength.Value))
             {
-                var size = stream.Read(buffer, 0, bufferSize);
+                var size = await stream.ReadAsync(buffer, 0, bufferSize).ConfigureAwait(false);
+                if (size == 0)
+                {
+                    break;
+                }
                 count += size;
                 await targetStream.WriteAsync(buffer, 0, size, token).ConfigureAwait(false);
             }
@@ -310,7 +314,11 @@ namespace Cuture.Http
             while (!token.IsCancellationRequested
                    && (contentLength == null || count < contentLength.Value))
             {
-                var size = stream.Read(buffer, 0, bufferSize);
+                var size = await stream.ReadAsync(buffer, 0, bufferSize).ConfigureAwait(false);
+                if (size == 0)
+                {
+                    break;
+                }
                 count += size;
                 await targetStream.WriteAsync(buffer, 0, size, token).ConfigureAwait(false);
 
@@ -405,7 +413,11 @@ namespace Cuture.Http
             while (!token.IsCancellationRequested
                    && (contentLength == null || count < contentLength.Value))
             {
-                var size = stream.Read(buffer, 0, bufferSize);
+                var size = await stream.ReadAsync(buffer, 0, bufferSize).ConfigureAwait(false);
+                if (size == 0)
+                {
+                    break;
+                }
                 count += size;
                 await targetStream.WriteAsync(buffer, 0, size, token).ConfigureAwait(false);
 
