@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
+using Cuture.Http.Util;
+
 namespace Cuture.Http
 {
     /// <summary>
@@ -91,6 +93,20 @@ namespace Cuture.Http
         public static IHttpTurboRequest UseUserAgent(this IHttpTurboRequest request, string userAgent)
         {
             request.AddHeader(HttpHeaders.UserAgent, userAgent);
+            return request;
+        }
+
+        /// <summary>
+        /// 使用基础认证
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest WithBasicAuth(this IHttpTurboRequest request, string userName, string password)
+        {
+            request.AddHeader(BasicAuthUtil.HttpHeader, BasicAuthUtil.EncodeToHeader(userName, password));
             return request;
         }
 
