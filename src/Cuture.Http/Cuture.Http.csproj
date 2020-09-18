@@ -5,7 +5,7 @@
     <Platforms>AnyCPU</Platforms>
     <NoWarn>CA1062;CA1200;CA1303;CA1054;CA2234</NoWarn>
     
-    <Description>基于System.Net.Http.HttpClient的简单封装,用于进行Http请求。
+    <Description>用于快速进行Http请求的链式拓展方法库
 
 Example Usage:
 var url = "http://www.domain.com/api";
@@ -23,7 +23,7 @@ var response = await url.ToHttpRequest()
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
@@ -36,6 +36,6 @@ var response = await url.ToHttpRequest()
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.1" />
   </ItemGroup>
 </Project>

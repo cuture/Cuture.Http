@@ -1,6 +1,9 @@
 # Cuture.Http
 
-源于自用的http请求辅助库整理, 基于System.Net.Http.HttpClient做了一些简单封装和拓展方法, 用于进行http请求; 目标框架为```.NetStandard2.0```;
+用于快速进行Http请求的链式拓展方法库。
+- 主要为针对`string`和`Uri`对象的拓展方法;
+- 本质上是对`System.Net.Http.HttpClient`等的封装; 
+- 目标框架目前为`.NetStandard2.0`;
 
 ## 如何使用
 
@@ -74,7 +77,7 @@ catch (Exception ex)
 }
 ```
 
-### 其它工具拓展等
+### 部分其它工具拓展示例
 
 ```C#
 "https://dotnet.microsoft.com/".EncodeBase64();
