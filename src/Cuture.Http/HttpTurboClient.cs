@@ -22,12 +22,12 @@ namespace Cuture.Http
         /// <summary>
         /// 是否在dispose时释放HttpClient
         /// </summary>
-        private readonly bool _disposeClient = false;
+        private readonly bool _disposeClient;
 
         /// <summary>
         /// HttpClient
         /// </summary>
-        private readonly HttpClient _httpClient = null;
+        private readonly HttpClient _httpClient;
 
         #endregion 字段
 

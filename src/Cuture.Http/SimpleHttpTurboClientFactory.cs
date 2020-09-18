@@ -17,7 +17,7 @@ namespace Cuture.Http
         /// <summary>
         /// HoldClient的集合
         /// </summary>
-        private ConcurrentBag<IHttpTurboClient> _holdedClients = null;
+        private ConcurrentBag<IHttpTurboClient> _holdedClients;
 
         /// <summary>
         /// 是否保持所有Client的引用
@@ -144,15 +144,6 @@ namespace Cuture.Http
                 }
             }
             return turboClient;
-        }
-
-        /// <summary>
-        /// 保持所有Client的引用,不被释放
-        /// </summary>
-        /// <param name="hold">是否保持</param>
-        [Obsolete("在创建对象时确定", true)]
-        public void HoldAllClient(bool hold)
-        {
         }
 
         /// <summary>

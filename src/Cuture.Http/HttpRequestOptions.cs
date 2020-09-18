@@ -138,7 +138,7 @@ namespace Cuture.Http
         /// <para/>
         /// 不满足上述条件时, 根据对应的具体实现来确定是否有效
         /// </summary>
-        public static bool DisableUseDefaultProxyByDefault { get; set; } = false;
+        public static bool DisableUseDefaultProxyByDefault { get; set; }
 
         /// <summary>
         /// 自动循环处理的最大重定向次数

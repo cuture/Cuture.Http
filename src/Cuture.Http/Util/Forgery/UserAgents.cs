@@ -13,24 +13,24 @@ namespace Cuture.Http
         #region 字段
 
         /// <summary>
-        /// Chrome 81
+        /// Chrome 85
         /// </summary>
-        public const string Chrome = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36";
+        public const string Chrome = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36";
 
         /// <summary>
         /// Edge
         /// </summary>
-        public const string Edge = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.18363";
+        public const string Edge = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.19041";
 
         /// <summary>
-        /// Edge on Chromium 84
+        /// Edge on Chromium 85
         /// </summary>
-        public const string EdgeChromium = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4115.0 Safari/537.36 Edg/84.0.488.1";
+        public const string EdgeChromium = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36 Edg/85.0.564.51";
 
         /// <summary>
-        /// FireFox 75
+        /// FireFox 80
         /// </summary>
-        public const string FireFox = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0";
+        public const string FireFox = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0";
 
         /// <summary>
         /// IE 11
@@ -55,7 +55,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomChromeVersion()
         {
-            return $"Chrome/{s_random.Next(49, 87)}.0.{s_random.Next(3000, 5500)}.{s_random.Next(50, 200)}";
+            return $"Chrome/{s_random.Next(49, 89)}.0.{s_random.Next(3000, 5500)}.{s_random.Next(50, 200)}";
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string RandomFirefoxUserAgent()
         {
-            var version = s_random.Next(50, 75);
+            var version = s_random.Next(60, 85);
             return $"Mozilla/5.0 {RandomFirefoxPlatform(version)} Gecko/20100101 Firefox/{version}.0";
         }
 

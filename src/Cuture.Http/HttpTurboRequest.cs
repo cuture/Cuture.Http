@@ -24,7 +24,7 @@ namespace Cuture.Http
         /// <summary>
         /// 是否允许重定向
         /// </summary>
-        public bool AllowRedirection { get; set; } = false;
+        public bool AllowRedirection { get; set; }
 
         /// <summary>
         /// 禁用Proxy
@@ -70,11 +70,6 @@ namespace Cuture.Http
         /// 取消标记
         /// </summary>
         public CancellationToken Token { get; set; }
-
-        /// <summary>
-        /// 请求使用的HttpTurbo
-        /// </summary>
-        public IHttpTurboClient TurboClient { get; set; }
 
         #endregion 属性
 

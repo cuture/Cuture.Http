@@ -25,11 +25,11 @@ namespace Cuture.Http
         {
             var sb = new StringBuilder();
             sb.Append(s_random.Next(11, 240));
-            sb.Append(".");
+            sb.Append('.');
             sb.Append(s_random.Next(1, 250));
-            sb.Append(".");
+            sb.Append('.');
             sb.Append(s_random.Next(1, 240));
-            sb.Append(".");
+            sb.Append('.');
             sb.Append(s_random.Next(1, 240));
             return sb.ToString();
         }
