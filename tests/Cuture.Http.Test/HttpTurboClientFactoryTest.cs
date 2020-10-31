@@ -11,7 +11,7 @@ namespace Cuture.Http.Test
     {
         #region 字段
 
-        private T _factory;
+        protected T _factory;
 
         #endregion 字段
 

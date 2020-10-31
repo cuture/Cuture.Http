@@ -82,6 +82,12 @@ namespace Cuture.Http
                 {
                     return;
                 }
+
+                if (ReferenceEquals(Default.JsonSerializer, s_defaultJsonSerializer))
+                {
+                    Default.JsonSerializer = value;
+                }
+
                 s_defaultJsonSerializer = value;
             }
         }
@@ -103,6 +109,12 @@ namespace Cuture.Http
                     return;
                 }
                 var oldFactory = s_defaultTurboClientFactory;
+
+                if (ReferenceEquals(Default.TurboClientFactory, oldFactory))
+                {
+                    Default.TurboClientFactory = value;
+                }
+
                 s_defaultTurboClientFactory = value;
                 oldFactory.Dispose();
             }

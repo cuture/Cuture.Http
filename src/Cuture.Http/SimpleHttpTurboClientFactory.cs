@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+
+using Cuture.Http.Internal;
 
 namespace Cuture.Http
 {
@@ -15,14 +19,33 @@ namespace Cuture.Http
         #region 字段
 
         /// <summary>
-        /// HoldClient的集合
+        /// 默认持有客户端的时长
         /// </summary>
-        private ConcurrentBag<IHttpTurboClient> _holdedClients;
+        public const int DefaultHoldMinute = 5;
+
+        private readonly TimeSpan? _holdTimeSpan;
 
         /// <summary>
         /// 是否保持所有Client的引用
         /// </summary>
-        private bool _isHoldClient = true;
+        private readonly bool _isHoldClient;
+
+        /// <summary>
+        /// client释放队列
+        /// </summary>
+        private SortedQueue<CreatedTimeTagedObject<WeakReference<IHttpTurboClient>>> _clientReleaseQueue;
+
+        /// <summary>
+        /// HoldClient的集合
+        /// </summary>
+        private HashSet<IHttpTurboClient> _holdedClients;
+
+        /// <summary>
+        /// 是否已释放
+        /// </summary>
+        private bool _isDisposed;
+
+        private CancellationTokenSource _releaseTokenSource;
 
         #region Client
 
@@ -57,14 +80,25 @@ namespace Cuture.Http
         /// <summary>
         /// 简单实现的 <see cref="IHttpTurboClientFactory"/>
         /// </summary>
-        /// <param name="holdClient">保持内部所有 <see cref="IHttpTurboClient"/> 的引用，不被回收</param>
-        public SimpleHttpTurboClientFactory(bool holdClient = true)
+        /// <param name="holdClient">保持内部所有 <see cref="IHttpTurboClient"/> 的引用，不被GC回收
+        /// <para/>
+        /// (非永久持有，以 holdTimeSpan 参数控制最短持有时长，使其仍被释放，以应对DNS变更)</param>
+        /// <param name="holdTimeSpan">保持引用的时长，不传递时为默认值 <see cref="DefaultHoldMinute" /></param>
+        public SimpleHttpTurboClientFactory(bool holdClient = true, TimeSpan? holdTimeSpan = null)
         {
+            _isHoldClient = holdClient;
             if (holdClient)
             {
-                _holdedClients = new ConcurrentBag<IHttpTurboClient>();
+                _holdedClients = new HashSet<IHttpTurboClient>();
+                _clientReleaseQueue = new SortedQueue<CreatedTimeTagedObject<WeakReference<IHttpTurboClient>>>();
+                _holdTimeSpan = holdTimeSpan.HasValue
+                                    ? holdTimeSpan.Value.TotalSeconds > 0
+                                        ? holdTimeSpan
+                                        : throw new ArgumentOutOfRangeException(nameof(holdTimeSpan))
+                                    : TimeSpan.FromMinutes(DefaultHoldMinute);
+
+                InitAutoReleaseTask();
             }
-            _isHoldClient = holdClient;
         }
 
         #endregion Public 构造函数
@@ -76,6 +110,8 @@ namespace Cuture.Http
         /// </summary>
         public void Clear()
         {
+            CheckDisposed();
+
             ReleaseWeakReferenceClient(_client);
             ReleaseWeakReferenceClient(_directlyClient);
 
@@ -88,7 +124,11 @@ namespace Cuture.Http
                 DisposeClients(proxyClients);
             }
 
-            _holdedClients = new ConcurrentBag<IHttpTurboClient>();
+            lock (_clientReleaseQueue)
+            {
+                _clientReleaseQueue.Clear();
+                _holdedClients.Clear();
+            }
         }
 
         /// <summary>
@@ -96,6 +136,8 @@ namespace Cuture.Http
         /// </summary>
         public void Dispose()
         {
+            _isDisposed = true;
+            _clientReleaseQueue = null;
             _holdedClients = null;
 
             ReleaseWeakReferenceClient(_client);
@@ -111,6 +153,8 @@ namespace Cuture.Http
 
                 DisposeClients(proxyClients.Values);
             }
+
+            CancelAutoReleaseTask();
         }
 
         /// <summary>
@@ -120,17 +164,19 @@ namespace Cuture.Http
         /// <returns></returns>
         public IHttpTurboClient GetTurboClient(IHttpTurboRequest request)
         {
+            CheckDisposed();
+
             IHttpTurboClient turboClient = null;
 
             if (request.DisableProxy)
             {
-                turboClient = GetClientInWeakReference(_directlyClient, () => HoldClient(new HttpTurboClient(HttpTurboClient.CreateDefaultClientHandler().DisableProxy())));
+                turboClient = GetClientInWeakReference(_directlyClient, () => new HttpTurboClient(HttpTurboClient.CreateDefaultClientHandler().DisableProxy()));
             }
             else
             {
                 if (request.Proxy is null)
                 {
-                    turboClient = GetClientInWeakReference(_client, () => HoldClient(new HttpTurboClient()));
+                    turboClient = GetClientInWeakReference(_client, () => new HttpTurboClient());
                 }
                 else
                 {
@@ -139,7 +185,7 @@ namespace Cuture.Http
                         var httpClientHandler = HttpTurboClient.CreateDefaultClientHandler();
                         httpClientHandler.UseProxy = true;
                         httpClientHandler.Proxy = request.Proxy;
-                        return HoldClient(new HttpTurboClient(httpClientHandler));
+                        return new HttpTurboClient(httpClientHandler);
                     });
                 }
             }
@@ -161,14 +207,48 @@ namespace Cuture.Http
         }
 
         /// <summary>
+        /// 从弱引用中释放
+        /// <see cref="IHttpTurboClient"/>
+        /// </summary>
+        /// <param name="turboClientWR"></param>
+        private static void ReleaseWeakReferenceClient(WeakReference<IHttpTurboClient> turboClientWR)
+        {
+            if (turboClientWR.TryGetTarget(out var client))
+            {
+                Debug.WriteLine($"Dispose {nameof(IHttpTurboClient)}:{client.GetHashCode()}");
+
+                turboClientWR.SetTarget(null);
+                client.Dispose();
+            }
+        }
+
+        private void CancelAutoReleaseTask()
+        {
+            if (_releaseTokenSource != null)
+            {
+                _releaseTokenSource.Cancel(true);
+                _releaseTokenSource.Dispose();
+                _releaseTokenSource = null;
+            }
+        }
+
+        private void CheckDisposed()
+        {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(string.Empty);
+            }
+        }
+
+        /// <summary>
         /// 从弱引用中获取
         /// <see cref="IHttpTurboClient"/>
         /// </summary>
         /// <param name="weakReference"></param>
         /// <param name="createFunc"></param>
         /// <returns></returns>
-        private static IHttpTurboClient GetClientInWeakReference(WeakReference<IHttpTurboClient> weakReference,
-                                                                 Func<IHttpTurboClient> createFunc)
+        private IHttpTurboClient GetClientInWeakReference(WeakReference<IHttpTurboClient> weakReference,
+                                                          Func<IHttpTurboClient> createFunc)
         {
             if (!weakReference.TryGetTarget(out IHttpTurboClient turboClient))
             {
@@ -181,27 +261,13 @@ namespace Cuture.Http
                         Debug.WriteLine($"new HttpTurboClient:{turboClient.GetHashCode()}");
 
                         weakReference.SetTarget(turboClient);
+
+                        HoldClient(weakReference);
                     }
                 }
             }
 
             return turboClient;
-        }
-
-        /// <summary>
-        /// 从弱引用中释放
-        /// <see cref="IHttpTurboClient"/>
-        /// </summary>
-        /// <param name="turboClientWR"></param>
-        private static void ReleaseWeakReferenceClient(WeakReference<IHttpTurboClient> turboClientWR)
-        {
-            if (turboClientWR.TryGetTarget(out var client))
-            {
-                Debug.WriteLine($"Dispose {nameof(IHttpTurboClient)}:{client.GetHashCode()}");
-
-                client.Dispose();
-            }
-            turboClientWR.SetTarget(null);
         }
 
         /// <summary>
@@ -231,7 +297,7 @@ namespace Cuture.Http
                 var proxyUri = proxy.GetProxy(request.RequestUri);
                 if (proxyUri is null)
                 {
-                    return GetClientInWeakReference(_client, () => HoldClient(new HttpTurboClient()));
+                    return GetClientInWeakReference(_client, () => new HttpTurboClient());
                 }
                 proxyHash = proxyHash * -1521134295 + proxyUri.OriginalString.GetHashCode();
             }
@@ -249,8 +315,8 @@ namespace Cuture.Http
                 {
                     if (!weakReferenceDictionary.TryGetValue(proxyHash, out clientWR))
                     {
-                        client = createFunc(proxy);
-                        clientWR = new WeakReference<IHttpTurboClient>(client);
+                        clientWR = new WeakReference<IHttpTurboClient>(null);
+                        client = GetClientInWeakReference(clientWR, () => createFunc(proxy));
 
                         Debug.WriteLine($"new HttpTurboClient:{client.GetHashCode()} ProxyHash:{proxyHash}");
 
@@ -275,13 +341,67 @@ namespace Cuture.Http
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private IHttpTurboClient HoldClient(IHttpTurboClient client)
+        private void HoldClient(WeakReference<IHttpTurboClient> clientWR)
         {
             if (_isHoldClient)
             {
-                _holdedClients.Add(client);
+                if (clientWR.TryGetTarget(out var client))
+                {
+                    lock (_clientReleaseQueue)
+                    {
+                        _holdedClients.Add(client);
+                        _clientReleaseQueue.Enqueue(new CreatedTimeTagedObject<WeakReference<IHttpTurboClient>>(clientWR, DateTime.UtcNow));
+                    }
+                }
             }
-            return client;
+        }
+
+        private void InitAutoReleaseTask()
+        {
+            if (!_isHoldClient)
+            {
+                return;
+            }
+
+            CancelAutoReleaseTask();
+
+            var tokenSource = new CancellationTokenSource();
+            Task.Run(async () =>
+            {
+                var token = tokenSource.Token;
+                while (!token.IsCancellationRequested)
+                {
+                    if (_clientReleaseQueue.Peek() is CreatedTimeTagedObject<WeakReference<IHttpTurboClient>> next)
+                    {
+                        var now = DateTime.UtcNow;
+                        var expire = next.CreatedTime.Add(_holdTimeSpan.Value);
+                        if (expire <= now)
+                        {
+                            lock (_clientReleaseQueue)
+                            {
+                                next = _clientReleaseQueue.Dequeue();
+                            }
+                            if (next != null
+                                && next.Data.TryGetTarget(out var client))
+                            {
+                                _holdedClients.Remove(client);
+                                //释放引用，等待GC回收
+                                next.Data.SetTarget(null);
+                            }
+                        }
+                        else
+                        {
+                            await Task.Delay(expire - now, token).ConfigureAwait(false);
+                        }
+                    }
+                    else
+                    {
+                        await Task.Delay(_holdTimeSpan.Value, token).ConfigureAwait(false);
+                    }
+                }
+            }, tokenSource.Token);
+
+            _releaseTokenSource = tokenSource;
         }
 
         #endregion 方法
