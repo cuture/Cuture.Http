@@ -32,6 +32,9 @@ namespace Cuture.Http
         /// </summary>
         public bool DisableProxy { get; set; } = HttpRequestOptions.DisableUseDefaultProxyByDefault;
 
+        /// <summary>
+        /// 是否已设置请求选项
+        /// </summary>
         public bool IsSetOptions => _options != null;
 
         /// <summary>
@@ -40,9 +43,14 @@ namespace Cuture.Http
         public int MaxAutomaticRedirections { get; set; } = HttpRequestOptions.MaxAutomaticRedirections;
 
         /// <summary>
+        /// Web代理
+        /// </summary>
+        public IWebProxy Proxy { get; set; }
+
+        /// <summary>
         /// 请求选项
         /// </summary>
-        public HttpRequestOptions Options
+        public HttpRequestOptions RequestOptions
         {
             get
             {
@@ -55,11 +63,6 @@ namespace Cuture.Http
             }
             set => _options = value;
         }
-
-        /// <summary>
-        /// Web代理
-        /// </summary>
-        public IWebProxy Proxy { get; set; }
 
         /// <summary>
         /// 超时时间

@@ -28,11 +28,11 @@ namespace Cuture.Http
         {
             if (request.IsSetOptions)
             {
-                if (request.Options.Client != null)
+                if (request.RequestOptions.Client != null)
                 {
-                    return request.Options.Client.SendAsync(request.AsRequest(), request.Token);
+                    return request.RequestOptions.Client.SendAsync(request.AsRequest(), request.Token);
                 }
-                return InternalGetHttpTurboClient(request, request.Options).ExecuteAsync(request);
+                return InternalGetHttpTurboClient(request, request.RequestOptions).ExecuteAsync(request);
             }
 
             return InternalGetHttpTurboClient(request, HttpRequestOptions.Default).ExecuteAsync(request);
@@ -49,11 +49,11 @@ namespace Cuture.Http
         {
             if (request.IsSetOptions)
             {
-                if (request.Options.Client != null)
+                if (request.RequestOptions.Client != null)
                 {
-                    return request.Options.Client.SendAsync(request.AsRequest(), completionOption, request.Token);
+                    return request.RequestOptions.Client.SendAsync(request.AsRequest(), completionOption, request.Token);
                 }
-                return InternalGetHttpTurboClient(request, request.Options).ExecuteAsync(request, completionOption);
+                return InternalGetHttpTurboClient(request, request.RequestOptions).ExecuteAsync(request, completionOption);
             }
 
             return InternalGetHttpTurboClient(request, HttpRequestOptions.Default).ExecuteAsync(request, completionOption);
@@ -77,9 +77,9 @@ namespace Cuture.Http
         public static Task<HttpResponseMessage> PostJsonAsync(this IHttpTurboRequest request, object content)
         {
             if (request.IsSetOptions
-                && request.Options.JsonSerializer != null)
+                && request.RequestOptions.JsonSerializer != null)
             {
-                request.Content = new JsonContent(content, JsonContent.ContentType, Encoding.UTF8, request.Options.JsonSerializer);
+                request.Content = new JsonContent(content, JsonContent.ContentType, Encoding.UTF8, request.RequestOptions.JsonSerializer);
             }
             else
             {
@@ -233,9 +233,9 @@ namespace Cuture.Http
         public static Task<T> GetAsObjectAsync<T>(this IHttpTurboRequest request)
         {
             if (request.IsSetOptions
-                && request.Options.JsonSerializer != null)
+                && request.RequestOptions.JsonSerializer != null)
             {
-                return request.ExecuteAsync().ReceiveAsObjectAsync<T>(request.Options.JsonSerializer);
+                return request.ExecuteAsync().ReceiveAsObjectAsync<T>(request.RequestOptions.JsonSerializer);
             }
             else
             {
@@ -255,9 +255,9 @@ namespace Cuture.Http
         public static Task<TextHttpOperationResult<T>> TryGetAsObjectAsync<T>(this IHttpTurboRequest request)
         {
             if (request.IsSetOptions
-                && request.Options.JsonSerializer != null)
+                && request.RequestOptions.JsonSerializer != null)
             {
-                return request.ExecuteAsync().TryReceiveAsObjectAsync<T>(request.Options.JsonSerializer);
+                return request.ExecuteAsync().TryReceiveAsObjectAsync<T>(request.RequestOptions.JsonSerializer);
             }
             else
             {

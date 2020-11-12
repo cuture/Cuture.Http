@@ -139,9 +139,9 @@ namespace Cuture.Http
         public static IHttpTurboRequest WithJsonContent(this IHttpTurboRequest request, object content)
         {
             if (request.IsSetOptions
-                && request.Options.JsonSerializer != null)
+                && request.RequestOptions.JsonSerializer != null)
             {
-                request.Content = new JsonContent(content, JsonContent.ContentType, Encoding.UTF8, request.Options.JsonSerializer);
+                request.Content = new JsonContent(content, JsonContent.ContentType, Encoding.UTF8, request.RequestOptions.JsonSerializer);
             }
             else
             {

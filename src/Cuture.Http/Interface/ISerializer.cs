@@ -12,7 +12,7 @@
         /// 反序列化数据到对象
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="value"></param>
+        /// <param name="data"></param>
         /// <returns></returns>
         T Deserialize<T>(TData data);
 

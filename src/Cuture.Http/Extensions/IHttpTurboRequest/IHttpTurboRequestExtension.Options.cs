@@ -192,7 +192,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest UseClient(this IHttpTurboRequest request, HttpClient client)
         {
-            request.Options.Client = client;
+            request.RequestOptions.Client = client;
             return request;
         }
 
@@ -205,7 +205,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest UseClient(this IHttpTurboRequest request, IHttpTurboClient client)
         {
-            request.Options.TurboClient = client;
+            request.RequestOptions.TurboClient = client;
             return request;
         }
 
@@ -228,7 +228,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest UseJsonSerializer(this IHttpTurboRequest request, IJsonSerializer jsonSerializer)
         {
-            request.Options.JsonSerializer = jsonSerializer;
+            request.RequestOptions.JsonSerializer = jsonSerializer;
             return request;
         }
 
@@ -251,7 +251,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest UseTurboClientFactory(this IHttpTurboRequest request, IHttpTurboClientFactory turboClientFactory)
         {
-            request.Options.TurboClientFactory = turboClientFactory;
+            request.RequestOptions.TurboClientFactory = turboClientFactory;
             return request;
         }
 
@@ -264,7 +264,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest WithOption(this IHttpTurboRequest request, HttpRequestOptions options)
         {
-            request.Options = options;
+            request.RequestOptions = options;
             return request;
         }
 

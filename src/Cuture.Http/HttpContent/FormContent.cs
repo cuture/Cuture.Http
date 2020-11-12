@@ -132,8 +132,14 @@ namespace Cuture.Http
             {
                 return EmptyContent;
             }
-
-            return encoding.GetBytes(data.Replace("%20", "+"));
+            return encoding.GetBytes(
+                    data
+#if NET5_0
+                        .Replace("%20", "+", StringComparison.Ordinal)
+#else
+                        .Replace("%20", "+")
+#endif
+                        );
         }
 
         #endregion 方法

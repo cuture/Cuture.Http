@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json.Linq;
 
+#if NET5_0
+
+using System.Buffers;
+
+#endif
+
 namespace Cuture.Http
 {
     /// <summary>
@@ -235,16 +241,32 @@ namespace Cuture.Http
             var response = await requestTask.ConfigureAwait(false);
 
             var contentLength = response.Content.Headers.ContentLength;
+#if NET5_0
+            using var stream = await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false);
+            using var buffer = MemoryPool<byte>.Shared.Rent(bufferSize);
 
+            var count = 0L;
+
+            while (!token.IsCancellationRequested
+                   && (contentLength == null || count < contentLength.Value))
+            {
+                var size = await stream.ReadAsync(buffer.Memory, token).ConfigureAwait(false);
+                if (size == 0)
+                {
+                    break;
+                }
+                count += size;
+                await targetStream.WriteAsync(buffer.Memory.Slice(0, size), token).ConfigureAwait(false);
+            }
+#else
             using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-
             var buffer = new byte[bufferSize];
             var count = 0L;
 
             while (!token.IsCancellationRequested
                    && (contentLength == null || count < contentLength.Value))
             {
-                var size = await stream.ReadAsync(buffer, 0, bufferSize).ConfigureAwait(false);
+                var size = await stream.ReadAsync(buffer, 0, bufferSize, token).ConfigureAwait(false);
                 if (size == 0)
                 {
                     break;
@@ -252,6 +274,7 @@ namespace Cuture.Http
                 count += size;
                 await targetStream.WriteAsync(buffer, 0, size, token).ConfigureAwait(false);
             }
+#endif
         }
 
         #region WithProgress
@@ -303,7 +326,28 @@ namespace Cuture.Http
             var response = await requestTask.ConfigureAwait(false);
 
             var contentLength = response.Content.Headers.ContentLength;
+#if NET5_0
+            using var stream = await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false);
+            using var buffer = MemoryPool<byte>.Shared.Rent(bufferSize);
 
+            var count = 0L;
+
+            await progressCallback(contentLength, count).ConfigureAwait(false);
+
+            while (!token.IsCancellationRequested
+                   && (contentLength == null || count < contentLength.Value))
+            {
+                var size = await stream.ReadAsync(buffer.Memory, token).ConfigureAwait(false);
+                if (size == 0)
+                {
+                    break;
+                }
+                count += size;
+                await targetStream.WriteAsync(buffer.Memory.Slice(0, size), token).ConfigureAwait(false);
+
+                await progressCallback(contentLength, count).ConfigureAwait(false);
+            }
+#else
             using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
             var buffer = new byte[bufferSize];
@@ -314,7 +358,7 @@ namespace Cuture.Http
             while (!token.IsCancellationRequested
                    && (contentLength == null || count < contentLength.Value))
             {
-                var size = await stream.ReadAsync(buffer, 0, bufferSize).ConfigureAwait(false);
+                var size = await stream.ReadAsync(buffer, 0, bufferSize, token).ConfigureAwait(false);
                 if (size == 0)
                 {
                     break;
@@ -324,6 +368,7 @@ namespace Cuture.Http
 
                 await progressCallback(contentLength, count).ConfigureAwait(false);
             }
+#endif
         }
 
         /// <summary>
@@ -402,9 +447,29 @@ namespace Cuture.Http
             var response = await requestTask.ConfigureAwait(false);
 
             var contentLength = response.Content.Headers.ContentLength;
+#if NET5_0
+            using var stream = await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false);
+            using var buffer = MemoryPool<byte>.Shared.Rent(bufferSize);
 
+            var count = 0L;
+
+            progressCallback(contentLength, count);
+
+            while (!token.IsCancellationRequested
+                   && (contentLength == null || count < contentLength.Value))
+            {
+                var size = await stream.ReadAsync(buffer.Memory, token).ConfigureAwait(false);
+                if (size == 0)
+                {
+                    break;
+                }
+                count += size;
+                await targetStream.WriteAsync(buffer.Memory.Slice(0, size), token).ConfigureAwait(false);
+
+                progressCallback(contentLength, count);
+            }
+#else
             using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-
             var buffer = new byte[bufferSize];
             var count = 0L;
 
@@ -413,7 +478,7 @@ namespace Cuture.Http
             while (!token.IsCancellationRequested
                    && (contentLength == null || count < contentLength.Value))
             {
-                var size = await stream.ReadAsync(buffer, 0, bufferSize).ConfigureAwait(false);
+                var size = await stream.ReadAsync(buffer, 0, bufferSize, token).ConfigureAwait(false);
                 if (size == 0)
                 {
                     break;
@@ -423,6 +488,7 @@ namespace Cuture.Http
 
                 progressCallback(contentLength, count);
             }
+#endif
         }
 
         /// <summary>

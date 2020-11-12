@@ -25,6 +25,7 @@ namespace Cuture.Http
         /// 获取一个HttpTurbo
         /// </summary>
         /// <param name="request">本次请求</param>
+        /// <param name="options"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static IHttpTurboClient InternalGetHttpTurboClient(IHttpTurboRequest request, HttpRequestOptions options)

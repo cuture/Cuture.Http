@@ -290,7 +290,12 @@ namespace Cuture.Http
 
             if (proxy is WebProxy webProxy)
             {
-                proxyHash = proxyHash * -1521134295 + webProxy.Address.OriginalString.GetHashCode();
+                proxyHash = proxyHash * -1521134295 + webProxy.Address.OriginalString
+#if NET5_0
+                                                        .GetHashCode(StringComparison.Ordinal);
+#else
+                                                        .GetHashCode();
+#endif
             }
             else
             {
@@ -299,14 +304,26 @@ namespace Cuture.Http
                 {
                     return GetClientInWeakReference(_client, () => new HttpTurboClient());
                 }
-                proxyHash = proxyHash * -1521134295 + proxyUri.OriginalString.GetHashCode();
+                proxyHash = proxyHash * -1521134295 + proxyUri.OriginalString
+#if NET5_0
+                                                        .GetHashCode(StringComparison.Ordinal);
+#else
+                                                        .GetHashCode();
+#endif
             }
 
             if (proxy.Credentials?.GetCredential(request.RequestUri, string.Empty) is NetworkCredential credential)
             {
+#if NET5_0
+                proxyHash = proxyHash * -1521134295 + credential.UserName.GetHashCode(StringComparison.Ordinal);
+                proxyHash = proxyHash * -1521134295 + credential.Password.GetHashCode(StringComparison.Ordinal);
+                proxyHash = proxyHash * -1521134295 + credential.Domain.GetHashCode(StringComparison.Ordinal);
+#else
                 proxyHash = proxyHash * -1521134295 + credential.UserName.GetHashCode();
                 proxyHash = proxyHash * -1521134295 + credential.Password.GetHashCode();
                 proxyHash = proxyHash * -1521134295 + credential.Domain.GetHashCode();
+#endif
+
             }
 
             if (!weakReferenceDictionary.TryGetValue(proxyHash, out WeakReference<IHttpTurboClient> clientWR))

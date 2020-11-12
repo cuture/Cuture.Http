@@ -25,7 +25,12 @@ namespace Cuture.Http
             {
                 return string.Empty;
             }
-            return Uri.EscapeDataString(data).Replace("%20", "+");
+            return Uri.EscapeDataString(data)
+#if NET5_0
+                .Replace("%20", "+", StringComparison.Ordinal);
+#else
+                .Replace("%20", "+");
+#endif
         }
 
         /// <summary>
@@ -62,7 +67,7 @@ namespace Cuture.Http
             {
                 if (m is JProperty property)
                 {
-                    return $"{property.Name}={property.Value.ToString()}";
+                    return $"{property.Name}={property.Value}";
                 }
                 return null;
             });
