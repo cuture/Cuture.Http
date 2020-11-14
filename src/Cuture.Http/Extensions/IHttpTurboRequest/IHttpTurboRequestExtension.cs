@@ -12,7 +12,7 @@ namespace Cuture.Http
 
         static IHttpTurboRequestExtension()
         {
-#if NETSTANDARD2_0
+#if !NETFRAMEWORK
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 #endif
         }
