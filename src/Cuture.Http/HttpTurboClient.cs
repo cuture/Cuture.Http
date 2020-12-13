@@ -58,17 +58,6 @@ namespace Cuture.Http
         }
 
         /// <summary>
-        /// http快速访问客户端
-        /// <para/>
-        /// 使用无参构造替代
-        /// </summary>
-        /// <param name="allowRedirection"></param>
-        /// <param name="maxAutomaticRedirections"></param>
-        [Obsolete("使用无参构造替代", true)]
-        public HttpTurboClient(bool allowRedirection, int maxAutomaticRedirections = 10)
-        { }
-
-        /// <summary>
         /// http快速访问客户端<para/>
         /// 封装 <see cref="HttpClient"/> 用于http请求
         /// </summary>

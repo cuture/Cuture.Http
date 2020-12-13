@@ -7,7 +7,7 @@ namespace Cuture.Http
     /// <summary>
     /// Http相关的默认设置
     /// </summary>
-    [Obsolete("使用 HttpRequestOptions 替换")]
+    [Obsolete("使用 HttpRequestOptions 替换", true)]
     public static class HttpDefaultSetting
     {
         #region 字段

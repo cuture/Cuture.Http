@@ -105,7 +105,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Obsolete("使用 AutoRedirection 替代此方法调用")]
+        [Obsolete("使用 AutoRedirection 替代此方法调用", true)]
         public static IHttpTurboRequest AllowRedirection(this IHttpTurboRequest request)
         {
             request.AllowRedirection = true;
@@ -216,7 +216,7 @@ namespace Cuture.Http
         /// <param name="httpClient"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Obsolete("使用 UseClient 替代此方法调用")]
+        [Obsolete("使用 UseClient 替代此方法调用", true)]
         public static IHttpTurboRequest UseHttpClient(this IHttpTurboRequest request, HttpClient httpClient) => UseClient(request, httpClient);
 
         /// <summary>
@@ -239,7 +239,7 @@ namespace Cuture.Http
         /// <param name="turboClient"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Obsolete("使用 UseClient 替代此方法调用")]
+        [Obsolete("使用 UseClient 替代此方法调用", true)]
         public static IHttpTurboRequest UseTurboClient(this IHttpTurboRequest request, IHttpTurboClient turboClient) => UseClient(request, turboClient);
 
         /// <summary>
@@ -290,7 +290,7 @@ namespace Cuture.Http
         /// <param name="token"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Obsolete("使用 WithCancellation 替代此方法调用")]
+        [Obsolete("使用 WithCancellation 替代此方法调用", true)]
         public static IHttpTurboRequest WithCancellationToken(this IHttpTurboRequest request, CancellationToken token)
         {
             request.Token = token;

@@ -61,6 +61,8 @@ namespace Cuture.Http
 
         /// <summary>
         /// 使用指定的Http动作
+        /// <para/>
+        /// 建议使用纯大写字符串
         /// </summary>
         /// <param name="request">请求</param>
         /// <param name="httpMethod">Http动作</param>
@@ -68,7 +70,22 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest UseVerb(this IHttpTurboRequest request, string httpMethod)
         {
-            request.Method = new HttpMethod(httpMethod);
+            if (string.IsNullOrWhiteSpace(httpMethod))
+            {
+                throw new ArgumentNullException($"{nameof(httpMethod)} must has a value");
+            }
+            var method = httpMethod switch
+            {
+                "GET" => HttpMethod.Get,
+                "POST" => HttpMethod.Post,
+                "DELETE" => HttpMethod.Delete,
+                "PUT" => HttpMethod.Put,
+                "HEAD" => HttpMethod.Head,
+                "OPTIONS" => HttpMethod.Options,
+                _ => new HttpMethod(httpMethod)
+            };
+
+            request.Method = method;
             return request;
         }
 
@@ -92,7 +109,7 @@ namespace Cuture.Http
         /// <param name="httpMethod">Http动作</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Obsolete("使用 UseVerb 替代此方法调用")]
+        [Obsolete("使用 UseVerb 替代此方法调用", true)]
         public static IHttpTurboRequest WithVerb(this IHttpTurboRequest request, HttpMethod httpMethod)
         {
             request.Method = httpMethod;
