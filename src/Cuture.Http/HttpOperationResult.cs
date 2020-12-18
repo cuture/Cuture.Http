@@ -6,8 +6,14 @@ namespace Cuture.Http
     /// <summary>
     /// http请求结果
     /// </summary>
-    public class HttpOperationResult
+    public class HttpOperationResult : IDisposable
     {
+        #region Private 字段
+
+        private bool _disposedValue;
+
+        #endregion Private 字段
+
         #region 属性
 
         /// <summary>
@@ -16,24 +22,44 @@ namespace Cuture.Http
         public Exception Exception { get; set; }
 
         /// <summary>
-        /// 获取一个值，该值指示 HTTP 请求是否成功
-        /// </summary>
-        public bool IsSuccessStatusCode => ResponseMessage is null ? false : ResponseMessage.IsSuccessStatusCode;
-
-        /// <summary>
         /// 原始响应信息
         /// </summary>
         public HttpResponseMessage ResponseMessage { get; set; }
 
+        /// <summary>
+        /// 获取一个值，该值指示 HTTP 请求是否成功
+        /// </summary>
+        public bool IsSuccessStatusCode => ResponseMessage is not null && ResponseMessage.IsSuccessStatusCode;
+
         #endregion 属性
 
         #region 方法
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
 
         /// <summary>
         /// 获取请求返回头的 Set-Cookie 字符串内容
         /// </summary>
         /// <returns></returns>
         public string GetCookie() => ResponseMessage.GetCookie();
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    ResponseMessage?.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
 
         #endregion 方法
     }
@@ -74,6 +100,20 @@ namespace Cuture.Http
         }
 
         #endregion 构造函数
+
+        #region Protected 方法
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (Data is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+        }
+
+        #endregion Protected 方法
     }
 
     /// <summary>

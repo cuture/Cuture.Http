@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Titanium.Web.Proxy;
 using Titanium.Web.Proxy.EventArguments;
+using Titanium.Web.Proxy.Http;
 using Titanium.Web.Proxy.Models;
 
 namespace Cuture.Http.Test
@@ -127,23 +128,29 @@ namespace Cuture.Http.Test
                 }
                 return Task.CompletedTask;
             }
-            var authorizationHeader = e.HttpClient.Request.Headers.Headers["Proxy-Authorization"].Value;
-            var authorizationBase64String = authorizationHeader.Split(' ')[1];
-            var authorization = Encoding.UTF8.GetString(Convert.FromBase64String(authorizationBase64String));
-            var authorizations = authorization.Split(':');
-            var username = authorizations[0];
-            var password = authorizations[1];
 
-            var accountInfo = Authenticates[username];
-            if (password.Equals(accountInfo.Password))
+            if (e.HttpClient.Request.Headers.Headers.ContainsKey("Proxy-Authorization"))
             {
-                lock (accountInfo)
+                var authorizationHeader = e.HttpClient.Request.Headers.Headers["Proxy-Authorization"].Value;
+                var authorizationBase64String = authorizationHeader.Split(' ')[1];
+                var authorization = Encoding.UTF8.GetString(Convert.FromBase64String(authorizationBase64String));
+                var authorizations = authorization.Split(':');
+                var username = authorizations[0];
+                var password = authorizations[1];
+
+                if (Authenticates.ContainsKey(username)
+                    && Authenticates[username] is ProxyAuthenticateInfo accountInfo
+                    && password.Equals(accountInfo.Password))
                 {
-                    accountInfo.RequestTime++;
+                    lock (accountInfo)
+                    {
+                        accountInfo.RequestTime++;
+                    }
+                    return Task.CompletedTask;
                 }
             }
 
-            Assert.Fail();
+            e.Respond(new Response() { StatusCode = 401 }, false);
 
             return Task.CompletedTask;
         }

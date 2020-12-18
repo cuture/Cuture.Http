@@ -37,7 +37,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static async Task<byte[]> ReceiveAsBytesAsync(this Task<HttpResponseMessage> requestTask)
         {
-            var response = await requestTask.ConfigureAwait(false);
+            using var response = await requestTask.ConfigureAwait(false);
             return await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
         }
 
@@ -78,7 +78,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static async Task<string> ReceiveAsStringAsync(this Task<HttpResponseMessage> requestTask)
         {
-            var response = await requestTask.ConfigureAwait(false);
+            using var response = await requestTask.ConfigureAwait(false);
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
@@ -117,8 +117,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static async Task<JObject> ReceiveAsJsonAsync(this Task<HttpResponseMessage> requestTask)
         {
-            var response = await requestTask.ConfigureAwait(false);
-
+            using var response = await requestTask.ConfigureAwait(false);
             return await response.ReceiveAsJsonAsync().ConfigureAwait(false);
         }
 
@@ -166,7 +165,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static async Task<T> ReceiveAsObjectAsync<T>(this Task<HttpResponseMessage> requestTask, ISerializer<string> serializer = null)
         {
-            var response = await requestTask.ConfigureAwait(false);
+            using var response = await requestTask.ConfigureAwait(false);
             return await response.ReceiveAsObjectAsync<T>(serializer ?? HttpRequestOptions.DefaultJsonSerializer).ConfigureAwait(false);
         }
 
@@ -238,7 +237,7 @@ namespace Cuture.Http
                 throw new ArgumentException($"{nameof(targetStream)} must can write");
             }
 
-            var response = await requestTask.ConfigureAwait(false);
+            using var response = await requestTask.ConfigureAwait(false);
 
             var contentLength = response.Content.Headers.ContentLength;
 #if NET5_0
@@ -323,7 +322,7 @@ namespace Cuture.Http
                 throw new ArgumentException($"{nameof(targetStream)} must can write");
             }
 
-            var response = await requestTask.ConfigureAwait(false);
+            using var response = await requestTask.ConfigureAwait(false);
 
             var contentLength = response.Content.Headers.ContentLength;
 #if NET5_0
@@ -390,7 +389,6 @@ namespace Cuture.Http
                                                                    CancellationToken token,
                                                                    int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
         {
-            var result = new HttpOperationResult<byte[]>();
             using var mStream = new MemoryStream(512_000);
 
             await requestTask.DownloadToStreamWithProgressAsync(mStream, progressCallback, token, bufferSize).ConfigureAwait(false);
@@ -444,7 +442,7 @@ namespace Cuture.Http
                 throw new ArgumentException($"{nameof(targetStream)} must can write");
             }
 
-            var response = await requestTask.ConfigureAwait(false);
+            using var response = await requestTask.ConfigureAwait(false);
 
             var contentLength = response.Content.Headers.ContentLength;
 #if NET5_0
@@ -510,8 +508,6 @@ namespace Cuture.Http
                                                                    CancellationToken token,
                                                                    int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
         {
-            var result = new HttpOperationResult<byte[]>();
-
             using var mStream = new MemoryStream(512_000);
 
             await requestTask.DownloadToStreamWithProgressAsync(mStream, progressCallback, token, bufferSize).ConfigureAwait(false);
@@ -596,7 +592,13 @@ namespace Cuture.Http
         /// <param name="responseMessage"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<byte[]> ReceiveAsBytesAsync(this HttpResponseMessage responseMessage) => await responseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+        public static async Task<byte[]> ReceiveAsBytesAsync(this HttpResponseMessage responseMessage)
+        {
+            using (responseMessage)
+            {
+                return await responseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+            }
+        }
 
         /// <summary>
         /// 获取请求返回的JObject对象
@@ -606,12 +608,15 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static async Task<JObject> ReceiveAsJsonAsync(this HttpResponseMessage responseMessage)
         {
-            var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-            if (!string.IsNullOrEmpty(json))
+            using (responseMessage)
             {
-                return JObject.Parse(json);
+                var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                if (!string.IsNullOrEmpty(json))
+                {
+                    return JObject.Parse(json);
+                }
+                return null;
             }
-            return null;
         }
 
         /// <summary>
@@ -624,12 +629,15 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static async Task<T> ReceiveAsObjectAsync<T>(this HttpResponseMessage responseMessage, ISerializer<string> serializer = null)
         {
-            var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-            if (!string.IsNullOrEmpty(json))
+            using (responseMessage)
             {
-                return (serializer ?? HttpRequestOptions.DefaultJsonSerializer).Deserialize<T>(json);
+                var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                if (!string.IsNullOrEmpty(json))
+                {
+                    return (serializer ?? HttpRequestOptions.DefaultJsonSerializer).Deserialize<T>(json);
+                }
+                return default;
             }
-            return default;
         }
 
         /// <summary>
@@ -638,7 +646,13 @@ namespace Cuture.Http
         /// <param name="responseMessage"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<string> ReceiveAsStringAsync(this HttpResponseMessage responseMessage) => await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+        public static async Task<string> ReceiveAsStringAsync(this HttpResponseMessage responseMessage)
+        {
+            using (responseMessage)
+            {
+                return await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+            }
+        }
 
         /// <summary>
         /// 获取请求返回头的 Set-Cookie 字符串内容
