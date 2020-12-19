@@ -1,9 +1,9 @@
 # Cuture.Http
 
 用于快速进行Http请求的链式拓展方法库。
-- 主要为针对`string`和`Uri`对象的拓展方法;
+- 主要为针对`string`和`Uri`对象的拓展方法，及一些Http相关的工具;
 - 本质上是对`System.Net.Http.HttpClient`等的封装; 
-- 目标框架目前为`.NetStandard2.0`;
+- 目标框架目前为`.Net5`/`.NetStandard2.0`;
 
 ## 如何使用
 
@@ -77,22 +77,40 @@ catch (Exception ex)
 }
 ```
 
+### 从原始数据构建请求(.net5 only now)
+使用从各种抓包工具中复制的原始数据，快速构建等价请求
+```C#
+var rawBase64Str = "R0VUIGh0dHA6Ly9kZXRlY3Rwb3J0YWwuZmlyZWZveC5jb20vc3VjY2Vzcy50eHQgSFRUUC8xLjENCkhvc3Q6IGRldGVjdHBvcnRhbC5maXJlZm94LmNvbQ0KVXNlci1BZ2VudDogTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NDsgcnY6ODQuMCkgR2Vja28vMjAxMDAxMDEgRmlyZWZveC84NC4wDQpBY2NlcHQ6ICovKg0KQWNjZXB0LUxhbmd1YWdlOiB6aC1DTix6aDtxPTAuOCx6aC1UVztxPTAuNyx6aC1ISztxPTAuNSxlbi1VUztxPTAuMyxlbjtxPTAuMg0KQWNjZXB0LUVuY29kaW5nOiBnemlwLCBkZWZsYXRlDQpDYWNoZS1Db250cm9sOiBuby1jYWNoZQ0KUHJhZ21hOiBuby1jYWNoZQ0KRE5UOiAxDQpDb25uZWN0aW9uOiBrZWVwLWFsaXZlDQoNCg==";
+var request = RequestBuildTool.FromRaw(rawBase64Str);
+//进行其他的一些请求设置等，覆盖原始的请求设置
+var result = await request.TryGetAsStringAsync();
+```
+
 ### 部分其它工具拓展示例
 
+#### Base64编码
 ```C#
 "https://dotnet.microsoft.com/".EncodeBase64();
 //aHR0cHM6Ly9kb3RuZXQubWljcm9zb2Z0LmNvbS8=
 "aHR0cHM6Ly9kb3RuZXQubWljcm9zb2Z0LmNvbS8=".DecodeBase64();
 //https://dotnet.microsoft.com/
+```
 
+#### UrlEncode
+```C#
 "keyword关键词".UrlEncode();
 //keyword%e5%85%b3%e9%94%ae%e8%af%8d
 "keyword%e5%85%b3%e9%94%ae%e8%af%8d".UrlDecode();
 //keyword关键词
+```
 
+#### 随机UA
+```C#
 UserAgents.RandomUserAgent();
-//随机的UA
+```
 
+#### Cookie字符串清理
+```C#
 var cookie = "lang=en-US; Path=/; Max-Age=2147483647 i_like_gogs=d38e69bb16e9080d; Path=/; HttpOnly _csrf=Zxnf2GNhwYoZUONx6ylflfFS0CI6MTU3ODExNzU2NzU4MDM0NjEzMg%3D%3D; Path=/; Expires=Sun, 05 Jan 2020 05:59:27 GMT; HttpOnly";
 CookieUtility.Clean(cookie);
 //lang=en-US; i_like_gogs=d38e69bb16e9080d; _csrf=Zxnf2GNhwYoZUONx6ylflfFS0CI6MTU3ODExNzU2NzU4MDM0NjEzMg%3D%3D;
