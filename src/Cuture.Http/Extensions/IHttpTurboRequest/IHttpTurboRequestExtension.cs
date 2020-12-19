@@ -1,5 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
+
+#if NETSTANDARD
+
 using System.Text;
+
+#endif
 
 namespace Cuture.Http
 {
@@ -10,12 +15,14 @@ namespace Cuture.Http
     {
         #region 构造函数
 
+#if NETSTANDARD
+
         static IHttpTurboRequestExtension()
         {
-#if !NETFRAMEWORK
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-#endif
         }
+
+#endif
 
         #endregion 构造函数
 

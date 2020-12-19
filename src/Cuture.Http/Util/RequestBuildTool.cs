@@ -119,7 +119,7 @@ namespace Cuture.Http
 
         #region Private
 
-        private static string GetHeaderValue(Encoding encoding, ReadOnlySpan<byte> header)
+        private static string GetHeaderValue(Encoding encoding, in ReadOnlySpan<byte> header)
         {
             return header[0] == ' '
                         ? encoding.GetString(header[1..])
@@ -148,7 +148,7 @@ namespace Cuture.Http
         /// <param name="data"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        private static ReadOnlySpan<byte> ReadSegmentData(ref ReadOnlySpan<byte> data, ReadOnlySpan<byte> value)
+        private static ReadOnlySpan<byte> ReadSegmentData(ref ReadOnlySpan<byte> data, in ReadOnlySpan<byte> value)
         {
             var index = data.IndexOf(value);
             if (index < 0)
