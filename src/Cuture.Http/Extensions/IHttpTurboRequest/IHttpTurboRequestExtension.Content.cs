@@ -12,6 +12,31 @@ namespace Cuture.Http
     {
         #region Content
 
+#if NET
+        /// <summary>
+        /// 使用指定数据作为Http请求的Content
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="data">content的数据</param>
+        /// <param name="contentType">Content-Type</param>
+        /// <param name="contentLength">数据长度（如果小于0，则会使用data的全部数据作为Content）</param>
+        /// <returns></returns>
+        public static IHttpTurboRequest WithContent(this IHttpTurboRequest request, in ReadOnlySpan<byte> data, string contentType, int contentLength = -1)
+        {
+            if (string.IsNullOrWhiteSpace(contentType))
+            {
+                throw new ArgumentException($"not found “{HttpHeaders.ContentType}” in data. Please check the raw data.");
+            }
+
+            request.Content?.Dispose();
+            request.Content = new TypedByteArrayContent(contentLength > 0 ? data.Slice(0, contentLength).ToArray() : data.ToArray(),
+                                                        contentType);
+
+            return request;
+        }
+
+#endif
+
         /// <summary>
         /// 为请求添加HttpContent;
         /// <para/>
@@ -96,6 +121,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest WithContent(this IHttpTurboRequest request, HttpContent httpContent)
         {
+            request.Content?.Dispose();
             request.Content = httpContent;
             return request;
         }
@@ -110,6 +136,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest WithFormContent(this IHttpTurboRequest request, string content)
         {
+            request.Content?.Dispose();
             request.Content = new FormContent(content);
             return request;
         }
@@ -124,6 +151,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest WithFormContent(this IHttpTurboRequest request, object content)
         {
+            request.Content?.Dispose();
             request.Content = new FormContent(content);
             return request;
         }
@@ -138,6 +166,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest WithJsonContent(this IHttpTurboRequest request, object content)
         {
+            request.Content?.Dispose();
             if (request.IsSetOptions
                 && request.RequestOptions.JsonSerializer != null)
             {
@@ -160,6 +189,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest WithJsonContent(this IHttpTurboRequest request, string content)
         {
+            request.Content?.Dispose();
             request.Content = new JsonContent(content);
             return request;
         }

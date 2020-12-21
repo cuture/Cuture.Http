@@ -43,6 +43,37 @@ namespace Cuture.Http
         }
 
         /// <summary>
+        /// 添加Header且不验证其内容
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest AddHeadersWithoutValidation(this IHttpTurboRequest request, IEnumerable<KeyValuePair<string, string>> headers)
+        {
+            foreach (var header in headers)
+            {
+                request.Headers.TryAddWithoutValidation(header.Key, header.Value);
+            }
+            return request;
+        }
+
+        /// <summary>
+        /// 添加Header且不验证其内容
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest AddHeaderWithoutValidation(this IHttpTurboRequest request, string key, string value)
+        {
+            request.Headers.TryAddWithoutValidation(key, value);
+            return request;
+        }
+
+        /// <summary>
         /// 如果存在Header则将其移除,并添加Header
         /// </summary>
         /// <param name="request"></param>
