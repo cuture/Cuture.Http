@@ -173,8 +173,8 @@ namespace Cuture.Http
                                 cookie = CookieUtility.Clean(setCookie);
                             }
 
-                            redirectRequest.Headers.Remove(HttpHeaders.Cookie);
-                            redirectRequest.Headers.TryAddWithoutValidation(HttpHeaders.Cookie, cookie);
+                            redirectRequest.Headers.Remove(HttpHeaderDefinitions.Cookie);
+                            redirectRequest.Headers.TryAddWithoutValidation(HttpHeaderDefinitions.Cookie, cookie);
                         }
 
                         innerRequest.Dispose();

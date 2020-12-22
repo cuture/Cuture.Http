@@ -81,12 +81,12 @@ namespace Cuture.Http
 
                 switch (key)
                 {
-                    case HttpHeaders.Host:  //忽略Host
+                    case HttpHeaderDefinitions.Host:  //忽略Host
                         continue;
-                    case HttpHeaders.ContentType:
+                    case HttpHeaderDefinitions.ContentType:
                         contentType = GetHeaderValue(encoding, headerSpan);
                         continue;
-                    case HttpHeaders.ContentLength:
+                    case HttpHeaderDefinitions.ContentLength:
                         contentLength = int.Parse(GetHeaderValue(encoding, headerSpan));
                         continue;
                 }

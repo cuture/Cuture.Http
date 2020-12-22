@@ -533,7 +533,7 @@ namespace Cuture.Http
         /// <param name="responseMessage"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string GetCookie(this HttpResponseMessage responseMessage) => responseMessage.Headers.TryGetValues(HttpHeaders.SetCookie, out var cookies) ? string.Join("; ", cookies) : string.Empty;
+        public static string GetCookie(this HttpResponseMessage responseMessage) => responseMessage.Headers.TryGetValues(HttpHeaderDefinitions.SetCookie, out var cookies) ? string.Join("; ", cookies) : string.Empty;
 
         /// <summary>
         /// 获取获取响应的重定向Uri
@@ -663,7 +663,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryGetCookie(this HttpResponseMessage responseMessage, out string cookie)
         {
-            if (responseMessage.Headers.TryGetValues(HttpHeaders.SetCookie, out var cookies))
+            if (responseMessage.Headers.TryGetValues(HttpHeaderDefinitions.SetCookie, out var cookies))
             {
                 cookie = string.Join("; ", cookies);
                 return true;

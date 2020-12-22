@@ -60,7 +60,7 @@ namespace Cuture.Http
         /// <param name="encoding">指定编码类型</param>
         public FormContent(string content, string contentType, Encoding encoding) : base(GetBytes(content, encoding))
         {
-            Headers.TryAddWithoutValidation(HttpHeaders.ContentType, contentType);
+            Headers.TryAddWithoutValidation(HttpHeaderDefinitions.ContentType, contentType);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Cuture.Http
         /// <param name="encoding">指定编码类型</param>
         public FormContent(object content, string contentType, Encoding encoding) : base(GetBytes(content, encoding))
         {
-            Headers.TryAddWithoutValidation(HttpHeaders.ContentType, contentType);
+            Headers.TryAddWithoutValidation(HttpHeaderDefinitions.ContentType, contentType);
         }
 
         #endregion 构造函数

@@ -11,9 +11,9 @@ namespace Cuture.Http.Util
         #region Public 字段
 
         /// <summary>
-        /// <see cref="HttpHeaders.Authorization"/>
+        /// <see cref="HttpHeaderDefinitions.Authorization"/>
         /// </summary>
-        public const string HttpHeader = HttpHeaders.Authorization;
+        public const string HttpHeader = HttpHeaderDefinitions.Authorization;
 
         #endregion Public 字段
 

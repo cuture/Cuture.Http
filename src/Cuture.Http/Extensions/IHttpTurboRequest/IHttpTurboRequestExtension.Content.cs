@@ -25,7 +25,7 @@ namespace Cuture.Http
         {
             if (string.IsNullOrWhiteSpace(contentType))
             {
-                throw new ArgumentException($"not found “{HttpHeaders.ContentType}” in data. Please check the raw data.");
+                throw new ArgumentException($"“{nameof(contentType)}”不能为 Null 或空白", nameof(contentType));
             }
 
             request.Content?.Dispose();

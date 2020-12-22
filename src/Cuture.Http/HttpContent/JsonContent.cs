@@ -64,7 +64,7 @@ namespace Cuture.Http
         /// <param name="jsonSerializer">指定json序列化器</param>
         public JsonContent(object content, string contentType, Encoding encoding, IJsonSerializer jsonSerializer) : base(encoding.GetBytes(jsonSerializer.Serialize(content)))
         {
-            Headers.TryAddWithoutValidation(HttpHeaders.ContentType, contentType);
+            Headers.TryAddWithoutValidation(HttpHeaderDefinitions.ContentType, contentType);
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Cuture.Http
         /// <param name="encoding">指定编码类型</param>
         public JsonContent(string json, string contentType, Encoding encoding) : base(encoding.GetBytes(json))
         {
-            Headers.TryAddWithoutValidation(HttpHeaders.ContentType, contentType);
+            Headers.TryAddWithoutValidation(HttpHeaderDefinitions.ContentType, contentType);
         }
 
         #endregion 构造函数

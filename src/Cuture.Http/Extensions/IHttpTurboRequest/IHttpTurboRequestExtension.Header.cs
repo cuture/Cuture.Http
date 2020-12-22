@@ -97,7 +97,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest UseCookie(this IHttpTurboRequest request, string cookie)
         {
-            request.AddHeader(HttpHeaders.Cookie, cookie);
+            request.AddHeader(HttpHeaderDefinitions.Cookie, cookie);
             return request;
         }
 
@@ -110,7 +110,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest UseReferer(this IHttpTurboRequest request, string referer)
         {
-            request.AddHeader(HttpHeaders.Referer, referer);
+            request.AddHeader(HttpHeaderDefinitions.Referer, referer);
             return request;
         }
 
@@ -123,7 +123,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest UseUserAgent(this IHttpTurboRequest request, string userAgent)
         {
-            request.AddHeader(HttpHeaders.UserAgent, userAgent);
+            request.AddHeader(HttpHeaderDefinitions.UserAgent, userAgent);
             return request;
         }
 

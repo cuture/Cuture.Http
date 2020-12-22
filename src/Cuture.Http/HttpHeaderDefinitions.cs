@@ -1,12 +1,9 @@
-﻿using System;
-
-namespace Cuture.Http
+﻿namespace Cuture.Http
 {
     /// <summary>
-    /// http标头
+    /// http标头定义
     /// </summary>
-    [Obsolete("使用 HttpHeaderDefinitions 替代", true)]
-    public static class HttpHeaders
+    public static class HttpHeaderDefinitions
     {
         //  (^[a-z0-9]+)\s+\d+[ \r\n\t]+([a-z0-9-]+)(.+)
         //  /// <summary>\n/// $2$3\n/// </summary>\npublic const string $1 = "$2";

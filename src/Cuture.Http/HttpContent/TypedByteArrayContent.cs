@@ -14,7 +14,7 @@ namespace Cuture.Http
                 throw new ArgumentException($"“{nameof(contentType)}”不能为 Null 或空白", nameof(contentType));
             }
 
-            Headers.TryAddWithoutValidation(HttpHeaders.ContentType, contentType);
+            Headers.TryAddWithoutValidation(HttpHeaderDefinitions.ContentType, contentType);
         }
 
         #endregion Public 构造函数

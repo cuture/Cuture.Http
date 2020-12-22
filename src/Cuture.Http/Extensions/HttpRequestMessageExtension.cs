@@ -16,7 +16,7 @@ namespace Cuture.Http
         /// <param name="requestMessage"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string GetCookie(this HttpRequestMessage requestMessage) => requestMessage.Headers.TryGetValues(HttpHeaders.Cookie, out var cookies) ? string.Join("; ", cookies) : string.Empty;
+        public static string GetCookie(this HttpRequestMessage requestMessage) => requestMessage.Headers.TryGetValues(HttpHeaderDefinitions.Cookie, out var cookies) ? string.Join("; ", cookies) : string.Empty;
 
         /// <summary>
         /// 获取请求头的 Cookie 字符串内容
@@ -27,7 +27,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryGetCookie(this HttpRequestMessage requestMessage, out string cookie)
         {
-            if (requestMessage.Headers.TryGetValues(HttpHeaders.Cookie, out var cookies))
+            if (requestMessage.Headers.TryGetValues(HttpHeaderDefinitions.Cookie, out var cookies))
             {
                 cookie = string.Join("; ", cookies);
                 return true;

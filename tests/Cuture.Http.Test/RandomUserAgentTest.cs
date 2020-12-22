@@ -75,7 +75,7 @@ namespace Cuture.Http.Test
                 Assert.IsNotNull(result);
                 Assert.IsFalse(string.IsNullOrWhiteSpace(userAgent));
 
-                Assert.AreEqual(userAgent, result.Header[HttpHeaders.UserAgent]);
+                Assert.AreEqual(userAgent, result.Header[HttpHeaderDefinitions.UserAgent]);
             });
         }
 
