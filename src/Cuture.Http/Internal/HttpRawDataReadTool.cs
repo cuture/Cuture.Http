@@ -26,9 +26,19 @@ namespace Cuture.Http.Internal
         internal static readonly byte[] NewLineSeparator = new[] { (byte)'\r', (byte)'\n' };
 
         /// <summary>
+        /// 新行分隔符
+        /// </summary>
+        internal static ReadOnlySpan<byte> NewLineSeparatorSpan => NewLineSeparator.AsSpan();
+
+        /// <summary>
         /// Header结束分隔符
         /// </summary>
         internal static readonly byte[] HeaderEndSeparator = new[] { (byte)'\r', (byte)'\n', (byte)'\r', (byte)'\n' };
+
+        /// <summary>
+        /// Header结束分隔符
+        /// </summary>
+        internal static ReadOnlySpan<byte> HeaderEndSeparatorSpan => HeaderEndSeparator.AsSpan();
 
         /// <summary>
         /// 读取Header的值（自动忽略头部的空格）
@@ -53,6 +63,7 @@ namespace Cuture.Http.Internal
                         ? encoding.GetString(data[1..])
                         : encoding.GetString(data);
         }
+
         /// <summary>
         /// 读取并将数据调整为读取后的剩余数据
         /// </summary>

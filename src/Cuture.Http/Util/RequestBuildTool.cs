@@ -1,5 +1,6 @@
 ﻿#if NET
 using System;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 using static Cuture.Http.Internal.HttpRawDataReadTool;
@@ -16,6 +17,7 @@ namespace Cuture.Http
         /// </summary>
         /// <param name="rawBase64String"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest FromRaw(string rawBase64String) => FromRaw(Convert.FromBase64String(rawBase64String));
 
         /// <summary>
@@ -23,6 +25,7 @@ namespace Cuture.Http
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest FromRaw(byte[] data) => FromRaw(data.AsSpan());
 
         /// <summary>
@@ -37,24 +40,7 @@ namespace Cuture.Http
                 throw new ArgumentOutOfRangeException($"the data (length:{data.Length}) is too large, This is not the recommend way to use it.");
             }
 
-            var methodSpan = ReadSegmentData(ref data, SpaceSeparator);
-
-            if (methodSpan.IsEmpty)
-            {
-                throw new ArgumentException("not found “method” in data. Please check the raw data.");
-            }
-
-            var urlSpan = ReadSegmentData(ref data, SpaceSeparator);
-
-            if (urlSpan.IsEmpty)
-            {
-                throw new ArgumentException("not found “url” in data.Please check the raw data.");
-            }
-
-            var newLineSplitChars = NewLineSeparator.AsSpan();
-
-            //暂时不处理http版本
-            var httpVersionSpan = ReadSegmentData(ref data, newLineSplitChars);
+            ReadHttpRequestLine(ref data, out var methodSpan, out var urlSpan, out _);
 
             var encoding = Encoding.UTF8;
 
@@ -62,12 +48,63 @@ namespace Cuture.Http
             var request = url.ToHttpRequest()
                              .UseVerb(encoding.GetString(methodSpan));
 
-            int contentLength = -1;
+            var (contentLength, contentType) = request.LoadHeaders(ref data, encoding);
+
+            if (data.Length > 0)
+            {
+                request.WithContent(data, contentType, contentLength);
+            }
+
+            return request;
+        }
+
+        /// <summary>
+        /// 读取请求行
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="method"></param>
+        /// <param name="url"></param>
+        /// <param name="version"></param>
+        internal static void ReadHttpRequestLine(ref ReadOnlySpan<byte> data, out ReadOnlySpan<byte> method, out ReadOnlySpan<byte> url, out ReadOnlySpan<byte> version)
+        {
+            method = ReadSegmentData(ref data, SpaceSeparator);
+            if (method.IsEmpty)
+            {
+                throw new ArgumentException("not found “method” in data. Please check the raw data.");
+            }
+
+            url = ReadSegmentData(ref data, SpaceSeparator);
+            if (url.IsEmpty)
+            {
+                throw new ArgumentException("not found “url” in data. Please check the raw data.");
+            }
+
+            version = ReadSegmentData(ref data, NewLineSeparatorSpan);
+            if (version.IsEmpty)
+            {
+                throw new ArgumentException("not found “version” in data. Please check the raw data.");
+            }
+        }
+
+        /// <summary>
+        /// 加载header到指定<see cref="System.Net.Http.Headers.HttpHeaders"/>，并返回contentLength和contentType
+        /// <para/>
+        /// 当headers为空时不进行加载，但仍然会读取内容
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="headers"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        internal static (int contentLength, string contentType) LoadHeaders(ref ReadOnlySpan<byte> data, System.Net.Http.Headers.HttpHeaders headers, Encoding encoding)
+        {
+            var newLineSeparator = NewLineSeparatorSpan;
+            var contentLength = -1;
             var contentType = string.Empty;
+            encoding ??= Encoding.UTF8;
 
             while (data.Length > 0)
             {
-                var headerSpan = ReadSegmentData(ref data, newLineSplitChars);
+                var headerSpan = ReadSegmentData(ref data, newLineSeparator);
 
                 //连续两次换行 - Header结束
                 if (headerSpan.Length == 0)
@@ -90,15 +127,10 @@ namespace Cuture.Http
                         contentLength = int.Parse(GetHeaderValue(encoding, headerSpan));
                         continue;
                 }
-                request.Headers.TryAddWithoutValidation(key, GetHeaderValue(encoding, headerSpan));
+                headers?.TryAddWithoutValidation(key, GetHeaderValue(encoding, headerSpan));
             }
 
-            if (data.Length > 0)
-            {
-                request.WithContent(data, contentType, contentLength);
-            }
-
-            return request;
+            return (contentLength, contentType);
         }
     }
 }

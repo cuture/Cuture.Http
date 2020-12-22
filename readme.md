@@ -78,12 +78,23 @@ catch (Exception ex)
 ```
 
 ### 从原始数据构建请求(.net5 only now)
-使用从各种抓包工具中复制的原始数据，快速构建等价请求
+
+- 使用从各种抓包工具中复制的原始数据，快速构建等价请求
 ```C#
 var rawBase64Str = "R0VUIGh0dHA6Ly9kZXRlY3Rwb3J0YWwuZmlyZWZveC5jb20vc3VjY2Vzcy50eHQgSFRUUC8xLjENCkhvc3Q6IGRldGVjdHBvcnRhbC5maXJlZm94LmNvbQ0KVXNlci1BZ2VudDogTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NDsgcnY6ODQuMCkgR2Vja28vMjAxMDAxMDEgRmlyZWZveC84NC4wDQpBY2NlcHQ6ICovKg0KQWNjZXB0LUxhbmd1YWdlOiB6aC1DTix6aDtxPTAuOCx6aC1UVztxPTAuNyx6aC1ISztxPTAuNSxlbi1VUztxPTAuMyxlbjtxPTAuMg0KQWNjZXB0LUVuY29kaW5nOiBnemlwLCBkZWZsYXRlDQpDYWNoZS1Db250cm9sOiBuby1jYWNoZQ0KUHJhZ21hOiBuby1jYWNoZQ0KRE5UOiAxDQpDb25uZWN0aW9uOiBrZWVwLWFsaXZlDQoNCg==";
 var request = RequestBuildTool.FromRaw(rawBase64Str);
 //进行其他的一些请求设置等，覆盖原始的请求设置
 var result = await request.TryGetAsStringAsync();
+```
+
+- 仅从原始数据中加载指定部分
+```C#
+//仅读取请求头
+request.LoadHeadersFromRaw(rawBase64Str);
+//仅读取请求内容
+request.LoadContentFromRaw(rawBase64Str);
+//读取请求头和内容
+request.LoadHeadersAndContentFromRaw(rawBase64Str);
 ```
 
 ### 部分其它工具拓展示例
