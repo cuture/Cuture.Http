@@ -19,7 +19,9 @@ jobs:
     - name: restore dependencies
       run: dotnet restore
     - name: build
-      run: dotnet build --no-restore -c Release -o ./output
+      run: dotnet build --no-restore -c Release
+    - name: pack
+      run: dotnet pack -c Release -o ./output --no-build --include-symbols
     - name: push package
       shell: pwsh
       working-directory: ./output
