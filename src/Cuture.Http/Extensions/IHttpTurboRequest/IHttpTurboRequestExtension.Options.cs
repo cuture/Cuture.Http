@@ -100,19 +100,6 @@ namespace Cuture.Http
         #endregion Proxy
 
         /// <summary>
-        /// 允许自动重定向
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Obsolete("使用 AutoRedirection 替代此方法调用", true)]
-        public static IHttpTurboRequest AllowRedirection(this IHttpTurboRequest request)
-        {
-            request.AllowRedirection = true;
-            return request;
-        }
-
-        /// <summary>
         /// 设置是否允许自动重定向
         /// </summary>
         /// <param name="request"></param>
@@ -210,16 +197,6 @@ namespace Cuture.Http
         }
 
         /// <summary>
-        /// 使用指定的HttpClient
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="httpClient"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Obsolete("使用 UseClient 替代此方法调用", true)]
-        public static IHttpTurboRequest UseHttpClient(this IHttpTurboRequest request, HttpClient httpClient) => UseClient(request, httpClient);
-
-        /// <summary>
         /// 使用指定的Json序列化器
         /// </summary>
         /// <param name="request"></param>
@@ -231,16 +208,6 @@ namespace Cuture.Http
             request.RequestOptions.JsonSerializer = jsonSerializer;
             return request;
         }
-
-        /// <summary>
-        /// 使用指定的HttpTurboClient
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="turboClient"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Obsolete("使用 UseClient 替代此方法调用", true)]
-        public static IHttpTurboRequest UseTurboClient(this IHttpTurboRequest request, IHttpTurboClient turboClient) => UseClient(request, turboClient);
 
         /// <summary>
         /// 使用指定的TurboClientFactory
@@ -278,20 +245,6 @@ namespace Cuture.Http
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest WithCancellation(this IHttpTurboRequest request, CancellationToken token)
-        {
-            request.Token = token;
-            return request;
-        }
-
-        /// <summary>
-        /// 使用取消标记
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Obsolete("使用 WithCancellation 替代此方法调用", true)]
-        public static IHttpTurboRequest WithCancellationToken(this IHttpTurboRequest request, CancellationToken token)
         {
             request.Token = token;
             return request;

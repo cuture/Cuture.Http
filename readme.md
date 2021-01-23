@@ -1,9 +1,16 @@
 # Cuture.Http
 
+## Intro
 用于快速进行Http请求的链式拓展方法库。
-- 主要为针对`string`和`Uri`对象的拓展方法，及一些Http相关的工具;
-- 本质上是对`System.Net.Http.HttpClient`等的封装; 
-- 目标框架目前为`.Net5`/`.NetStandard2.0`;
+
+## Features
+- 主要为针对`string`和`Uri`对象的拓展方法，快速构建请求;
+- 包含对`System.Net.Http.HttpResponseMessage`的拓展方法，也可以配合原始`HttpClient`使用;
+- 连接复用，内部使用`System.Net.Http.HttpClient`进行请求; 
+- 使用链式的拓展方法可以配置请求的绝大多数信息;
+- Http相关的常用工具类及拓展方法;
+- 请求构建工具，直接使用原始请求数据（如从Fiddler中复制）复现请求；
+- 目标框架为`.NetStandard2.0+`可在`.NetFramework4.6.1+`下使用;
 
 ## 如何使用
 

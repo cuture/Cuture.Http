@@ -13,9 +13,9 @@ namespace Cuture.Http
         #region 字段
 
         /// <summary>
-        /// Chrome 85
+        /// Chrome 88
         /// </summary>
-        public const string Chrome = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36";
+        public const string Chrome = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36";
 
         /// <summary>
         /// Edge
@@ -23,14 +23,14 @@ namespace Cuture.Http
         public const string Edge = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.19041";
 
         /// <summary>
-        /// Edge on Chromium 85
+        /// Edge on Chromium 88
         /// </summary>
-        public const string EdgeChromium = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36 Edg/85.0.564.51";
+        public const string EdgeChromium = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36 Edg/88.0.705.50";
 
         /// <summary>
-        /// FireFox 80
+        /// FireFox 85
         /// </summary>
-        public const string FireFox = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0";
+        public const string FireFox = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/85.0";
 
         /// <summary>
         /// IE 11
@@ -233,7 +233,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string RandomFirefoxUserAgent()
         {
-            var version = s_random.Next(60, 85);
+            var version = s_random.Next(60, 87);
             return $"Mozilla/5.0 {RandomFirefoxPlatform(version)} Gecko/20100101 Firefox/{version}.0";
         }
 

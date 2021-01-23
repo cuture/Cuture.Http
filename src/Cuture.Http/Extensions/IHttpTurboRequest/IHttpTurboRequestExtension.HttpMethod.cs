@@ -102,20 +102,6 @@ namespace Cuture.Http
             return request;
         }
 
-        /// <summary>
-        /// 使用指定的Http动作
-        /// </summary>
-        /// <param name="request">请求</param>
-        /// <param name="httpMethod">Http动作</param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Obsolete("使用 UseVerb 替代此方法调用", true)]
-        public static IHttpTurboRequest WithVerb(this IHttpTurboRequest request, HttpMethod httpMethod)
-        {
-            request.Method = httpMethod;
-            return request;
-        }
-
         #endregion HttpMethod
     }
 }
