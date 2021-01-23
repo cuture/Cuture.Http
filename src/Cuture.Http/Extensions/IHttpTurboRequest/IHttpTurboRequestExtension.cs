@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 
 #if NETSTANDARD
 
@@ -37,7 +38,9 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static IHttpTurboClient InternalGetHttpTurboClient(IHttpTurboRequest request, HttpRequestOptions options)
         {
-            return options.TurboClient ?? options.TurboClientFactory?.GetTurboClient(request);
+            return options.TurboClient
+                        ?? options.TurboClientFactory?.GetTurboClient(request)
+                        ?? throw new ArgumentException($"HttpRequestOptions's {nameof(HttpRequestOptions.Client)}、{nameof(HttpRequestOptions.TurboClient)}、{nameof(HttpRequestOptions.TurboClientFactory)}、cannot both be null.");
         }
 
         #endregion 方法

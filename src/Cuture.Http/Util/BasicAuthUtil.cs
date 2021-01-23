@@ -26,7 +26,7 @@ namespace Cuture.Http.Util
         /// <param name="password"></param>
         /// <param name="encoding"></param>
         /// <returns></returns>
-        public static string Encode(string userName, string password, Encoding encoding = null) => $"{userName}:{password}".EncodeBase64(encoding ?? Encoding.UTF8);
+        public static string Encode(string userName, string password, Encoding? encoding = null) => $"{userName}:{password}".EncodeBase64(encoding ?? Encoding.UTF8);
 
         /// <summary>
         /// 编码为HttpHeader的值（附加Basic到字符串头部）
@@ -35,7 +35,7 @@ namespace Cuture.Http.Util
         /// <param name="password"></param>
         /// <param name="encoding"></param>
         /// <returns></returns>
-        public static string EncodeToHeader(string userName, string password, Encoding encoding = null) => $"Basic {Encode(userName, password, encoding)}";
+        public static string EncodeToHeader(string userName, string password, Encoding? encoding = null) => $"Basic {Encode(userName, password, encoding)}";
 
         /// <summary>
         /// 尝试解码BasicAuth的值
@@ -45,7 +45,7 @@ namespace Cuture.Http.Util
         /// <param name="password"></param>
         /// <param name="encoding"></param>
         /// <returns></returns>
-        public static bool TryDecode(string value, out string userName, out string password, Encoding encoding = null)
+        public static bool TryDecode(string value, out string? userName, out string? password, Encoding? encoding = null)
         {
             if (string.IsNullOrWhiteSpace(value))
             {

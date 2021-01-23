@@ -205,7 +205,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<JObject> GetAsJsonAsync(this IHttpTurboRequest request) => request.ExecuteAsync().ReceiveAsJsonAsync();
+        public static Task<JObject?> GetAsJsonAsync(this IHttpTurboRequest request) => request.ExecuteAsync().ReceiveAsJsonAsync();
 
         /// <summary>
         /// 执行请求并尝试以 json 接收返回数据，并解析为
@@ -230,7 +230,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<T> GetAsObjectAsync<T>(this IHttpTurboRequest request)
+        public static Task<T?> GetAsObjectAsync<T>(this IHttpTurboRequest request)
         {
             if (request.IsSetOptions
                 && request.RequestOptions.JsonSerializer != null)

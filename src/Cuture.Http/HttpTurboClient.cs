@@ -144,8 +144,8 @@ namespace Cuture.Http
         {
             if (request.AllowRedirection)
             {
-                Uri redirectUri;
-                HttpResponseMessage tmpResponse = null;
+                Uri? redirectUri;
+                HttpResponseMessage tmpResponse = null!;
                 var innerRequest = request.AsRequest();
 
                 for (int i = 0; i <= request.MaxAutomaticRedirections; i++)

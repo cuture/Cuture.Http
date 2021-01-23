@@ -170,12 +170,12 @@ namespace Cuture.Http
         /// <para/>
         /// <see cref="Client"/> > <see cref="TurboClient"/> > <see cref="TurboClientFactory"/>
         /// </summary>
-        public HttpClient Client { get; set; }
+        public HttpClient? Client { get; set; }
 
         /// <summary>
         /// Json序列化器
         /// </summary>
-        public IJsonSerializer JsonSerializer { get; set; }
+        public IJsonSerializer? JsonSerializer { get; set; }
 
         /// <summary>
         /// 用于请求的 <see cref="IHttpTurboClient"/>
@@ -186,7 +186,7 @@ namespace Cuture.Http
         /// <para/>
         /// <see cref="Client"/> > <see cref="TurboClient"/> > <see cref="TurboClientFactory"/>
         /// </summary>
-        public IHttpTurboClient TurboClient { get; set; }
+        public IHttpTurboClient? TurboClient { get; set; }
 
         /// <summary>
         /// 用于请求的 <see cref="IHttpTurboClientFactory"/>
@@ -197,7 +197,7 @@ namespace Cuture.Http
         /// <para/>
         /// <see cref="Client"/> > <see cref="TurboClient"/> > <see cref="TurboClientFactory"/>
         /// </summary>
-        public IHttpTurboClientFactory TurboClientFactory { get; set; }
+        public IHttpTurboClientFactory? TurboClientFactory { get; set; }
 
         #endregion Public 属性
 
@@ -207,7 +207,7 @@ namespace Cuture.Http
         /// 获取一份浅表复制
         /// </summary>
         /// <returns></returns>
-        public HttpRequestOptions Copy() => MemberwiseClone() as HttpRequestOptions;
+        public HttpRequestOptions Copy() => (MemberwiseClone() as HttpRequestOptions)!;
 
         #endregion Public 方法
     }

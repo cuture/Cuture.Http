@@ -115,7 +115,7 @@ namespace Cuture.Http
         /// <param name="requestTask"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<JObject> ReceiveAsJsonAsync(this Task<HttpResponseMessage> requestTask)
+        public static async Task<JObject?> ReceiveAsJsonAsync(this Task<HttpResponseMessage> requestTask)
         {
             using var response = await requestTask.ConfigureAwait(false);
             return await response.ReceiveAsJsonAsync().ConfigureAwait(false);
@@ -163,7 +163,7 @@ namespace Cuture.Http
         /// <param name="serializer"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<T> ReceiveAsObjectAsync<T>(this Task<HttpResponseMessage> requestTask, ISerializer<string> serializer = null)
+        public static async Task<T?> ReceiveAsObjectAsync<T>(this Task<HttpResponseMessage> requestTask, ISerializer<string>? serializer = null)
         {
             using var response = await requestTask.ConfigureAwait(false);
             return await response.ReceiveAsObjectAsync<T>(serializer ?? HttpRequestOptions.DefaultJsonSerializer).ConfigureAwait(false);
@@ -179,7 +179,7 @@ namespace Cuture.Http
         /// <param name="serializer"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<TextHttpOperationResult<T>> TryReceiveAsObjectAsync<T>(this Task<HttpResponseMessage> requestTask, ISerializer<string> serializer = null)
+        public static async Task<TextHttpOperationResult<T>> TryReceiveAsObjectAsync<T>(this Task<HttpResponseMessage> requestTask, ISerializer<string>? serializer = null)
         {
             var result = new TextHttpOperationResult<T>();
             try
@@ -541,7 +541,7 @@ namespace Cuture.Http
         /// <param name="response"></param>
         /// <param name="requestUri">请求的Uri</param>
         /// <returns></returns>
-        public static Uri GetUriForRedirect(this HttpResponseMessage response, Uri requestUri)
+        public static Uri? GetUriForRedirect(this HttpResponseMessage response, Uri requestUri)
         {
             switch (response.StatusCode)
             {
@@ -556,7 +556,7 @@ namespace Cuture.Http
                     return null;
             }
 
-            Uri location = response.Headers.Location;
+            Uri? location = response.Headers.Location;
             if (location == null)
             {
                 return null;
@@ -606,7 +606,7 @@ namespace Cuture.Http
         /// <param name="responseMessage"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<JObject> ReceiveAsJsonAsync(this HttpResponseMessage responseMessage)
+        public static async Task<JObject?> ReceiveAsJsonAsync(this HttpResponseMessage responseMessage)
         {
             using (responseMessage)
             {
@@ -627,7 +627,7 @@ namespace Cuture.Http
         /// <param name="serializer"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<T> ReceiveAsObjectAsync<T>(this HttpResponseMessage responseMessage, ISerializer<string> serializer = null)
+        public static async Task<T?> ReceiveAsObjectAsync<T>(this HttpResponseMessage responseMessage, ISerializer<string>? serializer = null)
         {
             using (responseMessage)
             {

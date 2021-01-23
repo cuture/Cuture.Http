@@ -95,7 +95,7 @@ namespace Cuture.Http
         /// <param name="headers"></param>
         /// <param name="encoding"></param>
         /// <returns></returns>
-        internal static (int contentLength, string contentType) LoadHeaders(ref ReadOnlySpan<byte> data, System.Net.Http.Headers.HttpHeaders headers, Encoding encoding)
+        internal static (int contentLength, string contentType) LoadHeaders(ref ReadOnlySpan<byte> data, System.Net.Http.Headers.HttpHeaders? headers, Encoding? encoding)
         {
             var newLineSeparator = NewLineSeparatorSpan;
             var contentLength = -1;

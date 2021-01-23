@@ -23,7 +23,7 @@ namespace Cuture.Http
         /// <summary>
         /// HttpContent
         /// </summary>
-        HttpContent Content { get; set; }
+        HttpContent? Content { get; set; }
 
         /// <summary>
         /// 禁用Proxy
@@ -58,7 +58,7 @@ namespace Cuture.Http
         /// <summary>
         /// Web代理
         /// </summary>
-        IWebProxy Proxy { get; set; }
+        IWebProxy? Proxy { get; set; }
 
         /// <summary>
         /// 请求的Uri

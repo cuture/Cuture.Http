@@ -19,12 +19,12 @@ namespace Cuture.Http
         /// <summary>
         /// 执行过程出现的异常
         /// </summary>
-        public Exception Exception { get; set; }
+        public Exception? Exception { get; set; }
 
         /// <summary>
         /// 原始响应信息
         /// </summary>
-        public HttpResponseMessage ResponseMessage { get; set; }
+        public HttpResponseMessage? ResponseMessage { get; set; }
 
         /// <summary>
         /// 获取一个值，该值指示 HTTP 请求是否成功
@@ -46,8 +46,12 @@ namespace Cuture.Http
         /// 获取请求返回头的 Set-Cookie 字符串内容
         /// </summary>
         /// <returns></returns>
-        public string GetCookie() => ResponseMessage.GetCookie();
+        public string GetCookie() => ResponseMessage?.GetCookie() ?? string.Empty;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
@@ -75,7 +79,7 @@ namespace Cuture.Http
         /// <summary>
         /// 内容
         /// </summary>
-        public T Data { get; set; }
+        public T? Data { get; set; }
 
         #endregion 属性
 
@@ -103,6 +107,10 @@ namespace Cuture.Http
 
         #region Protected 方法
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -127,7 +135,7 @@ namespace Cuture.Http
         /// <summary>
         /// 响应正文文本
         /// </summary>
-        public string Text { get; set; }
+        public string? Text { get; set; }
 
         #endregion 属性
 

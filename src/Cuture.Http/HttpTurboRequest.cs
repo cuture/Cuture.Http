@@ -11,11 +11,14 @@ namespace Cuture.Http
     /// <summary>
     /// http请求
     /// </summary>
+#pragma warning disable CS8766 // 返回类型中引用类型的为 Null 性与隐式实现的成员不匹配(可能是由于为 Null 性特性)。
+
     public class HttpTurboRequest : HttpRequestMessage, IHttpTurboRequest
+#pragma warning restore CS8766 // 返回类型中引用类型的为 Null 性与隐式实现的成员不匹配(可能是由于为 Null 性特性)。
     {
         #region Private 字段
 
-        private HttpRequestOptions _options;
+        private HttpRequestOptions? _options;
 
         #endregion Private 字段
 
@@ -45,7 +48,7 @@ namespace Cuture.Http
         /// <summary>
         /// Web代理
         /// </summary>
-        public IWebProxy Proxy { get; set; }
+        public IWebProxy? Proxy { get; set; }
 
         /// <summary>
         /// 请求选项

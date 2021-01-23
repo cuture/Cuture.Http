@@ -23,9 +23,9 @@ namespace Cuture.Http.Internal
             CreatedTime = createdTime;
         }
 
-        public int CompareTo(CreatedTimeTagedObject<T> other)
+        public int CompareTo(CreatedTimeTagedObject<T>? other)
         {
-            return CreatedTime.CompareTo(other.CreatedTime);
+            return CreatedTime.CompareTo(other?.CreatedTime);
         }
 
         #endregion Public 构造函数

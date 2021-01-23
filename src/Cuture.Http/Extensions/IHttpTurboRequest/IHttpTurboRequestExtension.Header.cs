@@ -46,8 +46,7 @@ namespace Cuture.Http
         /// 添加Header且不验证其内容
         /// </summary>
         /// <param name="request"></param>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
+        /// <param name="headers"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpTurboRequest AddHeadersWithoutValidation(this IHttpTurboRequest request, IEnumerable<KeyValuePair<string, string>> headers)

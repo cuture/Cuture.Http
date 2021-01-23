@@ -25,18 +25,17 @@ namespace Cuture.Http.Internal
 
         public SortedQueue() : this(null, null)
         {
-
         }
 
-        public SortedQueue(IComparer<T> comparer) : this(null, comparer)
+        public SortedQueue(IComparer<T>? comparer) : this(null, comparer)
         {
         }
 
-        public SortedQueue(IEnumerable<T> collection) : this(collection, null)
+        public SortedQueue(IEnumerable<T>? collection) : this(collection, null)
         {
         }
 
-        public SortedQueue(IEnumerable<T> collection, IComparer<T> comparer)
+        public SortedQueue(IEnumerable<T>? collection, IComparer<T>? comparer)
         {
             _set = collection is null
                     ? comparer is null
@@ -56,7 +55,7 @@ namespace Cuture.Http.Internal
             _set.Clear();
         }
 
-        public T Dequeue()
+        public T? Dequeue()
         {
             var result = _set.Min;
             if (result != null)
@@ -70,7 +69,7 @@ namespace Cuture.Http.Internal
 
         public IEnumerator<T> GetEnumerator() => _set.GetEnumerator();
 
-        public T Peek() => _set.Min;
+        public T? Peek() => _set.Min;
 
         IEnumerator IEnumerable.GetEnumerator() => _set.GetEnumerator();
 

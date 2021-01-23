@@ -33,31 +33,31 @@ namespace Cuture.Http
         /// <summary>
         /// client释放队列
         /// </summary>
-        private SortedQueue<CreatedTimeTagedObject<WeakReference<IHttpTurboClient>>> _clientReleaseQueue;
+        private SortedQueue<CreatedTimeTagedObject<WeakReference<IHttpTurboClient>>>? _clientReleaseQueue;
 
         /// <summary>
         /// HoldClient的集合
         /// </summary>
-        private HashSet<IHttpTurboClient> _holdedClients;
+        private HashSet<IHttpTurboClient>? _holdedClients;
 
         /// <summary>
         /// 是否已释放
         /// </summary>
         private bool _isDisposed;
 
-        private CancellationTokenSource _releaseTokenSource;
+        private CancellationTokenSource? _releaseTokenSource;
 
         #region Client
 
         /// <summary>
         /// 默认的 <see cref="IHttpTurboClient"/>
         /// </summary>
-        private WeakReference<IHttpTurboClient> _client = new WeakReference<IHttpTurboClient>(null);
+        private WeakReference<IHttpTurboClient> _client = new WeakReference<IHttpTurboClient>(null!);
 
         /// <summary>
         /// 禁用Proxy的 <see cref="IHttpTurboClient"/>
         /// </summary>
-        private WeakReference<IHttpTurboClient> _directlyClient = new WeakReference<IHttpTurboClient>(null);
+        private WeakReference<IHttpTurboClient> _directlyClient = new WeakReference<IHttpTurboClient>(null!);
 
         #endregion Client
 
@@ -124,10 +124,13 @@ namespace Cuture.Http
                 DisposeClients(proxyClients);
             }
 
-            lock (_clientReleaseQueue)
+            if (_clientReleaseQueue != null)
             {
-                _clientReleaseQueue.Clear();
-                _holdedClients.Clear();
+                lock (_clientReleaseQueue)
+                {
+                    _clientReleaseQueue.Clear();
+                    _holdedClients?.Clear();
+                }
             }
         }
 
@@ -136,6 +139,11 @@ namespace Cuture.Http
         /// </summary>
         public void Dispose()
         {
+            if (_isDisposed)
+            {
+                return;
+            }
+
             _isDisposed = true;
             _clientReleaseQueue = null;
             _holdedClients = null;
@@ -143,13 +151,13 @@ namespace Cuture.Http
             ReleaseWeakReferenceClient(_client);
             ReleaseWeakReferenceClient(_directlyClient);
 
-            _client = null;
-            _directlyClient = null;
+            _client = null!;
+            _directlyClient = null!;
 
             if (_proxyClients.IsValueCreated)
             {
                 var proxyClients = ProxyClients;
-                _proxyClients = null;
+                _proxyClients = null!;
 
                 DisposeClients(proxyClients.Values);
             }
@@ -166,7 +174,7 @@ namespace Cuture.Http
         {
             CheckDisposed();
 
-            IHttpTurboClient turboClient = null;
+            IHttpTurboClient turboClient;
 
             if (request.DisableProxy)
             {
@@ -217,7 +225,7 @@ namespace Cuture.Http
             {
                 Debug.WriteLine($"Dispose {nameof(IHttpTurboClient)}:{client.GetHashCode()}");
 
-                turboClientWR.SetTarget(null);
+                turboClientWR.SetTarget(null!);
                 client.Dispose();
             }
         }
@@ -250,7 +258,7 @@ namespace Cuture.Http
         private IHttpTurboClient GetClientInWeakReference(WeakReference<IHttpTurboClient> weakReference,
                                                           Func<IHttpTurboClient> createFunc)
         {
-            if (!weakReference.TryGetTarget(out IHttpTurboClient turboClient))
+            if (!weakReference.TryGetTarget(out IHttpTurboClient? turboClient))
             {
                 lock (weakReference)
                 {
@@ -282,15 +290,15 @@ namespace Cuture.Http
                                                                          ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> weakReferenceDictionary,
                                                                          Func<IWebProxy, IHttpTurboClient> createFunc)
         {
-            IHttpTurboClient client = null;
+            IHttpTurboClient client;
 
             //HACK 此处是否可能有问题?
-            var proxy = request.Proxy;
+            var proxy = request.Proxy!;
             int proxyHash = -1261813833;
 
             if (proxy is WebProxy webProxy)
             {
-                proxyHash = proxyHash * -1521134295 + webProxy.Address.OriginalString
+                proxyHash = proxyHash * -1521134295 + webProxy.Address!.OriginalString
 #if NET5_0
                                                         .GetHashCode(StringComparison.Ordinal);
 #else
@@ -323,16 +331,15 @@ namespace Cuture.Http
                 proxyHash = proxyHash * -1521134295 + credential.Password.GetHashCode();
                 proxyHash = proxyHash * -1521134295 + credential.Domain.GetHashCode();
 #endif
-
             }
 
-            if (!weakReferenceDictionary.TryGetValue(proxyHash, out WeakReference<IHttpTurboClient> clientWR))
+            if (!weakReferenceDictionary.TryGetValue(proxyHash, out WeakReference<IHttpTurboClient>? clientWR))
             {
                 lock (weakReferenceDictionary)
                 {
                     if (!weakReferenceDictionary.TryGetValue(proxyHash, out clientWR))
                     {
-                        clientWR = new WeakReference<IHttpTurboClient>(null);
+                        clientWR = new WeakReference<IHttpTurboClient>(null!);
                         client = GetClientInWeakReference(clientWR, () => createFunc(proxy));
 
                         Debug.WriteLine($"new HttpTurboClient:{client.GetHashCode()} ProxyHash:{proxyHash}");
@@ -364,9 +371,9 @@ namespace Cuture.Http
             {
                 if (clientWR.TryGetTarget(out var client))
                 {
-                    lock (_clientReleaseQueue)
+                    lock (_clientReleaseQueue!)
                     {
-                        _holdedClients.Add(client);
+                        _holdedClients!.Add(client);
                         _clientReleaseQueue.Enqueue(new CreatedTimeTagedObject<WeakReference<IHttpTurboClient>>(clientWR, DateTime.UtcNow));
                     }
                 }
@@ -388,22 +395,22 @@ namespace Cuture.Http
                 var token = tokenSource.Token;
                 while (!token.IsCancellationRequested)
                 {
-                    if (_clientReleaseQueue.Peek() is CreatedTimeTagedObject<WeakReference<IHttpTurboClient>> next)
+                    if (_clientReleaseQueue!.Peek() is CreatedTimeTagedObject<WeakReference<IHttpTurboClient>> next)
                     {
                         var now = DateTime.UtcNow;
-                        var expire = next.CreatedTime.Add(_holdTimeSpan.Value);
+                        var expire = next.CreatedTime.Add(_holdTimeSpan!.Value);
                         if (expire <= now)
                         {
                             lock (_clientReleaseQueue)
                             {
-                                next = _clientReleaseQueue.Dequeue();
+                                next = _clientReleaseQueue.Dequeue()!;
                             }
                             if (next != null
                                 && next.Data.TryGetTarget(out var client))
                             {
-                                _holdedClients.Remove(client);
+                                _holdedClients!.Remove(client);
                                 //释放引用，等待GC回收
-                                next.Data.SetTarget(null);
+                                next.Data.SetTarget(null!);
                             }
                         }
                         else
@@ -413,7 +420,7 @@ namespace Cuture.Http
                     }
                     else
                     {
-                        await Task.Delay(_holdTimeSpan.Value, token).ConfigureAwait(false);
+                        await Task.Delay(_holdTimeSpan!.Value, token).ConfigureAwait(false);
                     }
                 }
             }, tokenSource.Token);

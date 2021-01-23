@@ -15,8 +15,6 @@ namespace Cuture.Http
         /// 字符串转换为Http请求
         /// <br/>
         /// 框架有默认并发限制,可以通过设置
-        /// <see cref="HttpDefaultSetting.DefaultConnectionLimit"/>
-        /// 或者
         /// <see cref="ServicePointManager.DefaultConnectionLimit"/>
         /// 来放宽并发请求限制
         /// </summary>
@@ -29,8 +27,6 @@ namespace Cuture.Http
         /// 字符串转换为Http请求
         /// <br/>
         /// 框架有默认并发限制,可以通过设置
-        /// <see cref="HttpDefaultSetting.DefaultConnectionLimit"/>
-        /// 或者
         /// <see cref="ServicePointManager.DefaultConnectionLimit"/>
         /// 来放宽并发请求限制
         /// </summary>
@@ -44,8 +40,6 @@ namespace Cuture.Http
         /// Uri转换为Http请求
         /// <br/>
         /// 框架有默认并发限制,可以通过设置
-        /// <see cref="HttpDefaultSetting.DefaultConnectionLimit"/>
-        /// 或者
         /// <see cref="ServicePointManager.DefaultConnectionLimit"/>
         /// 来放宽并发请求限制
         /// </summary>
@@ -58,8 +52,6 @@ namespace Cuture.Http
         /// Uri转换为Http请求
         /// <br/>
         /// 框架有默认并发限制,可以通过设置
-        /// <see cref="HttpDefaultSetting.DefaultConnectionLimit"/>
-        /// 或者
         /// <see cref="ServicePointManager.DefaultConnectionLimit"/>
         /// 来放宽并发请求限制
         /// </summary>
