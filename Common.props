@@ -21,7 +21,7 @@
     <Authors>Stratos</Authors>
     <Company></Company>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/StratosBlue/Cuture.Http.git</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/cuture/Cuture.Http.git</PackageProjectUrl>
 
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
