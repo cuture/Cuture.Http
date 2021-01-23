@@ -125,7 +125,7 @@
     <value>wwwroot\icon.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Index" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\index.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
+    <value>Resources\index.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
   </data>
   <data name="RedirectEnd" xml:space="preserve">
     <value>重定向结束</value>
