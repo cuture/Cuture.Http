@@ -1,4 +1,4 @@
-﻿#if NET
+﻿#if NETCOREAPP
 
 using System;
 using System.Collections.Generic;

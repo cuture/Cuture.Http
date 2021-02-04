@@ -134,7 +134,7 @@ namespace Cuture.Http
             }
             return encoding.GetBytes(
                     data
-#if NET5_0
+#if NETCOREAPP
                         .Replace("%20", "+", StringComparison.Ordinal)
 #else
                         .Replace("%20", "+")

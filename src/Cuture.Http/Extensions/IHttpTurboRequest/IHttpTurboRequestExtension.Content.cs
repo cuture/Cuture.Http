@@ -12,7 +12,7 @@ namespace Cuture.Http
     {
         #region Content
 
-#if NET
+#if NETCOREAPP
         /// <summary>
         /// 使用指定数据作为Http请求的Content
         /// </summary>

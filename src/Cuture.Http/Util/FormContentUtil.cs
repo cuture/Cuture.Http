@@ -26,7 +26,7 @@ namespace Cuture.Http
                 return string.Empty;
             }
             return Uri.EscapeDataString(data)
-#if NET5_0
+#if NETCOREAPP
                 .Replace("%20", "+", StringComparison.Ordinal);
 #else
                 .Replace("%20", "+");

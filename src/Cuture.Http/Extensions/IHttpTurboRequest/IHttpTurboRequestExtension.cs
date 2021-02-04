@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-#if NETSTANDARD
+#if NETSTANDARD || NETCOREAPP3_1
 
 using System.Text;
 
@@ -16,7 +16,7 @@ namespace Cuture.Http
     {
         #region 构造函数
 
-#if NETSTANDARD
+#if NETSTANDARD || NETCOREAPP3_1
 
         static IHttpTurboRequestExtension()
         {

@@ -1,4 +1,4 @@
-﻿#if NET
+﻿#if NETCOREAPP
 
 using System.Threading.Tasks;
 

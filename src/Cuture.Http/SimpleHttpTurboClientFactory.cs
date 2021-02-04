@@ -299,7 +299,7 @@ namespace Cuture.Http
             if (proxy is WebProxy webProxy)
             {
                 proxyHash = proxyHash * -1521134295 + webProxy.Address!.OriginalString
-#if NET5_0
+#if NETCOREAPP
                                                         .GetHashCode(StringComparison.Ordinal);
 #else
                                                         .GetHashCode();
@@ -313,7 +313,7 @@ namespace Cuture.Http
                     return GetClientInWeakReference(_client, () => new HttpTurboClient());
                 }
                 proxyHash = proxyHash * -1521134295 + proxyUri.OriginalString
-#if NET5_0
+#if NETCOREAPP
                                                         .GetHashCode(StringComparison.Ordinal);
 #else
                                                         .GetHashCode();
@@ -322,7 +322,7 @@ namespace Cuture.Http
 
             if (proxy.Credentials?.GetCredential(request.RequestUri, string.Empty) is NetworkCredential credential)
             {
-#if NET5_0
+#if NETCOREAPP
                 proxyHash = proxyHash * -1521134295 + credential.UserName.GetHashCode(StringComparison.Ordinal);
                 proxyHash = proxyHash * -1521134295 + credential.Password.GetHashCode(StringComparison.Ordinal);
                 proxyHash = proxyHash * -1521134295 + credential.Domain.GetHashCode(StringComparison.Ordinal);
@@ -428,6 +428,6 @@ namespace Cuture.Http
             _releaseTokenSource = tokenSource;
         }
 
-        #endregion 方法
+#endregion 方法
     }
 }

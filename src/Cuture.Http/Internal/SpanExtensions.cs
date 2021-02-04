@@ -1,4 +1,4 @@
-﻿#if NET
+﻿#if NETCOREAPP
 
 namespace System
 {

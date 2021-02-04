@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json.Linq;
 
-#if NET5_0
+#if NETCOREAPP
 
 using System.Buffers;
 
@@ -240,8 +240,13 @@ namespace Cuture.Http
             using var response = await requestTask.ConfigureAwait(false);
 
             var contentLength = response.Content.Headers.ContentLength;
-#if NET5_0
-            using var stream = await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false);
+#if NETCOREAPP
+            using var stream =
+#if NET
+        await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false); 
+#else
+        await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#endif
             using var buffer = MemoryPool<byte>.Shared.Rent(bufferSize);
 
             var count = 0L;
@@ -325,8 +330,13 @@ namespace Cuture.Http
             using var response = await requestTask.ConfigureAwait(false);
 
             var contentLength = response.Content.Headers.ContentLength;
-#if NET5_0
-            using var stream = await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false);
+#if NETCOREAPP
+            using var stream =
+#if NET
+        await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false); 
+#else
+        await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#endif
             using var buffer = MemoryPool<byte>.Shared.Rent(bufferSize);
 
             var count = 0L;
@@ -445,8 +455,13 @@ namespace Cuture.Http
             using var response = await requestTask.ConfigureAwait(false);
 
             var contentLength = response.Content.Headers.ContentLength;
-#if NET5_0
-            using var stream = await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false);
+#if NETCOREAPP
+            using var stream =
+#if NET
+        await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false); 
+#else
+        await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#endif
             using var buffer = MemoryPool<byte>.Shared.Rent(bufferSize);
 
             var count = 0L;

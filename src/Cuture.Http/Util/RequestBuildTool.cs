@@ -1,4 +1,4 @@
-﻿#if NET
+﻿#if NETCOREAPP
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -124,7 +124,7 @@ namespace Cuture.Http
                         contentType = GetHeaderValue(encoding, headerSpan);
                         continue;
                     case HttpHeaderDefinitions.ContentLength:
-                        contentLength = int.Parse(GetHeaderValue(encoding, headerSpan));
+                        contentLength = int.Parse(GetHeaderValue(encoding, headerSpan), System.Globalization.CultureInfo.InvariantCulture);
                         continue;
                 }
                 headers?.TryAddWithoutValidation(key, GetHeaderValue(encoding, headerSpan));

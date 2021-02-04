@@ -55,7 +55,7 @@ namespace Cuture.Http.Util
             }
 
             var splitIndex =
-#if NET5_0
+#if NETCOREAPP
                 value.IndexOf(' ', StringComparison.Ordinal);
 #else
                 value.IndexOf(' ');
