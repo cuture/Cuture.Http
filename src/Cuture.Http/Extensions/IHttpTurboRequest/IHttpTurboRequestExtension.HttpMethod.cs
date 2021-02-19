@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 namespace Cuture.Http
 {
     /// <summary>
-    /// <see cref="IHttpTurboRequest"/> 请求拓展类
+    /// <see cref="IHttpRequest"/> 请求拓展类
     /// </summary>
     public static partial class IHttpTurboRequestExtension
     {
@@ -17,7 +17,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseDelete(this IHttpTurboRequest request)
+        public static IHttpRequest UseDelete(this IHttpRequest request)
         {
             request.Method = HttpMethod.Delete;
             return request;
@@ -29,7 +29,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseGet(this IHttpTurboRequest request)
+        public static IHttpRequest UseGet(this IHttpRequest request)
         {
             request.Method = HttpMethod.Get;
             return request;
@@ -41,7 +41,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UsePost(this IHttpTurboRequest request)
+        public static IHttpRequest UsePost(this IHttpRequest request)
         {
             request.Method = HttpMethod.Post;
             return request;
@@ -53,7 +53,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UsePut(this IHttpTurboRequest request)
+        public static IHttpRequest UsePut(this IHttpRequest request)
         {
             request.Method = HttpMethod.Put;
             return request;
@@ -68,7 +68,7 @@ namespace Cuture.Http
         /// <param name="httpMethod">Http动作</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseVerb(this IHttpTurboRequest request, string httpMethod)
+        public static IHttpRequest UseVerb(this IHttpRequest request, string httpMethod)
         {
             if (string.IsNullOrWhiteSpace(httpMethod))
             {
@@ -96,7 +96,7 @@ namespace Cuture.Http
         /// <param name="httpMethod">Http动作</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseVerb(this IHttpTurboRequest request, HttpMethod httpMethod)
+        public static IHttpRequest UseVerb(this IHttpRequest request, HttpMethod httpMethod)
         {
             request.Method = httpMethod;
             return request;

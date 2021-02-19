@@ -115,7 +115,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public async Task<HttpResponseMessage> ExecuteAsync(IHttpTurboRequest request) => await ExecuteAsync(request, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false);
+        public async Task<HttpResponseMessage> ExecuteAsync(IHttpRequest request) => await ExecuteAsync(request, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false);
 
         /// <summary>
         /// 执行请求
@@ -124,7 +124,7 @@ namespace Cuture.Http
         /// <param name="completionOption"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public async Task<HttpResponseMessage> ExecuteAsync(IHttpTurboRequest request, HttpCompletionOption completionOption)
+        public async Task<HttpResponseMessage> ExecuteAsync(IHttpRequest request, HttpCompletionOption completionOption)
         {
             if (request.Timeout.HasValue)
             {
@@ -140,7 +140,7 @@ namespace Cuture.Http
 
         #region Internal
 
-        private async Task<HttpResponseMessage> InternalExecuteAsync(IHttpTurboRequest request, HttpCompletionOption completionOption, CancellationToken token)
+        private async Task<HttpResponseMessage> InternalExecuteAsync(IHttpRequest request, HttpCompletionOption completionOption, CancellationToken token)
         {
             if (request.AllowRedirection)
             {

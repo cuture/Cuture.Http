@@ -6,7 +6,7 @@ using System.Text;
 namespace Cuture.Http
 {
     /// <summary>
-    /// <see cref="IHttpTurboRequest"/> 请求拓展类
+    /// <see cref="IHttpRequest"/> 请求拓展类
     /// </summary>
     public static partial class IHttpTurboRequestExtension
     {
@@ -21,7 +21,7 @@ namespace Cuture.Http
         /// <param name="contentType">Content-Type</param>
         /// <param name="contentLength">数据长度（如果小于0，则会使用data的全部数据作为Content）</param>
         /// <returns></returns>
-        public static IHttpTurboRequest WithContent(this IHttpTurboRequest request, in ReadOnlySpan<byte> data, string contentType, int contentLength = -1)
+        public static IHttpRequest WithContent(this IHttpRequest request, in ReadOnlySpan<byte> data, string contentType, int contentLength = -1)
         {
             if (string.IsNullOrWhiteSpace(contentType))
             {
@@ -50,7 +50,7 @@ namespace Cuture.Http
         /// <param name="httpContent"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest AddContent(this IHttpTurboRequest request, HttpContent httpContent)
+        public static IHttpRequest AddContent(this IHttpRequest request, HttpContent httpContent)
         {
             //HACK 处理httpContent为MultipartFormDataContent和MultipartContent时的情况
             switch (request.Content)
@@ -89,7 +89,7 @@ namespace Cuture.Http
         /// <param name="name"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest AddContent(this IHttpTurboRequest request, HttpContent httpContent, string name)
+        public static IHttpRequest AddContent(this IHttpRequest request, HttpContent httpContent, string name)
         {
             //HACK 处理httpContent为MultipartFormDataContent和MultipartContent时的情况
             switch (request.Content)
@@ -119,7 +119,7 @@ namespace Cuture.Http
         /// <param name="httpContent"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest WithContent(this IHttpTurboRequest request, HttpContent httpContent)
+        public static IHttpRequest WithContent(this IHttpRequest request, HttpContent httpContent)
         {
             request.Content?.Dispose();
             request.Content = httpContent;
@@ -134,7 +134,7 @@ namespace Cuture.Http
         /// <param name="content"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest WithFormContent(this IHttpTurboRequest request, string content)
+        public static IHttpRequest WithFormContent(this IHttpRequest request, string content)
         {
             request.Content?.Dispose();
             request.Content = new FormContent(content);
@@ -149,7 +149,7 @@ namespace Cuture.Http
         /// <param name="content"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest WithFormContent(this IHttpTurboRequest request, object content)
+        public static IHttpRequest WithFormContent(this IHttpRequest request, object content)
         {
             request.Content?.Dispose();
             request.Content = new FormContent(content);
@@ -164,7 +164,7 @@ namespace Cuture.Http
         /// <param name="content"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest WithJsonContent(this IHttpTurboRequest request, object content)
+        public static IHttpRequest WithJsonContent(this IHttpRequest request, object content)
         {
             request.Content?.Dispose();
             if (request.IsSetOptions
@@ -187,7 +187,7 @@ namespace Cuture.Http
         /// <param name="content"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest WithJsonContent(this IHttpTurboRequest request, string content)
+        public static IHttpRequest WithJsonContent(this IHttpRequest request, string content)
         {
             request.Content?.Dispose();
             request.Content = new JsonContent(content);

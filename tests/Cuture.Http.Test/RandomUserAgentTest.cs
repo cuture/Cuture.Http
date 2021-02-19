@@ -14,7 +14,7 @@ namespace Cuture.Http.Test
     {
         #region ·½·¨
 
-        public IHttpTurboRequest GetRequest() => $"{TestServer.TestHost}/api/customrequest/get".ToHttpRequest();
+        public IHttpRequest GetRequest() => $"{TestServer.TestHost}/api/customrequest/get".ToHttpRequest();
 
         public int GetRequestCount() => 10_000;
 
@@ -51,7 +51,7 @@ namespace Cuture.Http.Test
         }
 
         [TestMethod]
-        private async Task ParallelRequestAsync(Func<IHttpTurboRequest> getRequest, Func<string> getUserAgent)
+        private async Task ParallelRequestAsync(Func<IHttpRequest> getRequest, Func<string> getUserAgent)
         {
             var target = GetTargetResult();
 

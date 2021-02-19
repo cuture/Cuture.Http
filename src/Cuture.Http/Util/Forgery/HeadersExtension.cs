@@ -40,7 +40,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest RandomXFowardFor(this IHttpTurboRequest request)
+        public static IHttpRequest RandomXFowardFor(this IHttpRequest request)
         {
             request.AddHeader("X-Forwarded-For", GetRandomIpAddress());
             return request;

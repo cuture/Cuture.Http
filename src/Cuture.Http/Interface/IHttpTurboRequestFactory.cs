@@ -14,14 +14,14 @@ namespace Cuture.Http
         /// </summary>
         /// <param name="uri"></param>
         /// <returns></returns>
-        IHttpTurboRequest CreateRequest(Uri uri);
+        IHttpRequest CreateRequest(Uri uri);
 
         /// <summary>
         /// 创建请求
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        IHttpTurboRequest CreateRequest(string url);
+        IHttpRequest CreateRequest(string url);
 
         #endregion 方法
     }

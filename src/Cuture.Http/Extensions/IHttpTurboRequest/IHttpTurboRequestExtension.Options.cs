@@ -7,7 +7,7 @@ using System.Threading;
 namespace Cuture.Http
 {
     /// <summary>
-    /// <see cref="IHttpTurboRequest"/> 请求拓展类
+    /// <see cref="IHttpRequest"/> 请求拓展类
     /// </summary>
     public static partial class IHttpTurboRequestExtension
     {
@@ -17,13 +17,13 @@ namespace Cuture.Http
 
         /// <summary>
         /// 禁用系统代理
-        /// <para/>设置 <see cref="IHttpTurboRequest.DisableProxy"/> 为 true
+        /// <para/>设置 <see cref="IHttpRequest.DisableProxy"/> 为 true
         /// <para/>默认实现下, 将不使用任何代理进行请求
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest DisableProxy(this IHttpTurboRequest request)
+        public static IHttpRequest DisableProxy(this IHttpRequest request)
         {
             request.DisableProxy = true;
             request.Proxy = null;
@@ -32,12 +32,12 @@ namespace Cuture.Http
 
         /// <summary>
         /// 使用默认Web代理（理论上默认情况下就是这种状态）
-        /// <para/>设置 <see cref="IHttpTurboRequest.Proxy"/> 为 <see cref="WebRequest.DefaultWebProxy"/>
+        /// <para/>设置 <see cref="IHttpRequest.Proxy"/> 为 <see cref="WebRequest.DefaultWebProxy"/>
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseDefaultWebProxy(this IHttpTurboRequest request)
+        public static IHttpRequest UseDefaultWebProxy(this IHttpRequest request)
         {
             request.DisableProxy = false;
             request.Proxy = WebRequest.DefaultWebProxy;
@@ -51,7 +51,7 @@ namespace Cuture.Http
         /// <param name="webProxy"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseProxy(this IHttpTurboRequest request, IWebProxy webProxy)
+        public static IHttpRequest UseProxy(this IHttpRequest request, IWebProxy webProxy)
         {
             request.Proxy = webProxy;
             return request;
@@ -64,7 +64,7 @@ namespace Cuture.Http
         /// <param name="proxyAddress">代理地址</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseProxy(this IHttpTurboRequest request, string proxyAddress)
+        public static IHttpRequest UseProxy(this IHttpRequest request, string proxyAddress)
         {
             request.Proxy = string.IsNullOrEmpty(proxyAddress) ? null : new WebProxy(proxyAddress);
             return request;
@@ -77,7 +77,7 @@ namespace Cuture.Http
         /// <param name="proxyUri">代理地址</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseProxy(this IHttpTurboRequest request, Uri proxyUri)
+        public static IHttpRequest UseProxy(this IHttpRequest request, Uri proxyUri)
         {
             request.Proxy = proxyUri is null ? null : new WebProxy(proxyUri);
             return request;
@@ -85,12 +85,12 @@ namespace Cuture.Http
 
         /// <summary>
         /// 使用系统代理
-        /// <para/>设置 <see cref="IHttpTurboRequest.Proxy"/> 为 <see cref="WebRequest.GetSystemWebProxy()"/>
+        /// <para/>设置 <see cref="IHttpRequest.Proxy"/> 为 <see cref="WebRequest.GetSystemWebProxy()"/>
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseSystemProxy(this IHttpTurboRequest request)
+        public static IHttpRequest UseSystemProxy(this IHttpRequest request)
         {
             request.DisableProxy = false;
             request.Proxy = WebRequest.GetSystemWebProxy();
@@ -106,7 +106,7 @@ namespace Cuture.Http
         /// <param name="allowRedirection"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest AutoRedirection(this IHttpTurboRequest request, bool allowRedirection = true)
+        public static IHttpRequest AutoRedirection(this IHttpRequest request, bool allowRedirection = true)
         {
             request.AllowRedirection = allowRedirection;
             return request;
@@ -118,7 +118,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <param name="action"></param>
         /// <returns></returns>
-        public static IHttpTurboRequest Configure(this IHttpTurboRequest request, Action<IHttpTurboRequest> action)
+        public static IHttpRequest Configure(this IHttpRequest request, Action<IHttpRequest> action)
         {
             action.Invoke(request);
             return request;
@@ -131,7 +131,7 @@ namespace Cuture.Http
         /// <param name="maxAutomaticRedirections"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest MaxAutoRedirections(this IHttpTurboRequest request, int maxAutomaticRedirections)
+        public static IHttpRequest MaxAutoRedirections(this IHttpRequest request, int maxAutomaticRedirections)
         {
             request.MaxAutomaticRedirections = maxAutomaticRedirections;
             return request;
@@ -144,7 +144,7 @@ namespace Cuture.Http
         /// <param name="milliseconds"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest TimeOut(this IHttpTurboRequest request, int milliseconds)
+        public static IHttpRequest TimeOut(this IHttpRequest request, int milliseconds)
         {
             request.Timeout = milliseconds;
             return request;
@@ -157,7 +157,7 @@ namespace Cuture.Http
         /// <param name="timeout"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest TimeOut(this IHttpTurboRequest request, TimeSpan timeout)
+        public static IHttpRequest TimeOut(this IHttpRequest request, TimeSpan timeout)
         {
             long num = (long)timeout.TotalMilliseconds;
             if (num < -1 || num > int.MaxValue)
@@ -177,7 +177,7 @@ namespace Cuture.Http
         /// <param name="httpMessageInvoker"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseClient(this IHttpTurboRequest request, HttpMessageInvoker httpMessageInvoker)
+        public static IHttpRequest UseClient(this IHttpRequest request, HttpMessageInvoker httpMessageInvoker)
         {
             request.RequestOptions.MessageInvoker = httpMessageInvoker;
             return request;
@@ -190,7 +190,7 @@ namespace Cuture.Http
         /// <param name="client"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseClient(this IHttpTurboRequest request, IHttpTurboClient client)
+        public static IHttpRequest UseClient(this IHttpRequest request, IHttpTurboClient client)
         {
             request.RequestOptions.TurboClient = client;
             return request;
@@ -203,7 +203,7 @@ namespace Cuture.Http
         /// <param name="jsonSerializer"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseJsonSerializer(this IHttpTurboRequest request, IJsonSerializer jsonSerializer)
+        public static IHttpRequest UseJsonSerializer(this IHttpRequest request, IJsonSerializer jsonSerializer)
         {
             request.RequestOptions.JsonSerializer = jsonSerializer;
             return request;
@@ -216,7 +216,7 @@ namespace Cuture.Http
         /// <param name="turboClientFactory"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseTurboClientFactory(this IHttpTurboRequest request, IHttpTurboClientFactory turboClientFactory)
+        public static IHttpRequest UseTurboClientFactory(this IHttpRequest request, IHttpTurboClientFactory turboClientFactory)
         {
             request.RequestOptions.TurboClientFactory = turboClientFactory;
             return request;
@@ -229,7 +229,7 @@ namespace Cuture.Http
         /// <param name="options"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest WithOption(this IHttpTurboRequest request, HttpRequestOptions options)
+        public static IHttpRequest WithOption(this IHttpRequest request, HttpRequestOptions options)
         {
             request.RequestOptions = options;
             return request;
@@ -244,7 +244,7 @@ namespace Cuture.Http
         /// <param name="token"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest WithCancellation(this IHttpTurboRequest request, CancellationToken token)
+        public static IHttpRequest WithCancellation(this IHttpRequest request, CancellationToken token)
         {
             request.Token = token;
             return request;

@@ -69,7 +69,7 @@ namespace Cuture.Http.Test
         /// 获取请求
         /// </summary>
         /// <returns></returns>
-        private IHttpTurboRequest GetMultipartContentRequest()
+        private IHttpRequest GetMultipartContentRequest()
         {
             return _urlMultipartContent.ToHttpRequest()
                         .UseVerb("CUSTOM")
@@ -125,7 +125,7 @@ namespace Cuture.Http.Test
         /// 获取请求
         /// </summary>
         /// <returns></returns>
-        private IHttpTurboRequest GetMultipartFormDataContentRequest()
+        private IHttpRequest GetMultipartFormDataContentRequest()
         {
             return _urlMultipartFormDataContent.ToHttpRequest()
                         .UseVerb("CUSTOM")

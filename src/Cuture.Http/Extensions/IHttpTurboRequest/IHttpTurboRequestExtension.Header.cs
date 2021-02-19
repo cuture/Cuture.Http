@@ -6,7 +6,7 @@ using Cuture.Http.Util;
 namespace Cuture.Http
 {
     /// <summary>
-    /// <see cref="IHttpTurboRequest"/> 请求拓展类
+    /// <see cref="IHttpRequest"/> 请求拓展类
     /// </summary>
     public static partial class IHttpTurboRequestExtension
     {
@@ -20,7 +20,7 @@ namespace Cuture.Http
         /// <param name="value"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest AddHeader(this IHttpTurboRequest request, string key, string value)
+        public static IHttpRequest AddHeader(this IHttpRequest request, string key, string value)
         {
             request.AddHeader(key, value);
             return request;
@@ -33,7 +33,7 @@ namespace Cuture.Http
         /// <param name="headers"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest AddHeaders(this IHttpTurboRequest request, IEnumerable<KeyValuePair<string, string>> headers)
+        public static IHttpRequest AddHeaders(this IHttpRequest request, IEnumerable<KeyValuePair<string, string>> headers)
         {
             foreach (var header in headers)
             {
@@ -49,7 +49,7 @@ namespace Cuture.Http
         /// <param name="headers"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest AddHeadersWithoutValidation(this IHttpTurboRequest request, IEnumerable<KeyValuePair<string, string>> headers)
+        public static IHttpRequest AddHeadersWithoutValidation(this IHttpRequest request, IEnumerable<KeyValuePair<string, string>> headers)
         {
             foreach (var header in headers)
             {
@@ -66,7 +66,7 @@ namespace Cuture.Http
         /// <param name="value"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest AddHeaderWithoutValidation(this IHttpTurboRequest request, string key, string value)
+        public static IHttpRequest AddHeaderWithoutValidation(this IHttpRequest request, string key, string value)
         {
             request.Headers.TryAddWithoutValidation(key, value);
             return request;
@@ -80,7 +80,7 @@ namespace Cuture.Http
         /// <param name="value"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest AddNewHeader(this IHttpTurboRequest request, string key, string value)
+        public static IHttpRequest AddNewHeader(this IHttpRequest request, string key, string value)
         {
             request.RemoveHeader(key);
             request.AddHeader(key, value);
@@ -94,7 +94,7 @@ namespace Cuture.Http
         /// <param name="cookie"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseCookie(this IHttpTurboRequest request, string cookie)
+        public static IHttpRequest UseCookie(this IHttpRequest request, string cookie)
         {
             request.AddHeader(HttpHeaderDefinitions.Cookie, cookie);
             return request;
@@ -107,7 +107,7 @@ namespace Cuture.Http
         /// <param name="referer"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseReferer(this IHttpTurboRequest request, string referer)
+        public static IHttpRequest UseReferer(this IHttpRequest request, string referer)
         {
             request.AddHeader(HttpHeaderDefinitions.Referer, referer);
             return request;
@@ -120,7 +120,7 @@ namespace Cuture.Http
         /// <param name="userAgent"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseUserAgent(this IHttpTurboRequest request, string userAgent)
+        public static IHttpRequest UseUserAgent(this IHttpRequest request, string userAgent)
         {
             request.AddHeader(HttpHeaderDefinitions.UserAgent, userAgent);
             return request;
@@ -134,7 +134,7 @@ namespace Cuture.Http
         /// <param name="password"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest WithBasicAuth(this IHttpTurboRequest request, string userName, string password)
+        public static IHttpRequest WithBasicAuth(this IHttpRequest request, string userName, string password)
         {
             request.AddHeader(BasicAuthUtil.HttpHeader, BasicAuthUtil.EncodeToHeader(userName, password));
             return request;

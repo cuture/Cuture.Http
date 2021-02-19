@@ -18,7 +18,7 @@ namespace Cuture.Http
         /// <param name="rawBase64String"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest FromRaw(string rawBase64String) => FromRaw(Convert.FromBase64String(rawBase64String));
+        public static IHttpRequest FromRaw(string rawBase64String) => FromRaw(Convert.FromBase64String(rawBase64String));
 
         /// <summary>
         /// 从请求的原始数据构建请求
@@ -26,14 +26,14 @@ namespace Cuture.Http
         /// <param name="data"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest FromRaw(byte[] data) => FromRaw(data.AsSpan());
+        public static IHttpRequest FromRaw(byte[] data) => FromRaw(data.AsSpan());
 
         /// <summary>
         /// 从请求的原始数据构建请求
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static IHttpTurboRequest FromRaw(ReadOnlySpan<byte> data)
+        public static IHttpRequest FromRaw(ReadOnlySpan<byte> data)
         {
             if (data.Length > 5 * 1024 * 1024)
             {

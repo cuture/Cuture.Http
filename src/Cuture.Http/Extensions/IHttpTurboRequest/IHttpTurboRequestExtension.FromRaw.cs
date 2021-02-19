@@ -9,7 +9,7 @@ using static Cuture.Http.Internal.HttpRawDataReadTool;
 namespace Cuture.Http
 {
     /// <summary>
-    /// <see cref="IHttpTurboRequest"/> 请求拓展类
+    /// <see cref="IHttpRequest"/> 请求拓展类
     /// </summary>
     public static partial class IHttpTurboRequestExtension
     {
@@ -30,7 +30,7 @@ namespace Cuture.Http
         /// <param name="rawBase64String"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest LoadHeadersFromRaw(this IHttpTurboRequest request, string rawBase64String) => request.LoadHeadersFromRaw(Convert.FromBase64String(rawBase64String));
+        public static IHttpRequest LoadHeadersFromRaw(this IHttpRequest request, string rawBase64String) => request.LoadHeadersFromRaw(Convert.FromBase64String(rawBase64String));
 
         /// <summary>
         /// 从原始的请求数据中加载Header到请求
@@ -45,7 +45,7 @@ namespace Cuture.Http
         /// <param name="rawData"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest LoadHeadersFromRaw(this IHttpTurboRequest request, byte[] rawData) => request.LoadHeadersFromRaw(rawData.AsSpan());
+        public static IHttpRequest LoadHeadersFromRaw(this IHttpRequest request, byte[] rawData) => request.LoadHeadersFromRaw(rawData.AsSpan());
 
         /// <summary>
         /// 从原始的请求数据中加载Header到请求
@@ -60,7 +60,7 @@ namespace Cuture.Http
         /// <param name="rawData"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest LoadHeadersFromRaw(this IHttpTurboRequest request, in ReadOnlySpan<byte> rawData)
+        public static IHttpRequest LoadHeadersFromRaw(this IHttpRequest request, in ReadOnlySpan<byte> rawData)
         {
             var data = rawData.TruncationStart(NewLineSeparator.AsSpan());
             request.LoadHeaders(ref data, Encoding.UTF8);
@@ -78,7 +78,7 @@ namespace Cuture.Http
         /// <param name="rawBase64String"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest LoadContentFromRaw(this IHttpTurboRequest request, string rawBase64String) => request.LoadContentFromRaw(Convert.FromBase64String(rawBase64String));
+        public static IHttpRequest LoadContentFromRaw(this IHttpRequest request, string rawBase64String) => request.LoadContentFromRaw(Convert.FromBase64String(rawBase64String));
 
         /// <summary>
         /// 从原始的请求数据中加载Content到请求
@@ -87,7 +87,7 @@ namespace Cuture.Http
         /// <param name="rawData"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest LoadContentFromRaw(this IHttpTurboRequest request, byte[] rawData) => request.LoadContentFromRaw(rawData.AsSpan());
+        public static IHttpRequest LoadContentFromRaw(this IHttpRequest request, byte[] rawData) => request.LoadContentFromRaw(rawData.AsSpan());
 
         /// <summary>
         /// 从原始的请求数据中加载Content到请求
@@ -96,7 +96,7 @@ namespace Cuture.Http
         /// <param name="rawData"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest LoadContentFromRaw(this IHttpTurboRequest request, in ReadOnlySpan<byte> rawData)
+        public static IHttpRequest LoadContentFromRaw(this IHttpRequest request, in ReadOnlySpan<byte> rawData)
         {
             var data = rawData.TruncationStart(NewLineSeparator.AsSpan());
             var (contentLength, contentType) = RequestBuildTool.LoadHeaders(ref data, null, Encoding.UTF8);
@@ -123,7 +123,7 @@ namespace Cuture.Http
         /// <param name="rawBase64String"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest LoadHeadersAndContentFromRaw(this IHttpTurboRequest request, string rawBase64String) => request.LoadHeadersAndContentFromRaw(Convert.FromBase64String(rawBase64String));
+        public static IHttpRequest LoadHeadersAndContentFromRaw(this IHttpRequest request, string rawBase64String) => request.LoadHeadersAndContentFromRaw(Convert.FromBase64String(rawBase64String));
 
         /// <summary>
         /// 从原始的请求数据中加载Header和Content到请求
@@ -138,7 +138,7 @@ namespace Cuture.Http
         /// <param name="rawData"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest LoadHeadersAndContentFromRaw(this IHttpTurboRequest request, byte[] rawData) => request.LoadHeadersAndContentFromRaw(rawData.AsSpan());
+        public static IHttpRequest LoadHeadersAndContentFromRaw(this IHttpRequest request, byte[] rawData) => request.LoadHeadersAndContentFromRaw(rawData.AsSpan());
 
         /// <summary>
         /// 从原始的请求数据中加载Header和Content到请求
@@ -153,7 +153,7 @@ namespace Cuture.Http
         /// <param name="rawData"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest LoadHeadersAndContentFromRaw(this IHttpTurboRequest request, in ReadOnlySpan<byte> rawData)
+        public static IHttpRequest LoadHeadersAndContentFromRaw(this IHttpRequest request, in ReadOnlySpan<byte> rawData)
         {
             var data = rawData.TruncationStart(NewLineSeparator.AsSpan());
             var (contentLength, contentType) = request.LoadHeaders(ref data, Encoding.UTF8);
@@ -175,7 +175,7 @@ namespace Cuture.Http
         /// <param name="encoding"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static (int contentLength, string contentType) LoadHeaders(this IHttpTurboRequest request, ref ReadOnlySpan<byte> data, Encoding? encoding = null) => RequestBuildTool.LoadHeaders(ref data, request.Headers, encoding);
+        internal static (int contentLength, string contentType) LoadHeaders(this IHttpRequest request, ref ReadOnlySpan<byte> data, Encoding? encoding = null) => RequestBuildTool.LoadHeaders(ref data, request.Headers, encoding);
 
         #endregion Internal
 

@@ -41,7 +41,7 @@ namespace Cuture.Http.Test
         /// ªÒ»°«Î«Û
         /// </summary>
         /// <returns></returns>
-        public IHttpTurboRequest GetRequest() => _url.ToHttpRequest().UseGet().AddHeader("Cache-Control", "no-cache");
+        public IHttpRequest GetRequest() => _url.ToHttpRequest().UseGet().AddHeader("Cache-Control", "no-cache");
 
         [TestMethod]
         public async Task ParallelRequestTestAsync()

@@ -19,7 +19,7 @@ namespace Cuture.Http.Test
     {
         #region 方法
 
-        public IHttpTurboRequest GetRequest() => $"{TestServer.TestHost}/api/user/update".ToHttpRequest().UsePost();
+        public IHttpRequest GetRequest() => $"{TestServer.TestHost}/api/user/update".ToHttpRequest().UsePost();
 
         [TestMethod]
         public async Task ParallelRequestTestAsync()
@@ -58,7 +58,7 @@ namespace Cuture.Http.Test
                                        () => GetCallbackRequest().UseJsonSerializer(jsonSerializer).WithJsonContent(user).TryGetAsObjectAsync<UserInfo>(),
                                        result => Assert.IsTrue(user.Equals(result.Data)));
 
-            static IHttpTurboRequest GetCallbackRequest()
+            static IHttpRequest GetCallbackRequest()
             {
                 return $"{TestServer.TestHost}/api/user/update/callback".ToHttpRequest().UsePost();
             }

@@ -16,7 +16,7 @@ namespace Cuture.Http
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        Task<HttpResponseMessage> ExecuteAsync(IHttpTurboRequest request);
+        Task<HttpResponseMessage> ExecuteAsync(IHttpRequest request);
 
         /// <summary>
         /// 执行请求
@@ -24,7 +24,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <param name="completionOption"></param>
         /// <returns></returns>
-        Task<HttpResponseMessage> ExecuteAsync(IHttpTurboRequest request, HttpCompletionOption completionOption);
+        Task<HttpResponseMessage> ExecuteAsync(IHttpRequest request, HttpCompletionOption completionOption);
 
         #endregion 方法
     }

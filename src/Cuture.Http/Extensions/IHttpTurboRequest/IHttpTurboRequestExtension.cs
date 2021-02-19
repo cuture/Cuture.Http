@@ -10,7 +10,7 @@ using System.Text;
 namespace Cuture.Http
 {
     /// <summary>
-    /// <see cref="IHttpTurboRequest"/> 请求拓展类
+    /// <see cref="IHttpRequest"/> 请求拓展类
     /// </summary>
     public static partial class IHttpTurboRequestExtension
     {
@@ -36,7 +36,7 @@ namespace Cuture.Http
         /// <param name="options"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static IHttpTurboClient InternalGetHttpTurboClient(IHttpTurboRequest request, HttpRequestOptions options)
+        private static IHttpTurboClient InternalGetHttpTurboClient(IHttpRequest request, HttpRequestOptions options)
         {
             return options.TurboClient
                         ?? options.TurboClientFactory?.GetTurboClient(request)

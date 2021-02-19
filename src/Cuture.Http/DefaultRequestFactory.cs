@@ -14,14 +14,14 @@ namespace Cuture.Http
         /// </summary>
         /// <param name="uri"></param>
         /// <returns></returns>
-        public IHttpTurboRequest CreateRequest(Uri uri) => new HttpTurboRequest(uri);
+        public IHttpRequest CreateRequest(Uri uri) => new HttpTurboRequest(uri);
 
         /// <summary>
         /// 创建请求
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public IHttpTurboRequest CreateRequest(string url) => new HttpTurboRequest(url);
+        public IHttpRequest CreateRequest(string url) => new HttpTurboRequest(url);
 
         /// <summary>
         ///

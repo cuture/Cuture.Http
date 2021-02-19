@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Cuture.Http
@@ -11,7 +10,7 @@ namespace Cuture.Http
     /// <summary>
     /// http请求
     /// </summary>
-    public interface IHttpTurboRequest
+    public interface IHttpRequest
     {
         #region 属性
 
@@ -84,29 +83,25 @@ namespace Cuture.Http
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        IHttpTurboRequest AddHeader(string key, string value);
+        IHttpRequest AddHeader(string key, string value);
 
         /// <summary>
         /// 添加Header
         /// </summary>
         /// <param name="key"></param>
         /// <param name="values"></param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        IHttpTurboRequest AddHeader(string key, IEnumerable<string> values);
+        IHttpRequest AddHeader(string key, IEnumerable<string> values);
 
         /// <summary>
         /// 获取 <see cref="HttpRequestMessage"/>
         /// </summary>
         /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         HttpRequestMessage AsRequest();
 
         /// <summary>
         /// 移除Header
         /// </summary>
         /// <param name="key"></param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void RemoveHeader(string key);
 
         #endregion 方法

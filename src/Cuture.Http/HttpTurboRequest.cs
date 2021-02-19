@@ -13,7 +13,7 @@ namespace Cuture.Http
     /// </summary>
 #pragma warning disable CS8766 // 返回类型中引用类型的为 Null 性与隐式实现的成员不匹配(可能是由于为 Null 性特性)。
 
-    public class HttpTurboRequest : HttpRequestMessage, IHttpTurboRequest
+    public class HttpTurboRequest : HttpRequestMessage, IHttpRequest
 #pragma warning restore CS8766 // 返回类型中引用类型的为 Null 性与隐式实现的成员不匹配(可能是由于为 Null 性特性)。
     {
         #region Private 字段
@@ -115,7 +115,7 @@ namespace Cuture.Http
         /// <param name="key"></param>
         /// <param name="value"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IHttpTurboRequest AddHeader(string key, string value)
+        public IHttpRequest AddHeader(string key, string value)
         {
             if (string.IsNullOrEmpty(key))
             {
@@ -139,7 +139,7 @@ namespace Cuture.Http
         /// <param name="key"></param>
         /// <param name="values"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IHttpTurboRequest AddHeader(string key, IEnumerable<string> values)
+        public IHttpRequest AddHeader(string key, IEnumerable<string> values)
         {
             if (string.IsNullOrEmpty(key))
             {

@@ -19,7 +19,7 @@ namespace Cuture.Http
         /// </summary>
         /// <param name="request">请求</param>
         /// <returns></returns>
-        IHttpTurboClient GetTurboClient(IHttpTurboRequest request);
+        IHttpTurboClient GetTurboClient(IHttpRequest request);
 
         #endregion 方法
     }

@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace Cuture.Http
 {
     /// <summary>
-    /// <see cref="IHttpTurboRequest"/> 请求拓展类
+    /// <see cref="IHttpRequest"/> 请求拓展类
     /// </summary>
     public static partial class IHttpTurboRequestExtension
     {
@@ -24,7 +24,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<HttpResponseMessage> ExecuteAsync(this IHttpTurboRequest request)
+        public static Task<HttpResponseMessage> ExecuteAsync(this IHttpRequest request)
         {
             if (request.IsSetOptions)
             {
@@ -53,7 +53,7 @@ namespace Cuture.Http
         /// <param name="content"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<HttpResponseMessage> PostJsonAsync(this IHttpTurboRequest request, object content)
+        public static Task<HttpResponseMessage> PostJsonAsync(this IHttpRequest request, object content)
         {
             if (request.IsSetOptions
                 && request.RequestOptions.JsonSerializer != null)
@@ -79,7 +79,7 @@ namespace Cuture.Http
         /// <param name="json"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<HttpResponseMessage> PostJsonAsync(this IHttpTurboRequest request, string json)
+        public static Task<HttpResponseMessage> PostJsonAsync(this IHttpRequest request, string json)
         {
             request.Content = new JsonContent(json);
             request.Method = HttpMethod.Post;
@@ -99,7 +99,7 @@ namespace Cuture.Http
         /// <param name="content"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<HttpResponseMessage> PostFormAsync(this IHttpTurboRequest request, object content)
+        public static Task<HttpResponseMessage> PostFormAsync(this IHttpRequest request, object content)
         {
             request.Content = new FormContent(content);
             request.Method = HttpMethod.Post;
@@ -115,7 +115,7 @@ namespace Cuture.Http
         /// <param name="content"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<HttpResponseMessage> PostFormAsync(this IHttpTurboRequest request, string content)
+        public static Task<HttpResponseMessage> PostFormAsync(this IHttpRequest request, string content)
         {
             request.Content = new FormContent(content);
             request.Method = HttpMethod.Post;
@@ -136,7 +136,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<byte[]> GetAsBytesAsync(this IHttpTurboRequest request) => request.ExecuteAsync().ReceiveAsBytesAsync();
+        public static Task<byte[]> GetAsBytesAsync(this IHttpRequest request) => request.ExecuteAsync().ReceiveAsBytesAsync();
 
         /// <summary>
         /// 执行请求并尝试以
@@ -146,7 +146,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<HttpOperationResult<byte[]>> TryGetAsBytesAsync(this IHttpTurboRequest request) => request.ExecuteAsync().TryReceiveAsBytesAsync();
+        public static Task<HttpOperationResult<byte[]>> TryGetAsBytesAsync(this IHttpRequest request) => request.ExecuteAsync().TryReceiveAsBytesAsync();
 
         #endregion bytes
 
@@ -160,7 +160,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<string> GetAsStringAsync(this IHttpTurboRequest request) => request.ExecuteAsync().ReceiveAsStringAsync();
+        public static Task<string> GetAsStringAsync(this IHttpRequest request) => request.ExecuteAsync().ReceiveAsStringAsync();
 
         /// <summary>
         /// 执行请求并尝试以
@@ -170,7 +170,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<HttpOperationResult<string>> TryGetAsStringAsync(this IHttpTurboRequest request) => request.ExecuteAsync().TryReceiveAsStringAsync();
+        public static Task<HttpOperationResult<string>> TryGetAsStringAsync(this IHttpRequest request) => request.ExecuteAsync().TryReceiveAsStringAsync();
 
         #endregion String
 
@@ -184,7 +184,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<JObject?> GetAsJsonAsync(this IHttpTurboRequest request) => request.ExecuteAsync().ReceiveAsJsonAsync();
+        public static Task<JObject?> GetAsJsonAsync(this IHttpRequest request) => request.ExecuteAsync().ReceiveAsJsonAsync();
 
         /// <summary>
         /// 执行请求并尝试以 json 接收返回数据，并解析为
@@ -194,7 +194,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<TextHttpOperationResult<JObject>> TryGetAsJsonAsync(this IHttpTurboRequest request) => request.ExecuteAsync().TryReceiveAsJsonAsync();
+        public static Task<TextHttpOperationResult<JObject>> TryGetAsJsonAsync(this IHttpRequest request) => request.ExecuteAsync().TryReceiveAsJsonAsync();
 
         #endregion json an JsonObject
 
@@ -209,7 +209,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<T?> GetAsObjectAsync<T>(this IHttpTurboRequest request)
+        public static Task<T?> GetAsObjectAsync<T>(this IHttpRequest request)
         {
             if (request.IsSetOptions
                 && request.RequestOptions.JsonSerializer != null)
@@ -231,7 +231,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<TextHttpOperationResult<T>> TryGetAsObjectAsync<T>(this IHttpTurboRequest request)
+        public static Task<TextHttpOperationResult<T>> TryGetAsObjectAsync<T>(this IHttpRequest request)
         {
             if (request.IsSetOptions
                 && request.RequestOptions.JsonSerializer != null)
@@ -260,7 +260,7 @@ namespace Cuture.Http
         /// <param name="targetStream"></param>
         /// <param name="bufferSize"></param>
         /// <returns></returns>
-        public static Task DownloadToStreamAsync(this IHttpTurboRequest request, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
+        public static Task DownloadToStreamAsync(this IHttpRequest request, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
         {
             throw new NotImplementedException("Execute with HttpCompletionOption.ResponseHeadersRead");
             return request.ExecuteAsync().DownloadToStreamAsync(targetStream, request.Token, bufferSize);
@@ -279,7 +279,7 @@ namespace Cuture.Http
         /// <param name="targetStream"></param>
         /// <param name="bufferSize"></param>
         /// <returns></returns>
-        public static Task DownloadToStreamWithProgressAsync(this IHttpTurboRequest request, Func<long?, long, Task> progressCallback, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
+        public static Task DownloadToStreamWithProgressAsync(this IHttpRequest request, Func<long?, long, Task> progressCallback, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
         {
             throw new NotImplementedException("Execute with HttpCompletionOption.ResponseHeadersRead");
             return request.ExecuteAsync().DownloadToStreamWithProgressAsync(targetStream, progressCallback, request.Token, bufferSize);
@@ -298,7 +298,7 @@ namespace Cuture.Http
         /// <param name="targetStream"></param>
         /// <param name="bufferSize"></param>
         /// <returns></returns>
-        public static Task DownloadToStreamWithProgressAsync(this IHttpTurboRequest request, Action<long?, long> progressCallback, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
+        public static Task DownloadToStreamWithProgressAsync(this IHttpRequest request, Action<long?, long> progressCallback, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
         {
             throw new NotImplementedException("Execute with HttpCompletionOption.ResponseHeadersRead");
             return request.ExecuteAsync().DownloadToStreamWithProgressAsync(targetStream, progressCallback, request.Token, bufferSize);
@@ -314,7 +314,7 @@ namespace Cuture.Http
         /// <param name="progressCallback"></param>
         /// <param name="bufferSize"></param>
         /// <returns></returns>
-        public static Task<byte[]> DownloadWithProgressAsync(this IHttpTurboRequest request, Func<long?, long, Task> progressCallback, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
+        public static Task<byte[]> DownloadWithProgressAsync(this IHttpRequest request, Func<long?, long, Task> progressCallback, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
         {
             throw new NotImplementedException("Execute with HttpCompletionOption.ResponseHeadersRead");
             return request.ExecuteAsync().DownloadWithProgressAsync(progressCallback, request.Token, bufferSize);
@@ -330,7 +330,7 @@ namespace Cuture.Http
         /// <param name="progressCallback"></param>
         /// <param name="bufferSize"></param>
         /// <returns></returns>
-        public static Task<byte[]> DownloadWithProgressAsync(this IHttpTurboRequest request, Action<long?, long> progressCallback, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
+        public static Task<byte[]> DownloadWithProgressAsync(this IHttpRequest request, Action<long?, long> progressCallback, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
         {
             throw new NotImplementedException("Execute with HttpCompletionOption.ResponseHeadersRead");
             return request.ExecuteAsync().DownloadWithProgressAsync(progressCallback, request.Token, bufferSize);

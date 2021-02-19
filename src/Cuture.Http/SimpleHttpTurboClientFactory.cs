@@ -170,7 +170,7 @@ namespace Cuture.Http
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public IHttpTurboClient GetTurboClient(IHttpTurboRequest request)
+        public IHttpTurboClient GetTurboClient(IHttpRequest request)
         {
             CheckDisposed();
 
@@ -286,7 +286,7 @@ namespace Cuture.Http
         /// <param name="weakReferenceDictionary"></param>
         /// <param name="createFunc"></param>
         /// <returns></returns>
-        private IHttpTurboClient GetProxyClientInWeakReferenceDictionary(IHttpTurboRequest request,
+        private IHttpTurboClient GetProxyClientInWeakReferenceDictionary(IHttpRequest request,
                                                                          ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> weakReferenceDictionary,
                                                                          Func<IWebProxy, IHttpTurboClient> createFunc)
         {
