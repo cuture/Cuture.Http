@@ -1,65 +1,89 @@
 ﻿using System;
-using System.Net;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 
 namespace Cuture.Http
 {
-    /// <summary>
-    /// <see cref="IHttpTurboRequest"/> 请求拓展类
-    /// </summary>
+    //此文件主要包含请求创建的拓展方法
+
     public static partial class IHttpTurboRequestExtension
     {
         #region Creation
 
-        /// <summary>
-        /// 字符串转换为Http请求
-        /// <br/>
-        /// 框架有默认并发限制,可以通过设置
-        /// <see cref="ServicePointManager.DefaultConnectionLimit"/>
-        /// 来放宽并发请求限制
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
+        #region Obslate
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest ToHttpRequest(this string url) => ToHttpRequest(url, HttpRequestOptions.DefaultTurboRequestFactory);
+        [Obsolete("使用 CreateHttpRequest 方法替代")]
+        public static IHttpTurboRequest ToHttpRequest(this string requestUri) => ToHttpRequest(requestUri, HttpRequestOptions.DefaultTurboRequestFactory);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("使用 CreateHttpRequest 方法替代")]
+        public static IHttpTurboRequest ToHttpRequest(this string requestUri, IHttpTurboRequestFactory factory) => factory.CreateRequest(requestUri);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("使用 CreateHttpRequest 方法替代")]
+        public static IHttpTurboRequest ToHttpRequest(this Uri requestUri) => ToHttpRequest(requestUri, HttpRequestOptions.DefaultTurboRequestFactory);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("使用 CreateHttpRequest 方法替代")]
+        public static IHttpTurboRequest ToHttpRequest(this Uri requestUri, IHttpTurboRequestFactory factory) => factory.CreateRequest(requestUri);
+
+        #endregion Obslate
+
+        #region for string
+
+        /// <inheritdoc cref="CreateHttpRequest(string, IHttpTurboRequestFactory)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest CreateHttpRequest(this string requestUri) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultTurboRequestFactory);
+
+        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpTurboRequestFactory)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest CreateHttpRequest(this string requestUri, IHttpTurboRequestFactory factory) => factory.CreateRequest(requestUri);
+
+        #endregion for string
+
+        #region for Uri
+
+        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpTurboRequestFactory)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest CreateHttpRequest(this Uri requestUri) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultTurboRequestFactory);
 
         /// <summary>
-        /// 字符串转换为Http请求
-        /// <br/>
-        /// 框架有默认并发限制,可以通过设置
-        /// <see cref="ServicePointManager.DefaultConnectionLimit"/>
-        /// 来放宽并发请求限制
+        /// 创建Http请求
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="factory"></param>
+        /// <param name="requestUri">请求的URI</param>
+        /// <param name="factory">请求创建器</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest ToHttpRequest(this string url, IHttpTurboRequestFactory factory) => factory.CreateRequest(url);
+        public static IHttpTurboRequest CreateHttpRequest(this Uri requestUri, IHttpTurboRequestFactory factory) => factory.CreateRequest(requestUri);
+
+        #endregion for Uri
+
+        #region for httpMessageInvoker
+
+        /// <inheritdoc cref="CreateRequest(HttpMessageInvoker, Uri, IHttpTurboRequestFactory)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, string requestUri) => CreateRequest(httpMessageInvoker, requestUri, HttpRequestOptions.DefaultTurboRequestFactory);
+
+        /// <inheritdoc cref="CreateRequest(HttpMessageInvoker, Uri, IHttpTurboRequestFactory)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, string requestUri, IHttpTurboRequestFactory factory) => httpMessageInvoker.CreateRequest(new Uri(requestUri, UriKind.RelativeOrAbsolute), factory);
+
+        /// <inheritdoc cref="CreateRequest(HttpMessageInvoker, Uri, IHttpTurboRequestFactory)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpTurboRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, Uri requestUri) => CreateRequest(httpMessageInvoker, requestUri, HttpRequestOptions.DefaultTurboRequestFactory);
 
         /// <summary>
-        /// Uri转换为Http请求
-        /// <br/>
-        /// 框架有默认并发限制,可以通过设置
-        /// <see cref="ServicePointManager.DefaultConnectionLimit"/>
-        /// 来放宽并发请求限制
+        /// 创建Http请求
         /// </summary>
-        /// <param name="uri"></param>
+        /// <param name="httpMessageInvoker">用以发起请求的<see cref="HttpMessageInvoker"/></param>
+        /// <param name="requestUri">请求的URI</param>
+        /// <param name="factory">请求创建器</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest ToHttpRequest(this Uri uri) => ToHttpRequest(uri, HttpRequestOptions.DefaultTurboRequestFactory);
+        public static IHttpTurboRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, Uri requestUri, IHttpTurboRequestFactory factory) => factory.CreateRequest(requestUri).UseClient(httpMessageInvoker);
 
-        /// <summary>
-        /// Uri转换为Http请求
-        /// <br/>
-        /// 框架有默认并发限制,可以通过设置
-        /// <see cref="ServicePointManager.DefaultConnectionLimit"/>
-        /// 来放宽并发请求限制
-        /// </summary>
-        /// <param name="uri"></param>
-        /// <param name="factory"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest ToHttpRequest(this Uri uri, IHttpTurboRequestFactory factory) => factory.CreateRequest(uri);
+        #endregion for httpMessageInvoker
 
         #endregion Creation
     }
