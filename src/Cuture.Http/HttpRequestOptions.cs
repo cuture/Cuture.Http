@@ -146,7 +146,7 @@ namespace Cuture.Http
         /// 禁止默认使用默认Proxy 初始值为 false
         /// <para/>
         /// 仅对 <see cref="IHttpTurboClientFactory"/> 使用 <see cref="SimpleHttpTurboClientFactory"/>,
-        /// 请求为 <see cref="HttpTurboRequest"/> 时有效
+        /// 请求为 <see cref="DefaultHttpRequest"/> 时有效
         /// <para/>
         /// 不满足上述条件时, 根据对应的具体实现来确定是否有效
         /// </summary>

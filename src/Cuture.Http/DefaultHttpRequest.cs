@@ -9,11 +9,15 @@ using System.Threading;
 namespace Cuture.Http
 {
     /// <summary>
-    /// http请求
+    /// 默认<see cref="IHttpRequest"/> 实现
+    /// <para/>
+    /// 派生自 <see cref="HttpRequestMessage"/> 的 <see cref="IHttpRequest"/> 实现
+    /// <para/>
+    /// * 不可重复使用进行请求
     /// </summary>
 #pragma warning disable CS8766 // 返回类型中引用类型的为 Null 性与隐式实现的成员不匹配(可能是由于为 Null 性特性)。
 
-    public class HttpTurboRequest : HttpRequestMessage, IHttpRequest
+    public class DefaultHttpRequest : HttpRequestMessage, IHttpRequest
 #pragma warning restore CS8766 // 返回类型中引用类型的为 Null 性与隐式实现的成员不匹配(可能是由于为 Null 性特性)。
     {
         #region Private 字段
@@ -84,7 +88,7 @@ namespace Cuture.Http
         /// <summary>
         /// http请求
         /// </summary>
-        public HttpTurboRequest()
+        public DefaultHttpRequest()
         {
         }
 
@@ -92,7 +96,7 @@ namespace Cuture.Http
         /// http请求
         /// </summary>
         /// <param name="url">请求的url</param>
-        public HttpTurboRequest(string url) : this(new Uri(url, UriKind.RelativeOrAbsolute))
+        public DefaultHttpRequest(string url) : this(new Uri(url, UriKind.RelativeOrAbsolute))
         {
         }
 
@@ -100,7 +104,7 @@ namespace Cuture.Http
         /// http请求
         /// </summary>
         /// <param name="uri">请求的uri</param>
-        public HttpTurboRequest(Uri uri)
+        public DefaultHttpRequest(Uri uri)
         {
             RequestUri = uri ?? throw new ArgumentNullException(nameof(uri));
         }
