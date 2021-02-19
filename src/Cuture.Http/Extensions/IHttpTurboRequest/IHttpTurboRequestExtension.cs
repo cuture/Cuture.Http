@@ -40,7 +40,7 @@ namespace Cuture.Http
         {
             return options.TurboClient
                         ?? options.TurboClientFactory?.GetTurboClient(request)
-                        ?? throw new ArgumentException($"HttpRequestOptions's {nameof(HttpRequestOptions.Client)}、{nameof(HttpRequestOptions.TurboClient)}、{nameof(HttpRequestOptions.TurboClientFactory)}、cannot both be null.");
+                        ?? throw new ArgumentException($"HttpRequestOptions's {nameof(HttpRequestOptions.MessageInvoker)}、{nameof(HttpRequestOptions.TurboClient)}、{nameof(HttpRequestOptions.TurboClientFactory)}、cannot both be null.");
         }
 
         #endregion 方法

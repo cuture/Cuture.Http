@@ -162,15 +162,15 @@ namespace Cuture.Http
         #region Public 属性
 
         /// <summary>
-        /// 用于请求的 <see cref="HttpClient"/>
-        /// <para/>
-        /// 选项优先级
+        /// 用于请求的 <see cref="HttpMessageInvoker"/>
         /// <para/>
         /// 设置此选项将覆盖自动重定向、代理请求、压缩、Cookie等请求设置
         /// <para/>
-        /// <see cref="Client"/> > <see cref="TurboClient"/> > <see cref="TurboClientFactory"/>
+        /// 选项优先级
+        /// <para/>
+        /// <see cref="MessageInvoker"/> > <see cref="TurboClient"/> > <see cref="TurboClientFactory"/>
         /// </summary>
-        public HttpClient? Client { get; set; }
+        public HttpMessageInvoker? MessageInvoker { get; set; }
 
         /// <summary>
         /// Json序列化器
@@ -184,7 +184,7 @@ namespace Cuture.Http
         /// <para/>
         /// 设置此选项将覆盖自动重定向、代理请求、压缩、Cookie等请求设置
         /// <para/>
-        /// <see cref="Client"/> > <see cref="TurboClient"/> > <see cref="TurboClientFactory"/>
+        /// <see cref="MessageInvoker"/> > <see cref="TurboClient"/> > <see cref="TurboClientFactory"/>
         /// </summary>
         public IHttpTurboClient? TurboClient { get; set; }
 
@@ -195,7 +195,7 @@ namespace Cuture.Http
         /// <para/>
         /// 设置此选项将覆盖自动重定向、代理请求、压缩、Cookie等请求设置
         /// <para/>
-        /// <see cref="Client"/> > <see cref="TurboClient"/> > <see cref="TurboClientFactory"/>
+        /// <see cref="MessageInvoker"/> > <see cref="TurboClient"/> > <see cref="TurboClientFactory"/>
         /// </summary>
         public IHttpTurboClientFactory? TurboClientFactory { get; set; }
 

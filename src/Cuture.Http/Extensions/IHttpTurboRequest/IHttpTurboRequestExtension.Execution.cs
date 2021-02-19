@@ -28,35 +28,14 @@ namespace Cuture.Http
         {
             if (request.IsSetOptions)
             {
-                if (request.RequestOptions.Client != null)
+                if (request.RequestOptions.MessageInvoker != null)
                 {
-                    return request.RequestOptions.Client.SendAsync(request.AsRequest(), request.Token);
+                    return request.RequestOptions.MessageInvoker.SendAsync(request.AsRequest(), request.Token);
                 }
                 return InternalGetHttpTurboClient(request, request.RequestOptions).ExecuteAsync(request);
             }
 
             return InternalGetHttpTurboClient(request, HttpRequestOptions.Default).ExecuteAsync(request);
-        }
-
-        /// <summary>
-        /// 执行请求
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="completionOption"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<HttpResponseMessage> ExecuteAsync(this IHttpTurboRequest request, HttpCompletionOption completionOption)
-        {
-            if (request.IsSetOptions)
-            {
-                if (request.RequestOptions.Client != null)
-                {
-                    return request.RequestOptions.Client.SendAsync(request.AsRequest(), completionOption, request.Token);
-                }
-                return InternalGetHttpTurboClient(request, request.RequestOptions).ExecuteAsync(request, completionOption);
-            }
-
-            return InternalGetHttpTurboClient(request, HttpRequestOptions.Default).ExecuteAsync(request, completionOption);
         }
 
         #endregion Execute
@@ -282,7 +261,10 @@ namespace Cuture.Http
         /// <param name="bufferSize"></param>
         /// <returns></returns>
         public static Task DownloadToStreamAsync(this IHttpTurboRequest request, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
-            => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead).DownloadToStreamAsync(targetStream, request.Token, bufferSize);
+        {
+            throw new NotImplementedException("Execute with HttpCompletionOption.ResponseHeadersRead");
+            return request.ExecuteAsync().DownloadToStreamAsync(targetStream, request.Token, bufferSize);
+        }
 
         /// <summary>
         /// 执行请求,将请求结果
@@ -298,7 +280,10 @@ namespace Cuture.Http
         /// <param name="bufferSize"></param>
         /// <returns></returns>
         public static Task DownloadToStreamWithProgressAsync(this IHttpTurboRequest request, Func<long?, long, Task> progressCallback, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
-            => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead).DownloadToStreamWithProgressAsync(targetStream, progressCallback, request.Token, bufferSize);
+        {
+            throw new NotImplementedException("Execute with HttpCompletionOption.ResponseHeadersRead");
+            return request.ExecuteAsync().DownloadToStreamWithProgressAsync(targetStream, progressCallback, request.Token, bufferSize);
+        }
 
         /// <summary>
         /// 执行请求,将请求结果
@@ -314,7 +299,10 @@ namespace Cuture.Http
         /// <param name="bufferSize"></param>
         /// <returns></returns>
         public static Task DownloadToStreamWithProgressAsync(this IHttpTurboRequest request, Action<long?, long> progressCallback, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
-            => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead).DownloadToStreamWithProgressAsync(targetStream, progressCallback, request.Token, bufferSize);
+        {
+            throw new NotImplementedException("Execute with HttpCompletionOption.ResponseHeadersRead");
+            return request.ExecuteAsync().DownloadToStreamWithProgressAsync(targetStream, progressCallback, request.Token, bufferSize);
+        }
 
         /// <summary>
         /// 执行请求,将请求结果
@@ -327,7 +315,10 @@ namespace Cuture.Http
         /// <param name="bufferSize"></param>
         /// <returns></returns>
         public static Task<byte[]> DownloadWithProgressAsync(this IHttpTurboRequest request, Func<long?, long, Task> progressCallback, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
-            => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead).DownloadWithProgressAsync(progressCallback, request.Token, bufferSize);
+        {
+            throw new NotImplementedException("Execute with HttpCompletionOption.ResponseHeadersRead");
+            return request.ExecuteAsync().DownloadWithProgressAsync(progressCallback, request.Token, bufferSize);
+        }
 
         /// <summary>
         /// 执行请求,将请求结果
@@ -340,7 +331,10 @@ namespace Cuture.Http
         /// <param name="bufferSize"></param>
         /// <returns></returns>
         public static Task<byte[]> DownloadWithProgressAsync(this IHttpTurboRequest request, Action<long?, long> progressCallback, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
-            => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead).DownloadWithProgressAsync(progressCallback, request.Token, bufferSize);
+        {
+            throw new NotImplementedException("Execute with HttpCompletionOption.ResponseHeadersRead");
+            return request.ExecuteAsync().DownloadWithProgressAsync(progressCallback, request.Token, bufferSize);
+        }
 
         #endregion Download
 

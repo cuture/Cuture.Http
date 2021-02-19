@@ -171,15 +171,15 @@ namespace Cuture.Http
         #region RequestOptions
 
         /// <summary>
-        /// 使用指定的HttpClient
+        /// 使用指定的 <see cref="HttpMessageInvoker"/>
         /// </summary>
         /// <param name="request"></param>
-        /// <param name="client"></param>
+        /// <param name="httpMessageInvoker"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpTurboRequest UseClient(this IHttpTurboRequest request, HttpClient client)
+        public static IHttpTurboRequest UseClient(this IHttpTurboRequest request, HttpMessageInvoker httpMessageInvoker)
         {
-            request.RequestOptions.Client = client;
+            request.RequestOptions.MessageInvoker = httpMessageInvoker;
             return request;
         }
 
