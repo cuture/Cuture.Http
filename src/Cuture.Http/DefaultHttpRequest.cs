@@ -88,25 +88,10 @@ namespace Cuture.Http
         /// <summary>
         /// http请求
         /// </summary>
-        public DefaultHttpRequest()
+        /// <param name="requestUri">请求的Uri</param>
+        public DefaultHttpRequest(Uri requestUri)
         {
-        }
-
-        /// <summary>
-        /// http请求
-        /// </summary>
-        /// <param name="url">请求的url</param>
-        public DefaultHttpRequest(string url) : this(new Uri(url, UriKind.RelativeOrAbsolute))
-        {
-        }
-
-        /// <summary>
-        /// http请求
-        /// </summary>
-        /// <param name="uri">请求的uri</param>
-        public DefaultHttpRequest(Uri uri)
-        {
-            RequestUri = uri ?? throw new ArgumentNullException(nameof(uri));
+            RequestUri = requestUri ?? throw new ArgumentNullException(nameof(requestUri));
         }
 
         #endregion 构造函数

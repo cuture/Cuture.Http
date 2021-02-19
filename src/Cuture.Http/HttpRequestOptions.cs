@@ -35,7 +35,7 @@ namespace Cuture.Http
         /// <summary>
         /// 默认Request工厂
         /// </summary>
-        private static IHttpTurboRequestFactory s_defaultTurboRequestFactory = new DefaultRequestFactory();
+        private static IHttpRequestCreator s_defaultTurboRequestCreator = new DefaultHttpRequestCreator();
 
         /// <summary>
         /// 自动重定向次数
@@ -123,21 +123,21 @@ namespace Cuture.Http
         /// <summary>
         /// 默认Request工厂
         /// </summary>
-        public static IHttpTurboRequestFactory DefaultTurboRequestFactory
+        public static IHttpRequestCreator DefaultTurboRequestCreator
         {
-            get => s_defaultTurboRequestFactory;
+            get => s_defaultTurboRequestCreator;
             set
             {
                 if (value is null)
                 {
-                    throw new NullReferenceException($"{nameof(DefaultTurboRequestFactory)} can not be null");
+                    throw new NullReferenceException($"{nameof(DefaultTurboRequestCreator)} can not be null");
                 }
-                if (ReferenceEquals(value, s_defaultTurboRequestFactory))
+                if (ReferenceEquals(value, s_defaultTurboRequestCreator))
                 {
                     return;
                 }
-                var oldFactory = s_defaultTurboRequestFactory;
-                s_defaultTurboRequestFactory = value;
+                var oldFactory = s_defaultTurboRequestCreator;
+                s_defaultTurboRequestCreator = value;
                 oldFactory.Dispose();
             }
         }

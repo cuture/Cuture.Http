@@ -14,74 +14,74 @@ namespace Cuture.Http
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
-        public static IHttpRequest ToHttpRequest(this string requestUri) => ToHttpRequest(requestUri, HttpRequestOptions.DefaultTurboRequestFactory);
+        public static IHttpRequest ToHttpRequest(this string requestUri) => ToHttpRequest(requestUri, HttpRequestOptions.DefaultTurboRequestCreator);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
-        public static IHttpRequest ToHttpRequest(this string requestUri, IHttpTurboRequestFactory factory) => factory.CreateRequest(requestUri);
+        public static IHttpRequest ToHttpRequest(this string requestUri, IHttpRequestCreator requestCreator) => new Uri(requestUri, UriKind.RelativeOrAbsolute).ToHttpRequest(requestCreator);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
-        public static IHttpRequest ToHttpRequest(this Uri requestUri) => ToHttpRequest(requestUri, HttpRequestOptions.DefaultTurboRequestFactory);
+        public static IHttpRequest ToHttpRequest(this Uri requestUri) => ToHttpRequest(requestUri, HttpRequestOptions.DefaultTurboRequestCreator);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
-        public static IHttpRequest ToHttpRequest(this Uri requestUri, IHttpTurboRequestFactory factory) => factory.CreateRequest(requestUri);
+        public static IHttpRequest ToHttpRequest(this Uri requestUri, IHttpRequestCreator requestCreator) => requestCreator.CreateRequest(requestUri);
 
         #endregion Obslate
 
         #region for string
 
-        /// <inheritdoc cref="CreateHttpRequest(string, IHttpTurboRequestFactory)"/>
+        /// <inheritdoc cref="CreateHttpRequest(string, IHttpRequestCreator)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest CreateHttpRequest(this string requestUri) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultTurboRequestFactory);
+        public static IHttpRequest CreateHttpRequest(this string requestUri) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultTurboRequestCreator);
 
-        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpTurboRequestFactory)"/>
+        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest CreateHttpRequest(this string requestUri, IHttpTurboRequestFactory factory) => factory.CreateRequest(requestUri);
+        public static IHttpRequest CreateHttpRequest(this string requestUri, IHttpRequestCreator requestCreator) => new Uri(requestUri, UriKind.RelativeOrAbsolute).CreateHttpRequest(requestCreator);
 
         #endregion for string
 
         #region for Uri
 
-        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpTurboRequestFactory)"/>
+        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest CreateHttpRequest(this Uri requestUri) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultTurboRequestFactory);
+        public static IHttpRequest CreateHttpRequest(this Uri requestUri) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultTurboRequestCreator);
 
         /// <summary>
         /// 创建Http请求
         /// </summary>
         /// <param name="requestUri">请求的URI</param>
-        /// <param name="factory">请求创建器</param>
+        /// <param name="requestCreator">请求创建器</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest CreateHttpRequest(this Uri requestUri, IHttpTurboRequestFactory factory) => factory.CreateRequest(requestUri);
+        public static IHttpRequest CreateHttpRequest(this Uri requestUri, IHttpRequestCreator requestCreator) => requestCreator.CreateRequest(requestUri);
 
         #endregion for Uri
 
         #region for httpMessageInvoker
 
-        /// <inheritdoc cref="CreateRequest(HttpMessageInvoker, Uri, IHttpTurboRequestFactory)"/>
+        /// <inheritdoc cref="CreateRequest(HttpMessageInvoker, Uri, IHttpRequestCreator)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, string requestUri) => CreateRequest(httpMessageInvoker, requestUri, HttpRequestOptions.DefaultTurboRequestFactory);
+        public static IHttpRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, string requestUri) => CreateRequest(httpMessageInvoker, requestUri, HttpRequestOptions.DefaultTurboRequestCreator);
 
-        /// <inheritdoc cref="CreateRequest(HttpMessageInvoker, Uri, IHttpTurboRequestFactory)"/>
+        /// <inheritdoc cref="CreateRequest(HttpMessageInvoker, Uri, IHttpRequestCreator)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, string requestUri, IHttpTurboRequestFactory factory) => httpMessageInvoker.CreateRequest(new Uri(requestUri, UriKind.RelativeOrAbsolute), factory);
+        public static IHttpRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, string requestUri, IHttpRequestCreator requestCreator) => httpMessageInvoker.CreateRequest(new Uri(requestUri, UriKind.RelativeOrAbsolute), requestCreator);
 
-        /// <inheritdoc cref="CreateRequest(HttpMessageInvoker, Uri, IHttpTurboRequestFactory)"/>
+        /// <inheritdoc cref="CreateRequest(HttpMessageInvoker, Uri, IHttpRequestCreator)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, Uri requestUri) => CreateRequest(httpMessageInvoker, requestUri, HttpRequestOptions.DefaultTurboRequestFactory);
+        public static IHttpRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, Uri requestUri) => CreateRequest(httpMessageInvoker, requestUri, HttpRequestOptions.DefaultTurboRequestCreator);
 
         /// <summary>
         /// 创建Http请求
         /// </summary>
         /// <param name="httpMessageInvoker">用以发起请求的<see cref="HttpMessageInvoker"/></param>
         /// <param name="requestUri">请求的URI</param>
-        /// <param name="factory">请求创建器</param>
+        /// <param name="requestCreator">请求创建器</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, Uri requestUri, IHttpTurboRequestFactory factory) => factory.CreateRequest(requestUri).UseClient(httpMessageInvoker);
+        public static IHttpRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, Uri requestUri, IHttpRequestCreator requestCreator) => requestCreator.CreateRequest(requestUri).UseClient(httpMessageInvoker);
 
         #endregion for httpMessageInvoker
 
