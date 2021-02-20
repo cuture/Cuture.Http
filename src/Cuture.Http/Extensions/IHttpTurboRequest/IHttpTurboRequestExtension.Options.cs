@@ -184,19 +184,6 @@ namespace Cuture.Http
         }
 
         /// <summary>
-        /// 使用指定的HttpTurboClient
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="client"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest UseClient(this IHttpRequest request, IHttpTurboClient client)
-        {
-            request.RequestOptions.TurboClient = client;
-            return request;
-        }
-
-        /// <summary>
         /// 使用指定的Json序列化器
         /// </summary>
         /// <param name="request"></param>
@@ -216,9 +203,9 @@ namespace Cuture.Http
         /// <param name="turboClientFactory"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest UseTurboClientFactory(this IHttpRequest request, IHttpTurboClientFactory turboClientFactory)
+        public static IHttpRequest UseTurboClientFactory(this IHttpRequest request, IHttpMessageInvokerFactory turboClientFactory)
         {
-            request.RequestOptions.TurboClientFactory = turboClientFactory;
+            request.RequestOptions.MessageInvokerFactory = turboClientFactory;
             return request;
         }
 

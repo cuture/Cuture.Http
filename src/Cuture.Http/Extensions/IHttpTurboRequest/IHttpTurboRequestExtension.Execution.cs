@@ -3,7 +3,10 @@ using System.IO;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+
+using Cuture.Http.Util;
 
 using Newtonsoft.Json.Linq;
 
@@ -24,18 +27,99 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<HttpResponseMessage> ExecuteAsync(this IHttpRequest request)
+        public static Task<HttpResponseMessage> ExecuteAsync(this IHttpRequest request) => InternalGetHttpMessageInvoker(request).ExecuteAsync(request);
+
+        /// <summary>
+        /// 执行请求
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="completionOption"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Task<HttpResponseMessage> ExecuteAsync(this IHttpRequest request, HttpCompletionOption completionOption)
         {
-            if (request.IsSetOptions)
+            if (completionOption == HttpCompletionOption.ResponseHeadersRead)
             {
-                if (request.RequestOptions.MessageInvoker != null)
+                if (InternalGetHttpMessageInvoker(request) is HttpClient httpClient)
                 {
-                    return request.RequestOptions.MessageInvoker.SendAsync(request.AsRequest(), request.Token);
+                    //TODO pool wrapper
+                    return new CompletionWithHeadersReadClientWrapper(httpClient, false).ExecuteAsync(request);
                 }
-                return InternalGetHttpTurboClient(request, request.RequestOptions).ExecuteAsync(request);
+                throw new NotSupportedException($"Only {nameof(HttpClient)} support {nameof(HttpCompletionOption)}.{nameof(HttpCompletionOption.ResponseHeadersRead)}.");
+            }
+            else
+            {
+                return request.ExecuteAsync();
+            }
+        }
+
+        internal static Task<HttpResponseMessage> ExecuteAsync(this HttpMessageInvoker messageInvoker, IHttpRequest request)
+        {
+            var token = request.Token;
+            CancellationTokenSource? cts = null;
+
+            if (request.Timeout.HasValue)
+            {
+                cts = CancellationTokenSource.CreateLinkedTokenSource();
+                cts.CancelAfter(request.Timeout.Value);
+                token = cts.Token;
             }
 
-            return InternalGetHttpTurboClient(request, HttpRequestOptions.Default).ExecuteAsync(request);
+            var task = request.AllowRedirection ? messageInvoker.InternalExecuteWithAutoRedirectCoreAsync(request, token) : messageInvoker.SendAsync(request.AsRequest(), token);
+
+            if (cts != null)
+            {
+                task.ContinueWith((task, state) => (state as CancellationTokenSource)!.Dispose(), cts, TaskContinuationOptions.None);
+            }
+
+            return task;
+        }
+
+        internal static async Task<HttpResponseMessage> InternalExecuteWithAutoRedirectCoreAsync(this HttpMessageInvoker messageInvoker, IHttpRequest request, CancellationToken token)
+        {
+            Uri? redirectUri;
+            HttpResponseMessage tmpResponse = null!;
+            var innerRequest = request.AsRequest();
+
+            for (int i = 0; i <= request.MaxAutomaticRedirections; i++)
+            {
+                tmpResponse = await messageInvoker.SendAsync(innerRequest, token).ConfigureAwait(false);
+
+                if ((redirectUri = tmpResponse.GetUriForRedirect(request.RequestUri)) != null)
+                {
+                    var redirectRequest = new HttpRequestMessage(HttpMethod.Get, redirectUri);
+
+                    foreach (var item in innerRequest.Headers)
+                    {
+                        redirectRequest.Headers.Add(item.Key, item.Value);
+                    }
+
+                    if (tmpResponse.TryGetCookie(out var setCookie))
+                    {
+                        if (innerRequest.TryGetCookie(out var cookie)
+                            && !string.IsNullOrWhiteSpace(cookie))
+                        {
+                            cookie = CookieUtility.Merge(cookie, setCookie);
+                        }
+                        else
+                        {
+                            cookie = CookieUtility.Clean(setCookie);
+                        }
+
+                        redirectRequest.Headers.Remove(HttpHeaderDefinitions.Cookie);
+                        redirectRequest.Headers.TryAddWithoutValidation(HttpHeaderDefinitions.Cookie, cookie);
+                    }
+
+                    innerRequest.Dispose();
+                    tmpResponse.Dispose();
+
+                    innerRequest = redirectRequest;
+                    continue;
+                }
+                innerRequest.Dispose();
+                break;
+            }
+            return tmpResponse;
         }
 
         #endregion Execute
@@ -250,6 +334,8 @@ namespace Cuture.Http
 
         #region Download
 
+        //TODO 检查Download方法中直接使用request.Token，是否不受超时限制
+
         /// <summary>
         /// 执行请求,将请求结果
         /// <see cref="HttpResponseMessage.Content"/>
@@ -261,10 +347,8 @@ namespace Cuture.Http
         /// <param name="bufferSize"></param>
         /// <returns></returns>
         public static Task DownloadToStreamAsync(this IHttpRequest request, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
-        {
-            throw new NotImplementedException("Execute with HttpCompletionOption.ResponseHeadersRead");
-            return request.ExecuteAsync().DownloadToStreamAsync(targetStream, request.Token, bufferSize);
-        }
+                => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
+                          .DownloadToStreamAsync(targetStream, request.Token, bufferSize);
 
         /// <summary>
         /// 执行请求,将请求结果
@@ -280,10 +364,8 @@ namespace Cuture.Http
         /// <param name="bufferSize"></param>
         /// <returns></returns>
         public static Task DownloadToStreamWithProgressAsync(this IHttpRequest request, Func<long?, long, Task> progressCallback, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
-        {
-            throw new NotImplementedException("Execute with HttpCompletionOption.ResponseHeadersRead");
-            return request.ExecuteAsync().DownloadToStreamWithProgressAsync(targetStream, progressCallback, request.Token, bufferSize);
-        }
+                => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
+                          .DownloadToStreamWithProgressAsync(targetStream, progressCallback, request.Token, bufferSize);
 
         /// <summary>
         /// 执行请求,将请求结果
@@ -299,10 +381,8 @@ namespace Cuture.Http
         /// <param name="bufferSize"></param>
         /// <returns></returns>
         public static Task DownloadToStreamWithProgressAsync(this IHttpRequest request, Action<long?, long> progressCallback, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
-        {
-            throw new NotImplementedException("Execute with HttpCompletionOption.ResponseHeadersRead");
-            return request.ExecuteAsync().DownloadToStreamWithProgressAsync(targetStream, progressCallback, request.Token, bufferSize);
-        }
+                => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
+                          .DownloadToStreamWithProgressAsync(targetStream, progressCallback, request.Token, bufferSize);
 
         /// <summary>
         /// 执行请求,将请求结果
@@ -315,10 +395,8 @@ namespace Cuture.Http
         /// <param name="bufferSize"></param>
         /// <returns></returns>
         public static Task<byte[]> DownloadWithProgressAsync(this IHttpRequest request, Func<long?, long, Task> progressCallback, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
-        {
-            throw new NotImplementedException("Execute with HttpCompletionOption.ResponseHeadersRead");
-            return request.ExecuteAsync().DownloadWithProgressAsync(progressCallback, request.Token, bufferSize);
-        }
+                => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
+                          .DownloadWithProgressAsync(progressCallback, request.Token, bufferSize);
 
         /// <summary>
         /// 执行请求,将请求结果
@@ -331,10 +409,8 @@ namespace Cuture.Http
         /// <param name="bufferSize"></param>
         /// <returns></returns>
         public static Task<byte[]> DownloadWithProgressAsync(this IHttpRequest request, Action<long?, long> progressCallback, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
-        {
-            throw new NotImplementedException("Execute with HttpCompletionOption.ResponseHeadersRead");
-            return request.ExecuteAsync().DownloadWithProgressAsync(progressCallback, request.Token, bufferSize);
-        }
+                => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
+                          .DownloadWithProgressAsync(progressCallback, request.Token, bufferSize);
 
         #endregion Download
 

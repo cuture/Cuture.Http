@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
-
-using Cuture.Http.Internal;
+using System.Collections.Generic;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

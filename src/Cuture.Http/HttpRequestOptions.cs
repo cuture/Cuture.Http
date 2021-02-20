@@ -30,7 +30,7 @@ namespace Cuture.Http
         /// <summary>
         /// 默认HttpTurbo构造器
         /// </summary>
-        private static IHttpTurboClientFactory s_defaultTurboClientFactory = new SimpleHttpTurboClientFactory();
+        private static IHttpMessageInvokerFactory s_defaultTurboClientFactory = new SimpleHttpMessageInvokerFactory();
 
         /// <summary>
         /// 默认Request工厂
@@ -47,7 +47,7 @@ namespace Cuture.Http
         /// </summary>
         public static HttpRequestOptions Default { get; } = new HttpRequestOptions()
         {
-            TurboClientFactory = DefaultTurboClientFactory,
+            MessageInvokerFactory = DefaultTurboClientFactory,
             JsonSerializer = DefaultJsonSerializer,
         };
 
@@ -95,7 +95,7 @@ namespace Cuture.Http
         /// <summary>
         /// 默认HttpTurbo构造器
         /// </summary>
-        public static IHttpTurboClientFactory DefaultTurboClientFactory
+        public static IHttpMessageInvokerFactory DefaultTurboClientFactory
         {
             get => s_defaultTurboClientFactory;
             set
@@ -110,9 +110,9 @@ namespace Cuture.Http
                 }
                 var oldFactory = s_defaultTurboClientFactory;
 
-                if (ReferenceEquals(Default.TurboClientFactory, oldFactory))
+                if (ReferenceEquals(Default.MessageInvokerFactory, oldFactory))
                 {
-                    Default.TurboClientFactory = value;
+                    Default.MessageInvokerFactory = value;
                 }
 
                 s_defaultTurboClientFactory = value;
@@ -145,7 +145,7 @@ namespace Cuture.Http
         /// <summary>
         /// 禁止默认使用默认Proxy 初始值为 false
         /// <para/>
-        /// 仅对 <see cref="IHttpTurboClientFactory"/> 使用 <see cref="SimpleHttpTurboClientFactory"/>,
+        /// 仅对 <see cref="IHttpMessageInvokerFactory"/> 使用 <see cref="SimpleHttpMessageInvokerFactory"/>,
         /// 请求为 <see cref="DefaultHttpRequest"/> 时有效
         /// <para/>
         /// 不满足上述条件时, 根据对应的具体实现来确定是否有效
@@ -162,42 +162,31 @@ namespace Cuture.Http
         #region Public 属性
 
         /// <summary>
+        /// Json序列化器
+        /// </summary>
+        public IJsonSerializer? JsonSerializer { get; set; }
+
+        /// <summary>
         /// 用于请求的 <see cref="HttpMessageInvoker"/>
         /// <para/>
         /// 设置此选项将覆盖自动重定向、代理请求、压缩、Cookie等请求设置
         /// <para/>
         /// 选项优先级
         /// <para/>
-        /// <see cref="MessageInvoker"/> > <see cref="TurboClient"/> > <see cref="TurboClientFactory"/>
+        /// <see cref="MessageInvoker"/> > <see cref="MessageInvokerFactory"/>
         /// </summary>
         public HttpMessageInvoker? MessageInvoker { get; set; }
 
         /// <summary>
-        /// Json序列化器
-        /// </summary>
-        public IJsonSerializer? JsonSerializer { get; set; }
-
-        /// <summary>
-        /// 用于请求的 <see cref="IHttpTurboClient"/>
+        /// 用于请求的 <see cref="IHttpMessageInvokerFactory"/>
         /// <para/>
         /// 选项优先级
         /// <para/>
         /// 设置此选项将覆盖自动重定向、代理请求、压缩、Cookie等请求设置
         /// <para/>
-        /// <see cref="MessageInvoker"/> > <see cref="TurboClient"/> > <see cref="TurboClientFactory"/>
+        /// <see cref="MessageInvoker"/> > <see cref="MessageInvokerFactory"/>
         /// </summary>
-        public IHttpTurboClient? TurboClient { get; set; }
-
-        /// <summary>
-        /// 用于请求的 <see cref="IHttpTurboClientFactory"/>
-        /// <para/>
-        /// 选项优先级
-        /// <para/>
-        /// 设置此选项将覆盖自动重定向、代理请求、压缩、Cookie等请求设置
-        /// <para/>
-        /// <see cref="MessageInvoker"/> > <see cref="TurboClient"/> > <see cref="TurboClientFactory"/>
-        /// </summary>
-        public IHttpTurboClientFactory? TurboClientFactory { get; set; }
+        public IHttpMessageInvokerFactory? MessageInvokerFactory { get; set; }
 
         #endregion Public 属性
 

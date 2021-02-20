@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Cuture.Http.Test
 {
     [TestClass]
-    public class SimpleHttpTurboClientFactoryTest : HttpTurboClientFactoryTest<SimpleHttpTurboClientFactory>
+    public class SimpleHttpTurboClientFactoryTest : HttpTurboClientFactoryTest<SimpleHttpMessageInvokerFactory>
     {
         #region Private 字段
 
@@ -16,9 +16,9 @@ namespace Cuture.Http.Test
 
         #region Protected 方法
 
-        protected override SimpleHttpTurboClientFactory CreateFactory()
+        protected override SimpleHttpMessageInvokerFactory CreateFactory()
         {
-            return new SimpleHttpTurboClientFactory(true, TimeSpan.FromSeconds(_holdSeconds));
+            return new SimpleHttpMessageInvokerFactory(true, TimeSpan.FromSeconds(_holdSeconds));
         }
 
         #endregion Protected 方法
@@ -30,16 +30,16 @@ namespace Cuture.Http.Test
         {
             var request = "http://127.0.0.1/index".ToHttpRequest();
 
-            var firstClientHash = _factory.GetTurboClient(request).GetHashCode();
+            var firstClientHash = _factory.GetInvoker(request).GetHashCode();
 
-            Assert.AreEqual(firstClientHash, _factory.GetTurboClient(request).GetHashCode());
+            Assert.AreEqual(firstClientHash, _factory.GetInvoker(request).GetHashCode());
 
             await Task.Delay(TimeSpan.FromSeconds(_holdSeconds + 1));
 
             GC.Collect(2, GCCollectionMode.Forced);
             GC.WaitForPendingFinalizers();
 
-            var lastClientHash = _factory.GetTurboClient(request).GetHashCode();
+            var lastClientHash = _factory.GetInvoker(request).GetHashCode();
             Assert.AreNotEqual(firstClientHash, lastClientHash);
         }
 

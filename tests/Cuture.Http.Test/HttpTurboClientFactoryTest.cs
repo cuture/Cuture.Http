@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Cuture.Http.Test
 {
     [TestClass]
-    public abstract class HttpTurboClientFactoryTest<T> where T : IHttpTurboClientFactory
+    public abstract class HttpTurboClientFactoryTest<T> where T : IHttpMessageInvokerFactory
     {
         #region 字段
 
@@ -35,7 +35,7 @@ namespace Cuture.Http.Test
             var request = url.ToHttpRequest();
             for (int i = 0; i < count; i++)
             {
-                var client = _factory.GetTurboClient(request);
+                var client = _factory.GetInvoker(request);
                 hashSet.Add(client.GetHashCode());
             }
 
@@ -45,7 +45,7 @@ namespace Cuture.Http.Test
 
             for (int i = 0; i < count; i++)
             {
-                var client = _factory.GetTurboClient(request);
+                var client = _factory.GetInvoker(request);
                 hashSet.Add(client.GetHashCode());
             }
 
@@ -59,7 +59,7 @@ namespace Cuture.Http.Test
                          .UseProxy("http://127.0.0.1:8000");
             for (int i = 0; i < count; i++)
             {
-                var client = _factory.GetTurboClient(request);
+                var client = _factory.GetInvoker(request);
                 hashSet.Add(client.GetHashCode());
             }
 
@@ -71,7 +71,7 @@ namespace Cuture.Http.Test
 
             for (int i = 0; i < count; i++)
             {
-                var client = _factory.GetTurboClient(request);
+                var client = _factory.GetInvoker(request);
                 hashSet.Add(client.GetHashCode());
             }
 
@@ -88,7 +88,7 @@ namespace Cuture.Http.Test
                          });
             for (int i = 0; i < count; i++)
             {
-                var client = _factory.GetTurboClient(request);
+                var client = _factory.GetInvoker(request);
                 hashSet.Add(client.GetHashCode());
             }
 
@@ -103,7 +103,7 @@ namespace Cuture.Http.Test
 
             for (int i = 0; i < count; i++)
             {
-                var client = _factory.GetTurboClient(request);
+                var client = _factory.GetInvoker(request);
                 hashSet.Add(client.GetHashCode());
             }
 
@@ -120,7 +120,7 @@ namespace Cuture.Http.Test
                          });
             for (int i = 0; i < count; i++)
             {
-                var client = _factory.GetTurboClient(request);
+                var client = _factory.GetInvoker(request);
                 hashSet.Add(client.GetHashCode());
             }
 
@@ -135,7 +135,7 @@ namespace Cuture.Http.Test
 
             for (int i = 0; i < count; i++)
             {
-                var client = _factory.GetTurboClient(request);
+                var client = _factory.GetInvoker(request);
                 hashSet.Add(client.GetHashCode());
             }
 
@@ -188,7 +188,7 @@ namespace Cuture.Http.Test
                 var proxy = proxies[index];
                 var request = "http://127.0.0.1/index".ToHttpRequest().UseProxy(proxy);
 
-                var client = _factory.GetTurboClient(request);
+                var client = _factory.GetInvoker(request);
 
                 lock (hashSet)
                 {
@@ -251,7 +251,7 @@ namespace Cuture.Http.Test
                     default:
                         break;
                 }
-                var client = _factory.GetTurboClient(request);
+                var client = _factory.GetInvoker(request);
 
                 lock (hashSet)
                 {

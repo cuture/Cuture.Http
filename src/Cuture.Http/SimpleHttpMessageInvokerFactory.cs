@@ -3,18 +3,17 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Cuture.Http.Internal;
-
 namespace Cuture.Http
 {
     /// <summary>
-    /// 简单实现的 <see cref="IHttpTurboClientFactory"/>
+    /// 简单实现的 <see cref="IHttpMessageInvokerFactory"/>
     /// </summary>
-    public sealed class SimpleHttpTurboClientFactory : IHttpTurboClientFactory
+    public sealed class SimpleHttpMessageInvokerFactory : IHttpMessageInvokerFactory
     {
         #region 字段
 
@@ -33,12 +32,12 @@ namespace Cuture.Http
         /// <summary>
         /// client释放队列
         /// </summary>
-        private SortedQueue<CreatedTimeTagedObject<WeakReference<IHttpTurboClient>>>? _clientReleaseQueue;
+        private SortedQueue<CreatedTimeTagedObject<WeakReference<HttpClient>>>? _clientReleaseQueue;
 
         /// <summary>
         /// HoldClient的集合
         /// </summary>
-        private HashSet<IHttpTurboClient>? _holdedClients;
+        private HashSet<HttpClient>? _holdedClients;
 
         /// <summary>
         /// 是否已释放
@@ -50,26 +49,26 @@ namespace Cuture.Http
         #region Client
 
         /// <summary>
-        /// 默认的 <see cref="IHttpTurboClient"/>
+        /// 默认的 <see cref="HttpClient"/>
         /// </summary>
-        private WeakReference<IHttpTurboClient> _client = new WeakReference<IHttpTurboClient>(null!);
+        private WeakReference<HttpClient> _client = new WeakReference<HttpClient>(null!);
 
         /// <summary>
-        /// 禁用Proxy的 <see cref="IHttpTurboClient"/>
+        /// 禁用Proxy的 <see cref="HttpClient"/>
         /// </summary>
-        private WeakReference<IHttpTurboClient> _directlyClient = new WeakReference<IHttpTurboClient>(null!);
+        private WeakReference<HttpClient> _directlyClient = new WeakReference<HttpClient>(null!);
 
         #endregion Client
 
         #region Client Dictionary
 
         /// <summary>
-        /// 有代理信息的 <see cref="IHttpTurboClient"/>
+        /// 有代理信息的 <see cref="HttpClient"/>
         /// </summary>
-        private Lazy<ConcurrentDictionary<int, WeakReference<IHttpTurboClient>>> _proxyClients = new Lazy<ConcurrentDictionary<int, WeakReference<IHttpTurboClient>>>();
+        private Lazy<ConcurrentDictionary<int, WeakReference<HttpClient>>> _proxyClients = new Lazy<ConcurrentDictionary<int, WeakReference<HttpClient>>>();
 
-        /// 有代理信息的 <see cref="IHttpTurboClient"/>
-        public ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> ProxyClients { get => _proxyClients.Value; }
+        /// 有代理信息的 <see cref="HttpClient"/>
+        public ConcurrentDictionary<int, WeakReference<HttpClient>> ProxyClients { get => _proxyClients.Value; }
 
         #endregion Client Dictionary
 
@@ -78,19 +77,19 @@ namespace Cuture.Http
         #region Public 构造函数
 
         /// <summary>
-        /// 简单实现的 <see cref="IHttpTurboClientFactory"/>
+        /// 简单实现的 <see cref="IHttpMessageInvokerFactory"/>
         /// </summary>
-        /// <param name="holdClient">保持内部所有 <see cref="IHttpTurboClient"/> 的引用，不被GC回收
+        /// <param name="holdClient">保持内部所有 <see cref="HttpClient"/> 的引用，不被GC回收
         /// <para/>
         /// (非永久持有，以 holdTimeSpan 参数控制最短持有时长，使其仍被释放，以应对DNS变更)</param>
         /// <param name="holdTimeSpan">保持引用的时长，不传递时为默认值 <see cref="DefaultHoldMinute" /></param>
-        public SimpleHttpTurboClientFactory(bool holdClient = true, TimeSpan? holdTimeSpan = null)
+        public SimpleHttpMessageInvokerFactory(bool holdClient = true, TimeSpan? holdTimeSpan = null)
         {
             _isHoldClient = holdClient;
             if (holdClient)
             {
-                _holdedClients = new HashSet<IHttpTurboClient>();
-                _clientReleaseQueue = new SortedQueue<CreatedTimeTagedObject<WeakReference<IHttpTurboClient>>>();
+                _holdedClients = new HashSet<HttpClient>();
+                _clientReleaseQueue = new SortedQueue<CreatedTimeTagedObject<WeakReference<HttpClient>>>();
                 _holdTimeSpan = holdTimeSpan.HasValue
                                     ? holdTimeSpan.Value.TotalSeconds > 0
                                         ? holdTimeSpan
@@ -165,67 +164,54 @@ namespace Cuture.Http
             CancelAutoReleaseTask();
         }
 
-        /// <summary>
-        /// 通过Uri判定获取一个Client
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        public IHttpTurboClient GetTurboClient(IHttpRequest request)
+        /// <inheritdoc/>
+        public HttpMessageInvoker GetInvoker(IHttpRequest request)
         {
             CheckDisposed();
 
-            IHttpTurboClient turboClient;
+            HttpClient httpClient;
 
             if (request.DisableProxy)
             {
-                turboClient = GetClientInWeakReference(_directlyClient, () => new HttpTurboClient(HttpTurboClient.CreateDefaultClientHandler().DisableProxy()));
+                httpClient = GetClientInWeakReference(_directlyClient, () => HttpClientUtil.CreateProxyDisabledDefaultClient());
             }
             else
             {
                 if (request.Proxy is null)
                 {
-                    turboClient = GetClientInWeakReference(_client, () => new HttpTurboClient());
+                    httpClient = GetClientInWeakReference(_client, () => HttpClientUtil.CreateDefaultClient());
                 }
                 else
                 {
-                    turboClient = GetProxyClientInWeakReferenceDictionary(request, ProxyClients, proxy =>
-                    {
-                        var httpClientHandler = HttpTurboClient.CreateDefaultClientHandler();
-                        httpClientHandler.UseProxy = true;
-                        httpClientHandler.Proxy = request.Proxy;
-                        return new HttpTurboClient(httpClientHandler);
-                    });
+                    httpClient = GetProxyClientInWeakReferenceDictionary(request, ProxyClients, proxy => HttpClientUtil.CreateProxyedClient(proxy));
                 }
             }
-            return turboClient;
+            return httpClient;
         }
 
         /// <summary>
-        /// 销毁
-        /// <see cref="IHttpTurboClient"/>
-        /// 弱引用列表
+        /// 销毁 <see cref="HttpClient"/> 弱引用列表
         /// </summary>
-        /// <param name="turboClients"></param>
-        private static void DisposeClients(IEnumerable<WeakReference<IHttpTurboClient>> turboClients)
+        /// <param name="httpClients"></param>
+        private static void DisposeClients(IEnumerable<WeakReference<HttpClient>> httpClients)
         {
-            foreach (var item in turboClients)
+            foreach (var item in httpClients)
             {
                 ReleaseWeakReferenceClient(item);
             }
         }
 
         /// <summary>
-        /// 从弱引用中释放
-        /// <see cref="IHttpTurboClient"/>
+        /// 从弱引用中释放 <see cref="HttpClient"/>
         /// </summary>
-        /// <param name="turboClientWR"></param>
-        private static void ReleaseWeakReferenceClient(WeakReference<IHttpTurboClient> turboClientWR)
+        /// <param name="httpClientWR"></param>
+        private static void ReleaseWeakReferenceClient(WeakReference<HttpClient> httpClientWR)
         {
-            if (turboClientWR.TryGetTarget(out var client))
+            if (httpClientWR.TryGetTarget(out var client))
             {
-                Debug.WriteLine($"Dispose {nameof(IHttpTurboClient)}:{client.GetHashCode()}");
+                Debug.WriteLine($"Dispose {nameof(HttpClient)}:{client.GetHashCode()}");
 
-                turboClientWR.SetTarget(null!);
+                httpClientWR.SetTarget(null!);
                 client.Dispose();
             }
         }
@@ -249,48 +235,46 @@ namespace Cuture.Http
         }
 
         /// <summary>
-        /// 从弱引用中获取
-        /// <see cref="IHttpTurboClient"/>
+        /// 从弱引用中获取 <see cref="HttpClient"/>
         /// </summary>
         /// <param name="weakReference"></param>
         /// <param name="createFunc"></param>
         /// <returns></returns>
-        private IHttpTurboClient GetClientInWeakReference(WeakReference<IHttpTurboClient> weakReference,
-                                                          Func<IHttpTurboClient> createFunc)
+        private HttpClient GetClientInWeakReference(WeakReference<HttpClient> weakReference,
+                                                    Func<HttpClient> createFunc)
         {
-            if (!weakReference.TryGetTarget(out IHttpTurboClient? turboClient))
+            if (!weakReference.TryGetTarget(out HttpClient? httpClient))
             {
                 lock (weakReference)
                 {
-                    if (!weakReference.TryGetTarget(out turboClient))
+                    if (!weakReference.TryGetTarget(out httpClient))
                     {
-                        turboClient = createFunc();
+                        httpClient = createFunc();
 
-                        Debug.WriteLine($"new HttpTurboClient:{turboClient.GetHashCode()}");
+                        Debug.WriteLine($"new HttpClient:{httpClient.GetHashCode()}");
 
-                        weakReference.SetTarget(turboClient);
+                        weakReference.SetTarget(httpClient);
 
                         HoldClient(weakReference);
                     }
                 }
             }
 
-            return turboClient;
+            return httpClient;
         }
 
         /// <summary>
-        /// 从弱引用字典中获取
-        /// <see cref="IHttpTurboClient"/>
+        /// 从弱引用字典中获取 <see cref="HttpClient"/>
         /// </summary>
         /// <param name="request"></param>
         /// <param name="weakReferenceDictionary"></param>
         /// <param name="createFunc"></param>
         /// <returns></returns>
-        private IHttpTurboClient GetProxyClientInWeakReferenceDictionary(IHttpRequest request,
-                                                                         ConcurrentDictionary<int, WeakReference<IHttpTurboClient>> weakReferenceDictionary,
-                                                                         Func<IWebProxy, IHttpTurboClient> createFunc)
+        private HttpClient GetProxyClientInWeakReferenceDictionary(IHttpRequest request,
+                                                                   ConcurrentDictionary<int, WeakReference<HttpClient>> weakReferenceDictionary,
+                                                                   Func<IWebProxy, HttpClient> createFunc)
         {
-            IHttpTurboClient client;
+            HttpClient client;
 
             //HACK 此处是否可能有问题?
             var proxy = request.Proxy!;
@@ -310,7 +294,7 @@ namespace Cuture.Http
                 var proxyUri = proxy.GetProxy(request.RequestUri);
                 if (proxyUri is null)
                 {
-                    return GetClientInWeakReference(_client, () => new HttpTurboClient());
+                    return GetClientInWeakReference(_client, () => HttpClientUtil.CreateDefaultClient());
                 }
                 proxyHash = proxyHash * -1521134295 + proxyUri.OriginalString
 #if NETCOREAPP
@@ -333,16 +317,16 @@ namespace Cuture.Http
 #endif
             }
 
-            if (!weakReferenceDictionary.TryGetValue(proxyHash, out WeakReference<IHttpTurboClient>? clientWR))
+            if (!weakReferenceDictionary.TryGetValue(proxyHash, out WeakReference<HttpClient>? clientWR))
             {
                 lock (weakReferenceDictionary)
                 {
                     if (!weakReferenceDictionary.TryGetValue(proxyHash, out clientWR))
                     {
-                        clientWR = new WeakReference<IHttpTurboClient>(null!);
+                        clientWR = new WeakReference<HttpClient>(null!);
                         client = GetClientInWeakReference(clientWR, () => createFunc(proxy));
 
-                        Debug.WriteLine($"new HttpTurboClient:{client.GetHashCode()} ProxyHash:{proxyHash}");
+                        Debug.WriteLine($"new HttpClient:{client.GetHashCode()} ProxyHash:{proxyHash}");
 
                         weakReferenceDictionary.AddOrUpdate(proxyHash, clientWR, (k, oldClientWR) =>
                         {
@@ -365,7 +349,7 @@ namespace Cuture.Http
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void HoldClient(WeakReference<IHttpTurboClient> clientWR)
+        private void HoldClient(WeakReference<HttpClient> clientWR)
         {
             if (_isHoldClient)
             {
@@ -374,7 +358,7 @@ namespace Cuture.Http
                     lock (_clientReleaseQueue!)
                     {
                         _holdedClients!.Add(client);
-                        _clientReleaseQueue.Enqueue(new CreatedTimeTagedObject<WeakReference<IHttpTurboClient>>(clientWR, DateTime.UtcNow));
+                        _clientReleaseQueue.Enqueue(new CreatedTimeTagedObject<WeakReference<HttpClient>>(clientWR, DateTime.UtcNow));
                     }
                 }
             }
@@ -395,7 +379,7 @@ namespace Cuture.Http
                 var token = tokenSource.Token;
                 while (!token.IsCancellationRequested)
                 {
-                    if (_clientReleaseQueue!.Peek() is CreatedTimeTagedObject<WeakReference<IHttpTurboClient>> next)
+                    if (_clientReleaseQueue!.Peek() is CreatedTimeTagedObject<WeakReference<HttpClient>> next)
                     {
                         var now = DateTime.UtcNow;
                         var expire = next.CreatedTime.Add(_holdTimeSpan!.Value);
@@ -428,6 +412,6 @@ namespace Cuture.Http
             _releaseTokenSource = tokenSource;
         }
 
-#endregion 方法
+        #endregion 方法
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 
 #if NETSTANDARD || NETCOREAPP3_1
@@ -30,17 +31,17 @@ namespace Cuture.Http
         #region 方法
 
         /// <summary>
-        /// 获取一个HttpTurbo
+        /// 根据请求获取一个用以执行请求的 <see cref="HttpMessageInvoker"/>
         /// </summary>
-        /// <param name="request">本次请求</param>
-        /// <param name="options"></param>
+        /// <param name="request">请求</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static IHttpTurboClient InternalGetHttpTurboClient(IHttpRequest request, HttpRequestOptions options)
+        private static HttpMessageInvoker InternalGetHttpMessageInvoker(IHttpRequest request)
         {
-            return options.TurboClient
-                        ?? options.TurboClientFactory?.GetTurboClient(request)
-                        ?? throw new ArgumentException($"HttpRequestOptions's {nameof(HttpRequestOptions.MessageInvoker)}、{nameof(HttpRequestOptions.TurboClient)}、{nameof(HttpRequestOptions.TurboClientFactory)}、cannot both be null.");
+            var options = request.IsSetOptions ? request.RequestOptions : HttpRequestOptions.Default;
+            return options.MessageInvoker
+                        ?? options.MessageInvokerFactory?.GetInvoker(request)
+                        ?? throw new ArgumentException($"HttpRequestOptions's {nameof(HttpRequestOptions.MessageInvoker)}、{nameof(HttpRequestOptions.MessageInvokerFactory)} cannot both be null.");
         }
 
         #endregion 方法

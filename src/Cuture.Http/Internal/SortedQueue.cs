@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-namespace Cuture.Http.Internal
+﻿namespace System.Collections.Generic
 {
     /// <summary>
     /// 线程不安全的有序队列

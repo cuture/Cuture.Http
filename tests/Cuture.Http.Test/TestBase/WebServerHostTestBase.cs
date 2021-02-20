@@ -30,7 +30,8 @@ namespace Cuture.Http.Test
             {
                 await ServerHost?.StopAsync();
             }
-            HttpRequestOptions.DefaultTurboClientFactory.Clear();
+            HttpRequestOptions.DefaultTurboClientFactory.Dispose();
+            HttpRequestOptions.DefaultTurboClientFactory = new SimpleHttpMessageInvokerFactory();
         }
 
         [TestInitialize]

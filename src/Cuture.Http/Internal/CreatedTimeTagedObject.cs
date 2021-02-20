@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Cuture.Http.Internal
+﻿namespace System
 {
     internal class CreatedTimeTagedObject<T> : IComparable<CreatedTimeTagedObject<T>> where T : class
     {
