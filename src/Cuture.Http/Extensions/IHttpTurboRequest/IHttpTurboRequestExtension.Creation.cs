@@ -14,7 +14,7 @@ namespace Cuture.Http
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
-        public static IHttpRequest ToHttpRequest(this string requestUri) => ToHttpRequest(requestUri, HttpRequestOptions.DefaultTurboRequestCreator);
+        public static IHttpRequest ToHttpRequest(this string requestUri) => ToHttpRequest(requestUri, HttpRequestOptions.DefaultHttpRequestCreator);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
@@ -22,7 +22,7 @@ namespace Cuture.Http
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
-        public static IHttpRequest ToHttpRequest(this Uri requestUri) => ToHttpRequest(requestUri, HttpRequestOptions.DefaultTurboRequestCreator);
+        public static IHttpRequest ToHttpRequest(this Uri requestUri) => ToHttpRequest(requestUri, HttpRequestOptions.DefaultHttpRequestCreator);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
@@ -34,7 +34,7 @@ namespace Cuture.Http
 
         /// <inheritdoc cref="CreateHttpRequest(string, IHttpRequestCreator)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest CreateHttpRequest(this string requestUri) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultTurboRequestCreator);
+        public static IHttpRequest CreateHttpRequest(this string requestUri) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultHttpRequestCreator);
 
         /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -46,7 +46,7 @@ namespace Cuture.Http
 
         /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest CreateHttpRequest(this Uri requestUri) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultTurboRequestCreator);
+        public static IHttpRequest CreateHttpRequest(this Uri requestUri) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultHttpRequestCreator);
 
         /// <summary>
         /// 创建Http请求
@@ -63,7 +63,7 @@ namespace Cuture.Http
 
         /// <inheritdoc cref="CreateRequest(HttpMessageInvoker, Uri, IHttpRequestCreator)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, string requestUri) => CreateRequest(httpMessageInvoker, requestUri, HttpRequestOptions.DefaultTurboRequestCreator);
+        public static IHttpRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, string requestUri) => CreateRequest(httpMessageInvoker, requestUri, HttpRequestOptions.DefaultHttpRequestCreator);
 
         /// <inheritdoc cref="CreateRequest(HttpMessageInvoker, Uri, IHttpRequestCreator)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -71,7 +71,7 @@ namespace Cuture.Http
 
         /// <inheritdoc cref="CreateRequest(HttpMessageInvoker, Uri, IHttpRequestCreator)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, Uri requestUri) => CreateRequest(httpMessageInvoker, requestUri, HttpRequestOptions.DefaultTurboRequestCreator);
+        public static IHttpRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, Uri requestUri) => CreateRequest(httpMessageInvoker, requestUri, HttpRequestOptions.DefaultHttpRequestCreator);
 
         /// <summary>
         /// 创建Http请求
