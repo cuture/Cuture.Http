@@ -26,28 +26,17 @@ namespace Cuture.Http
 
         #region 构造函数
 
-        /// <summary>
-        /// HttpFormContent
-        /// </summary>
-        /// <param name="content">已编码的from内容</param>
+        /// <inheritdoc cref="FormContent(string, string, Encoding)"/>
         public FormContent(string content) : this(content, ContentType, Encoding.UTF8)
         {
         }
 
-        /// <summary>
-        /// HttpFormContent
-        /// </summary>
-        /// <param name="content">已编码的from内容</param>
-        /// <param name="encoding">指定编码类型</param>
+        /// <inheritdoc cref="FormContent(string, string, Encoding)"/>
         public FormContent(string content, Encoding encoding) : this(content, ContentType, encoding)
         {
         }
 
-        /// <summary>
-        /// HttpFormContent
-        /// </summary>
-        /// <param name="content">已编码的from内容</param>
-        /// <param name="contentType">指定ContentType</param>
+        /// <inheritdoc cref="FormContent(string, string, Encoding)"/>
         public FormContent(string content, string contentType) : this(content, contentType, Encoding.UTF8)
         {
         }
@@ -63,29 +52,28 @@ namespace Cuture.Http
             Headers.TryAddWithoutValidation(HttpHeaderDefinitions.ContentType, contentType);
         }
 
-        /// <summary>
-        /// HttpFormContent
-        /// </summary>
-        /// <param name="content">用于转换为form的对象</param>
+        /// <inheritdoc cref="FormContent(object, string, Encoding, IFormDataFormatter)"/>
         public FormContent(object content) : this(content, ContentType, Encoding.UTF8)
         {
         }
 
-        /// <summary>
-        /// HttpFormContent
-        /// </summary>
-        /// <param name="content">用于转换为form的对象</param>
-        /// <param name="encoding">指定编码类型</param>
+        /// <inheritdoc cref="FormContent(object, string, Encoding, IFormDataFormatter)"/>
         public FormContent(object content, Encoding encoding) : this(content, ContentType, encoding)
         {
         }
 
-        /// <summary>
-        /// HttpFormContent
-        /// </summary>
-        /// <param name="content">用于转换为form的对象</param>
-        /// <param name="contentType">指定ContentType</param>
+        /// <inheritdoc cref="FormContent(object, string, Encoding, IFormDataFormatter)"/>
+        public FormContent(object content, IFormDataFormatter formatter) : this(content, ContentType, Encoding.UTF8, formatter)
+        {
+        }
+
+        /// <inheritdoc cref="FormContent(object, string, Encoding, IFormDataFormatter)"/>
         public FormContent(object content, string contentType) : this(content, contentType, Encoding.UTF8)
+        {
+        }
+
+        /// <inheritdoc cref="FormContent(object, string, Encoding, IFormDataFormatter)"/>
+        public FormContent(object content, string contentType, Encoding encoding) : this(content, contentType, encoding, HttpRequestOptions.DefaultFormDataFormatter)
         {
         }
 
@@ -95,7 +83,8 @@ namespace Cuture.Http
         /// <param name="content">用于转换为form的对象</param>
         /// <param name="contentType">指定ContentType</param>
         /// <param name="encoding">指定编码类型</param>
-        public FormContent(object content, string contentType, Encoding encoding) : base(GetBytes(content, encoding))
+        /// <param name="formatter">指定格式化器</param>
+        public FormContent(object content, string contentType, Encoding encoding, IFormDataFormatter formatter) : base(GetBytes(content, encoding, formatter))
         {
             Headers.TryAddWithoutValidation(HttpHeaderDefinitions.ContentType, contentType);
         }
@@ -104,7 +93,7 @@ namespace Cuture.Http
 
         #region 方法
 
-        private static byte[] GetBytes(object content, Encoding encoding)
+        private static byte[] GetBytes(object content, Encoding encoding, IFormDataFormatter formatter)
         {
             if (content is null)
             {
@@ -119,7 +108,7 @@ namespace Cuture.Http
 
             if (string.IsNullOrEmpty(data))
             {
-                data = content.ToEncodedForm();
+                data = formatter.FormatToEncoded(content);
             }
 
             return encoding.GetBytes(data);

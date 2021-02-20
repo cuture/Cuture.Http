@@ -6,8 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Newtonsoft.Json.Linq;
-
 #if NETCOREAPP
 
 using System.Buffers;
@@ -21,8 +19,6 @@ namespace Cuture.Http
     /// </summary>
     public static class HttpResponseMessageExtensions
     {
-#pragma warning disable CA1031 // 不捕获常规异常类型
-
         #region Task<HttpResponseMessage>
 
         #region bytes
@@ -106,50 +102,6 @@ namespace Cuture.Http
         }
 
         #endregion String
-
-        #region json as JsonObject
-
-        /// <summary>
-        /// 以 json 接收返回数据，并解析为 <see cref="JObject"/> 对象
-        /// </summary>
-        /// <param name="requestTask"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<JObject?> ReceiveAsJsonAsync(this Task<HttpResponseMessage> requestTask)
-        {
-            using var response = await requestTask.ConfigureAwait(false);
-            return await response.ReceiveAsJsonAsync().ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// 尝试以 json 接收返回数据，并解析为 <see cref="JObject"/> 对象
-        /// </summary>
-        /// <param name="requestTask"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<TextHttpOperationResult<JObject>> TryReceiveAsJsonAsync(this Task<HttpResponseMessage> requestTask)
-        {
-            var result = new TextHttpOperationResult<JObject>();
-            try
-            {
-                result.ResponseMessage = await requestTask.ConfigureAwait(false);
-
-                var json = await result.ResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-                result.Text = json;
-
-                if (!string.IsNullOrEmpty(json))
-                {
-                    result.Data = JObject.Parse(json);
-                }
-            }
-            catch (Exception ex)
-            {
-                result.Exception = ex;
-            }
-            return result;
-        }
-
-        #endregion json as JsonObject
 
         #region json as object
 
@@ -243,7 +195,7 @@ namespace Cuture.Http
 #if NETCOREAPP
             using var stream =
 #if NET
-        await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false); 
+        await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false);
 #else
         await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 #endif
@@ -333,7 +285,7 @@ namespace Cuture.Http
 #if NETCOREAPP
             using var stream =
 #if NET
-        await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false); 
+        await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false);
 #else
         await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 #endif
@@ -458,7 +410,7 @@ namespace Cuture.Http
 #if NETCOREAPP
             using var stream =
 #if NET
-        await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false); 
+        await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false);
 #else
         await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 #endif
@@ -538,8 +490,6 @@ namespace Cuture.Http
 
         #endregion Task<HttpResponseMessage>
 
-#pragma warning restore CA1031 // 不捕获常规异常类型
-
         #region HttpResponseMessage
 
         /// <summary>
@@ -612,25 +562,6 @@ namespace Cuture.Http
             using (responseMessage)
             {
                 return await responseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-            }
-        }
-
-        /// <summary>
-        /// 获取请求返回的JObject对象
-        /// </summary>
-        /// <param name="responseMessage"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<JObject?> ReceiveAsJsonAsync(this HttpResponseMessage responseMessage)
-        {
-            using (responseMessage)
-            {
-                var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-                if (!string.IsNullOrEmpty(json))
-                {
-                    return JObject.Parse(json);
-                }
-                return null;
             }
         }
 

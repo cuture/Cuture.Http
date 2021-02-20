@@ -14,7 +14,7 @@
         /// <typeparam name="T"></typeparam>
         /// <param name="data"></param>
         /// <returns></returns>
-        T Deserialize<T>(TData data);
+        T? Deserialize<T>(TData data);
 
         /// <summary>
         /// 序列化到数据

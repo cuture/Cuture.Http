@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 
 namespace Cuture.Http
 {
@@ -10,7 +11,7 @@ namespace Cuture.Http
     /// </summary>
     public class HttpRequestOptions
     {
-        #region DefaultSetting
+        #region CONST
 
         /// <summary>
         /// 默认下载时的buffer大小
@@ -21,6 +22,17 @@ namespace Cuture.Http
         /// 默认的自动循环处理的最大重定向次数
         /// </summary>
         public const int DefaultMaxAutomaticRedirections = 50;
+
+        #endregion CONST
+
+        #region DefaultSetting
+
+        #region Static Fields
+
+        /// <summary>
+        /// 全局使用的默认<inheritdoc cref="IFormDataFormatter"/>
+        /// </summary>
+        private static IFormDataFormatter s_defaultFormDataFormatter;
 
         /// <summary>
         /// 全局使用的默认<inheritdoc cref="IHttpMessageInvokerFactory"/>
@@ -35,12 +47,23 @@ namespace Cuture.Http
         /// <summary>
         /// 全局使用的默认<inheritdoc cref="IJsonSerializer"/>
         /// </summary>
-        private static IJsonSerializer s_defaultJsonSerializer = new DefaultJsonSerializer();
+        private static IJsonSerializer s_defaultJsonSerializer = null!;
 
         /// <summary>
         /// 自动重定向次数
         /// </summary>
         private static int s_maxAutomaticRedirections = DefaultMaxAutomaticRedirections;
+
+        #endregion Static Fields
+
+        #region Fields
+
+        private IJsonSerializer? _jsonSerializer;
+        private IHttpMessageInvokerFactory? _messageInvokerFactory;
+
+        #endregion Fields
+
+        #region Static Properties
 
         /// <summary>
         /// 全局使用的默认请求选项
@@ -61,6 +84,13 @@ namespace Cuture.Http
             set => ServicePointManager.DefaultConnectionLimit = value;
         }
 
+        /// <inheritdoc cref="s_defaultFormDataFormatter"/>
+        public static IFormDataFormatter DefaultFormDataFormatter
+        {
+            get => s_defaultFormDataFormatter;
+            set => SetOption(ref s_defaultFormDataFormatter, ref s_defaultFormDataFormatter!, value);
+        }
+
         /// <summary>
         /// 默认Http头
         /// </summary>
@@ -70,70 +100,21 @@ namespace Cuture.Http
         public static IHttpMessageInvokerFactory DefaultHttpMessageInvokerFactory
         {
             get => s_defaultHttpMessageInvokerFactory;
-            set
-            {
-                if (value is null)
-                {
-                    throw new NullReferenceException($"{nameof(DefaultHttpMessageInvokerFactory)} can not be null");
-                }
-                if (ReferenceEquals(value, s_defaultHttpMessageInvokerFactory))
-                {
-                    return;
-                }
-                var oldFactory = s_defaultHttpMessageInvokerFactory;
-
-                if (ReferenceEquals(Default.MessageInvokerFactory, oldFactory))
-                {
-                    Default.MessageInvokerFactory = value;
-                }
-
-                s_defaultHttpMessageInvokerFactory = value;
-                oldFactory.Dispose();
-            }
+            set => SetOption(ref s_defaultHttpMessageInvokerFactory, ref Default._messageInvokerFactory, value);
         }
 
         /// <inheritdoc cref="s_defaultHttpRequestCreator"/>
         public static IHttpRequestCreator DefaultHttpRequestCreator
         {
             get => s_defaultHttpRequestCreator;
-            set
-            {
-                if (value is null)
-                {
-                    throw new NullReferenceException($"{nameof(DefaultHttpRequestCreator)} can not be null");
-                }
-                if (ReferenceEquals(value, s_defaultHttpRequestCreator))
-                {
-                    return;
-                }
-                var oldFactory = s_defaultHttpRequestCreator;
-                s_defaultHttpRequestCreator = value;
-                oldFactory.Dispose();
-            }
+            set => SetOption(ref s_defaultHttpRequestCreator, ref s_defaultHttpRequestCreator!, value);
         }
 
         /// <inheritdoc cref="s_defaultJsonSerializer"/>
         public static IJsonSerializer DefaultJsonSerializer
         {
             get => s_defaultJsonSerializer;
-            set
-            {
-                if (value is null)
-                {
-                    throw new NullReferenceException($"{nameof(DefaultJsonSerializer)} can not be null");
-                }
-                if (ReferenceEquals(value, s_defaultJsonSerializer))
-                {
-                    return;
-                }
-
-                if (ReferenceEquals(Default.JsonSerializer, s_defaultJsonSerializer))
-                {
-                    Default.JsonSerializer = value;
-                }
-
-                s_defaultJsonSerializer = value;
-            }
+            set => SetOption(ref s_defaultJsonSerializer, ref Default._jsonSerializer, value);
         }
 
         /// <summary>
@@ -151,14 +132,31 @@ namespace Cuture.Http
         /// </summary>
         public static int MaxAutomaticRedirections { get => s_maxAutomaticRedirections; set => s_maxAutomaticRedirections = value > 0 ? value : throw new ArgumentOutOfRangeException($"{nameof(MaxAutomaticRedirections)} Must be greater than 0"); }
 
+        #endregion Static Properties
+
         #endregion DefaultSetting
+
+        #region 静态构造函数
+
+        static HttpRequestOptions()
+        {
+#if NETCOREAPP
+            s_defaultJsonSerializer = new SystemJsonJsonSerializer();
+            s_defaultFormDataFormatter = new SystemJsonFormDataFormatter();
+#else
+            s_defaultJsonSerializer = null!;
+            s_defaultFormDataFormatter = null!;
+#endif
+        }
+
+        #endregion 静态构造函数
 
         #region Public 属性
 
         /// <summary>
         /// Json序列化器
         /// </summary>
-        public IJsonSerializer? JsonSerializer { get; set; }
+        public IJsonSerializer? JsonSerializer { get => _jsonSerializer; set => _jsonSerializer = value; }
 
         /// <summary>
         /// 用于请求的 <see cref="HttpMessageInvoker"/>
@@ -180,7 +178,7 @@ namespace Cuture.Http
         /// <para/>
         /// <see cref="MessageInvoker"/> > <see cref="MessageInvokerFactory"/>
         /// </summary>
-        public IHttpMessageInvokerFactory? MessageInvokerFactory { get; set; }
+        public IHttpMessageInvokerFactory? MessageInvokerFactory { get => _messageInvokerFactory; set => _messageInvokerFactory = value; }
 
         #endregion Public 属性
 
@@ -193,5 +191,32 @@ namespace Cuture.Http
         public HttpRequestOptions Copy() => (MemberwiseClone() as HttpRequestOptions)!;
 
         #endregion Public 方法
+
+        #region Private 方法
+
+        private static void SetOption<T>(ref T target, ref T? compareTarget, T value, [CallerMemberName] string? propertyName = null)
+        {
+            if (value is null)
+            {
+                throw new NullReferenceException($"{propertyName} can not be null");
+            }
+
+            if (ReferenceEquals(value, target))
+            {
+                return;
+            }
+
+            var oldValue = target;
+            target = value;
+
+            if (compareTarget != null && ReferenceEquals(compareTarget, oldValue))
+            {
+                compareTarget = value;
+            }
+
+            (oldValue as IDisposable)?.Dispose();
+        }
+
+        #endregion Private 方法
     }
 }

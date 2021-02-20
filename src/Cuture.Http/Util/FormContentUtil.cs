@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Linq;
 using System.Runtime.CompilerServices;
-
-using Newtonsoft.Json.Linq;
 
 namespace Cuture.Http
 {
@@ -38,42 +35,14 @@ namespace Cuture.Http
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        public static string ToEncodedForm(this object content)
-        {
-            //TODO 优化它
-            var jobject = JObject.FromObject(content);
-            var kvs = jobject.Children().Select(m =>
-            {
-                if (m is JProperty property)
-                {
-                    return $"{Encode(property.Name)}={Encode(property.Value.ToString())}";
-                }
-                return null;
-            });
-
-            return string.Join("&", kvs);
-        }
+        public static string ToEncodedForm(this object content) => HttpRequestOptions.DefaultFormDataFormatter.FormatToEncoded(content);
 
         /// <summary>
         /// 获取对象的form表单
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        public static string ToForm(this object content)
-        {
-            //TODO 优化它
-            var jobject = JObject.FromObject(content);
-            var kvs = jobject.Children().Select(m =>
-            {
-                if (m is JProperty property)
-                {
-                    return $"{property.Name}={property.Value}";
-                }
-                return null;
-            });
-
-            return string.Join("&", kvs);
-        }
+        public static string ToForm(this object content) => HttpRequestOptions.DefaultFormDataFormatter.Format(content);
 
         #endregion 方法
     }

@@ -3,14 +3,16 @@
 namespace Cuture.Http
 {
     /// <summary>
-    /// 默认Json序列化器
+    /// 使用 Newtonsoft.Json 实现的 <inheritdoc cref="IJsonSerializer"/>
     /// </summary>
-    internal class DefaultJsonSerializer : IJsonSerializer
+    public class NewtonsoftJsonJsonSerializer : IJsonSerializer
     {
         #region Public 方法
 
+        /// <inheritdoc/>
         public T Deserialize<T>(string data) => JsonConvert.DeserializeObject<T>(data);
 
+        /// <inheritdoc/>
         public string Serialize(object value) => JsonConvert.SerializeObject(value);
 
         #endregion Public 方法

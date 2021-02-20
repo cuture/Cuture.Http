@@ -1,6 +1,8 @@
 <Project>
   <!--Project Setting-->
   <PropertyGroup>
+    <Platforms>AnyCPU</Platforms>
+
     <TargetFrameworks>netstandard2.0;net461;netcoreapp3.1;net5.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
 
@@ -9,10 +11,10 @@
 
   <!--Version-->
   <PropertyGroup>
-    <VersionMajor>1</VersionMajor>
-    <VersionMinor>4</VersionMinor>
-    <VersionPatch>1</VersionPatch>
-    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionPatch)</VersionPrefix>
+    <VersionMajor>2</VersionMajor>
+    <VersionMinor>0</VersionMinor>
+    <VersionPatch>0</VersionPatch>
+    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionPatch)-alpha0001</VersionPrefix>
   </PropertyGroup>
 
   <!--Package Info-->
@@ -27,10 +29,16 @@
     <RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
     <AssemblyVersion>$(VersionMajor).$(VersionMinor).$(VersionPatch).0</AssemblyVersion>
     <FileVersion>$(AssemblyVersion)</FileVersion>
+
+    <PackageTags>http request httprequest httpclient httphelper</PackageTags>
   </PropertyGroup>
 
   <!--Buid-->
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
 </Project>
