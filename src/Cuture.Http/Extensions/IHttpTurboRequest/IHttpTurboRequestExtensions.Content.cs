@@ -8,7 +8,7 @@ namespace Cuture.Http
     /// <summary>
     /// <see cref="IHttpRequest"/> 请求拓展类
     /// </summary>
-    public static partial class IHttpTurboRequestExtension
+    public static partial class IHttpTurboRequestExtensions
     {
         #region Content
 

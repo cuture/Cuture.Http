@@ -6,7 +6,7 @@ namespace Cuture.Http
     /// <summary>
     /// HttpClientHandler拓展
     /// </summary>
-    public static class HttpClientHandlerExtension
+    public static class HttpClientHandlerExtensions
     {
         #region 方法
 

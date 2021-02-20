@@ -19,7 +19,7 @@ namespace Cuture.Http
     /// <summary>
     /// HttpResponseMessage拓展方法
     /// </summary>
-    public static class HttpResponseMessageExtension
+    public static class HttpResponseMessageExtensions
     {
 #pragma warning disable CA1031 // 不捕获常规异常类型
 

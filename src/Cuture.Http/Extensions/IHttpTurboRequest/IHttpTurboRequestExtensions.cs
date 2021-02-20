@@ -13,13 +13,13 @@ namespace Cuture.Http
     /// <summary>
     /// <see cref="IHttpRequest"/> 请求拓展类
     /// </summary>
-    public static partial class IHttpTurboRequestExtension
+    public static partial class IHttpTurboRequestExtensions
     {
         #region 构造函数
 
 #if NETSTANDARD || NETCOREAPP3_1
 
-        static IHttpTurboRequestExtension()
+        static IHttpTurboRequestExtensions()
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         }

@@ -6,7 +6,7 @@ namespace Cuture.Http
     /// <summary>
     /// HttpRequestMessage拓展方法
     /// </summary>
-    public static class HttpRequestMessageExtension
+    public static class HttpRequestMessageExtensions
     {
         #region HttpRequestMessage
 

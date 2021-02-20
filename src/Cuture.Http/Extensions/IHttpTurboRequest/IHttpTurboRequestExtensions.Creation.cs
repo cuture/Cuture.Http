@@ -6,7 +6,7 @@ namespace Cuture.Http
 {
     //此文件主要包含请求创建的拓展方法
 
-    public static partial class IHttpTurboRequestExtension
+    public static partial class IHttpTurboRequestExtensions
     {
         #region Creation
 
