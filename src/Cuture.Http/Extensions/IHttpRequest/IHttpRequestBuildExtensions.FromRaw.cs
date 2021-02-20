@@ -8,10 +8,9 @@ using static Cuture.Http.Internal.HttpRawDataReadTool;
 
 namespace Cuture.Http
 {
-    /// <summary>
-    /// <see cref="IHttpRequest"/> 请求拓展类
-    /// </summary>
-    public static partial class IHttpTurboRequestExtensions
+    //此文件主要包含 从原始请求内容构建请求 相关的拓展方法
+
+    public static partial class IHttpRequestBuildExtensions
     {
         #region 方法
 

@@ -4,9 +4,12 @@ using System.Runtime.CompilerServices;
 
 namespace Cuture.Http
 {
-    //此文件主要包含请求创建的拓展方法
+    //此文件主要包含 请求创建 相关的拓展方法
 
-    public static partial class IHttpTurboRequestExtensions
+    /// <summary>
+    /// <see cref="IHttpRequest"/> 构建拓展类
+    /// </summary>
+    public static partial class IHttpRequestBuildExtensions
     {
         #region Creation
 

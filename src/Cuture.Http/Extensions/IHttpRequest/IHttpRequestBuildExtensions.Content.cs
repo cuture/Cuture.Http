@@ -5,10 +5,9 @@ using System.Text;
 
 namespace Cuture.Http
 {
-    /// <summary>
-    /// <see cref="IHttpRequest"/> 请求拓展类
-    /// </summary>
-    public static partial class IHttpTurboRequestExtensions
+    //此文件主要包含 Content 相关的拓展方法
+
+    public static partial class IHttpRequestBuildExtensions
     {
         #region Content
 

@@ -6,10 +6,9 @@ using System.Threading;
 
 namespace Cuture.Http
 {
-    /// <summary>
-    /// <see cref="IHttpRequest"/> 请求拓展类
-    /// </summary>
-    public static partial class IHttpTurboRequestExtensions
+    //此文件主要包含 请求选项 相关的拓展方法
+
+    public static partial class IHttpRequestBuildExtensions
     {
         #region Options
 
