@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Cuture.Http.Test
 {
     [TestClass]
-    public abstract class HttpTurboClientFactoryTest<T> where T : IHttpMessageInvokerFactory
+    public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInvokerFactory
     {
         #region 字段
 

@@ -23,19 +23,19 @@ namespace Cuture.Http
         public const int DefaultMaxAutomaticRedirections = 50;
 
         /// <summary>
-        /// 全局使用的默认json序列化器
-        /// </summary>
-        private static IJsonSerializer s_defaultJsonSerializer = new DefaultJsonSerializer();
-
-        /// <summary>
         /// 全局使用的默认<inheritdoc cref="IHttpMessageInvokerFactory"/>
         /// </summary>
-        private static IHttpMessageInvokerFactory s_defaultTurboClientFactory = new SimpleHttpMessageInvokerFactory();
+        private static IHttpMessageInvokerFactory s_defaultHttpMessageInvokerFactory = new SimpleHttpMessageInvokerFactory();
 
         /// <summary>
         /// 全局使用的默认<inheritdoc cref="IHttpRequestCreator"/>
         /// </summary>
-        private static IHttpRequestCreator s_defaultTurboRequestCreator = new DefaultHttpRequestCreator();
+        private static IHttpRequestCreator s_defaultHttpRequestCreator = new DefaultHttpRequestCreator();
+
+        /// <summary>
+        /// 全局使用的默认<inheritdoc cref="IJsonSerializer"/>
+        /// </summary>
+        private static IJsonSerializer s_defaultJsonSerializer = new DefaultJsonSerializer();
 
         /// <summary>
         /// 自动重定向次数
@@ -66,48 +66,48 @@ namespace Cuture.Http
         /// </summary>
         public static IDictionary<string, string> DefaultHttpHeaders { get; } = new Dictionary<string, string>();
 
-        /// <inheritdoc cref="s_defaultTurboClientFactory"/>
+        /// <inheritdoc cref="s_defaultHttpMessageInvokerFactory"/>
         public static IHttpMessageInvokerFactory DefaultHttpMessageInvokerFactory
         {
-            get => s_defaultTurboClientFactory;
+            get => s_defaultHttpMessageInvokerFactory;
             set
             {
                 if (value is null)
                 {
                     throw new NullReferenceException($"{nameof(DefaultHttpMessageInvokerFactory)} can not be null");
                 }
-                if (ReferenceEquals(value, s_defaultTurboClientFactory))
+                if (ReferenceEquals(value, s_defaultHttpMessageInvokerFactory))
                 {
                     return;
                 }
-                var oldFactory = s_defaultTurboClientFactory;
+                var oldFactory = s_defaultHttpMessageInvokerFactory;
 
                 if (ReferenceEquals(Default.MessageInvokerFactory, oldFactory))
                 {
                     Default.MessageInvokerFactory = value;
                 }
 
-                s_defaultTurboClientFactory = value;
+                s_defaultHttpMessageInvokerFactory = value;
                 oldFactory.Dispose();
             }
         }
 
-        /// <inheritdoc cref="s_defaultTurboRequestCreator"/>
+        /// <inheritdoc cref="s_defaultHttpRequestCreator"/>
         public static IHttpRequestCreator DefaultHttpRequestCreator
         {
-            get => s_defaultTurboRequestCreator;
+            get => s_defaultHttpRequestCreator;
             set
             {
                 if (value is null)
                 {
                     throw new NullReferenceException($"{nameof(DefaultHttpRequestCreator)} can not be null");
                 }
-                if (ReferenceEquals(value, s_defaultTurboRequestCreator))
+                if (ReferenceEquals(value, s_defaultHttpRequestCreator))
                 {
                     return;
                 }
-                var oldFactory = s_defaultTurboRequestCreator;
-                s_defaultTurboRequestCreator = value;
+                var oldFactory = s_defaultHttpRequestCreator;
+                s_defaultHttpRequestCreator = value;
                 oldFactory.Dispose();
             }
         }
