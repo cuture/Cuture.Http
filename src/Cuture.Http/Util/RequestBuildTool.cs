@@ -45,7 +45,7 @@ namespace Cuture.Http
             var encoding = Encoding.UTF8;
 
             var url = encoding.GetString(urlSpan);
-            var request = url.ToHttpRequest()
+            var request = url.CreateHttpRequest()
                              .UseVerb(encoding.GetString(methodSpan));
 
             var (contentLength, contentType) = request.LoadHeaders(ref data, encoding);

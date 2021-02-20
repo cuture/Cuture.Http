@@ -41,7 +41,7 @@ namespace Cuture.Http.Test
         /// ªÒ»°«Î«Û
         /// </summary>
         /// <returns></returns>
-        public IHttpRequest GetRequest() => _url.ToHttpRequest().UseGet().AddHeader("Cache-Control", "no-cache");
+        public IHttpRequest GetRequest() => _url.CreateHttpRequest().UseGet().AddHeader("Cache-Control", "no-cache");
 
         [TestMethod]
         public async Task ParallelRequestTestAsync()
@@ -93,7 +93,7 @@ namespace Cuture.Http.Test
         [TestMethod]
         public async Task DownloadWithUnexpectedContentTestAsync()
         {
-            var request = TestServer.TestHost.ToHttpRequest();
+            var request = TestServer.TestHost.CreateHttpRequest();
             using var stream = new MemoryStream();
             await request.DownloadToStreamAsync(stream);
 

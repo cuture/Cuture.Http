@@ -9,7 +9,7 @@
 
 Example Usage:
 var url = "http://www.domain.com/api";
-var response = await url.ToHttpRequest()
+var response = await url.CreateHttpRequest()
                         .UseUserAgent(UserAgents.FireFox)
                         .AddHeader("header1", "header1Value")
                         .UsePost()

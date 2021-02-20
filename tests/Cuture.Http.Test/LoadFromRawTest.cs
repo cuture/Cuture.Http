@@ -18,12 +18,12 @@ namespace Cuture.Http.Test
         [TestMethod]
         public async Task LoadHeadersFromRaw()
         {
-            var httpRst = await RawUrl.ToHttpRequest()
+            var httpRst = await RawUrl.CreateHttpRequest()
                                       .UsePost()
                                       .TryGetAsStringAsync();
             Assert.IsFalse(httpRst.IsSuccessStatusCode);
 
-            httpRst = await RawUrl.ToHttpRequest()
+            httpRst = await RawUrl.CreateHttpRequest()
                                   .UsePost()
                                   .LoadHeadersFromRaw(RawBase64String)
                                   .WithJsonContent(RawContentString)
@@ -35,7 +35,7 @@ namespace Cuture.Http.Test
         [TestMethod]
         public async Task LoadContentFromRaw()
         {
-            var httpRst = await RawUrl.ToHttpRequest()
+            var httpRst = await RawUrl.CreateHttpRequest()
                                       .UsePost()
                                       .LoadHeadersFromRaw(RawBase64String)
                                       .LoadContentFromRaw(RawBase64String)
@@ -47,7 +47,7 @@ namespace Cuture.Http.Test
         [TestMethod]
         public async Task LoadHeadersAndContentFromRaw()
         {
-            var httpRst = await RawUrl.ToHttpRequest()
+            var httpRst = await RawUrl.CreateHttpRequest()
                                       .UsePost()
                                       .LoadHeadersAndContentFromRaw(RawBase64String)
                                       .TryGetAsStringAsync();

@@ -32,7 +32,7 @@ namespace Cuture.Http.Test
 
             #region 普通请求
 
-            var request = url.ToHttpRequest();
+            var request = url.CreateHttpRequest();
             for (int i = 0; i < count; i++)
             {
                 var client = _factory.GetInvoker(request);
@@ -41,7 +41,7 @@ namespace Cuture.Http.Test
 
             #region 允许重定向请求
 
-            request = url.ToHttpRequest().AutoRedirection();
+            request = url.CreateHttpRequest().AutoRedirection();
 
             for (int i = 0; i < count; i++)
             {
@@ -55,7 +55,7 @@ namespace Cuture.Http.Test
 
             #region 代理请求
 
-            request = url.ToHttpRequest()
+            request = url.CreateHttpRequest()
                          .UseProxy("http://127.0.0.1:8000");
             for (int i = 0; i < count; i++)
             {
@@ -65,7 +65,7 @@ namespace Cuture.Http.Test
 
             #region 代理允许重定向请求
 
-            request = url.ToHttpRequest()
+            request = url.CreateHttpRequest()
                  .UseProxy("http://127.0.0.1:8000")
                  .AutoRedirection();
 
@@ -81,7 +81,7 @@ namespace Cuture.Http.Test
 
             #region 有验证的代理请求
 
-            request = url.ToHttpRequest()
+            request = url.CreateHttpRequest()
                          .UseProxy(new WebProxy("http://127.0.0.1:8000")
                          {
                              Credentials = new NetworkCredential("proxy_user_name", "proxy_password")
@@ -94,7 +94,7 @@ namespace Cuture.Http.Test
 
             #region 有验证的代理允许重定向请求
 
-            request = url.ToHttpRequest()
+            request = url.CreateHttpRequest()
                          .AutoRedirection()
                          .UseProxy(new WebProxy("http://127.0.0.1:8000")
                          {
@@ -113,7 +113,7 @@ namespace Cuture.Http.Test
 
             #region 有验证的代理请求2
 
-            request = url.ToHttpRequest()
+            request = url.CreateHttpRequest()
                          .UseProxy(new WebProxy("http://127.0.0.1:8000")
                          {
                              Credentials = new NetworkCredential("proxy_user_name2", "proxy_password2")
@@ -126,7 +126,7 @@ namespace Cuture.Http.Test
 
             #region 有验证的代理允许重定向请求2
 
-            request = url.ToHttpRequest()
+            request = url.CreateHttpRequest()
                          .AutoRedirection()
                          .UseProxy(new WebProxy("http://127.0.0.1:8000")
                          {
@@ -186,7 +186,7 @@ namespace Cuture.Http.Test
             {
                 var index = i % proxies.Length;
                 var proxy = proxies[index];
-                var request = "http://127.0.0.1/index".ToHttpRequest().UseProxy(proxy);
+                var request = "http://127.0.0.1/index".CreateHttpRequest().UseProxy(proxy);
 
                 var client = _factory.GetInvoker(request);
 
@@ -216,7 +216,7 @@ namespace Cuture.Http.Test
             Parallel.For(0, count, i =>
             {
                 var index = type == -1 ? i % 6 : type;
-                var request = urls[index].ToHttpRequest();
+                var request = urls[index].CreateHttpRequest();
                 switch (index)
                 {
                     case 1:

@@ -71,7 +71,7 @@ namespace Cuture.Http.Test
         /// <returns></returns>
         private IHttpRequest GetMultipartContentRequest()
         {
-            return _urlMultipartContent.ToHttpRequest()
+            return _urlMultipartContent.CreateHttpRequest()
                         .UseVerb("CUSTOM")
                         .AddHeader("Header1", "Header1Value")
                         .AddHeaders(
@@ -127,7 +127,7 @@ namespace Cuture.Http.Test
         /// <returns></returns>
         private IHttpRequest GetMultipartFormDataContentRequest()
         {
-            return _urlMultipartFormDataContent.ToHttpRequest()
+            return _urlMultipartFormDataContent.CreateHttpRequest()
                         .UseVerb("CUSTOM")
                         .AddHeader("Header1", "Header1Value")
                         .AddHeader("Header1", "Header1ValueNew")

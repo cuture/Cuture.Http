@@ -17,19 +17,19 @@ namespace Cuture.Http
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
-        public static IHttpRequest ToHttpRequest(this string requestUri) => ToHttpRequest(requestUri, HttpRequestOptions.DefaultHttpRequestCreator);
+        public static IHttpRequest ToHttpRequest(this string requestUri) => requestUri.CreateHttpRequest(HttpRequestOptions.DefaultHttpRequestCreator);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
-        public static IHttpRequest ToHttpRequest(this string requestUri, IHttpRequestCreator requestCreator) => new Uri(requestUri, UriKind.RelativeOrAbsolute).ToHttpRequest(requestCreator);
+        public static IHttpRequest ToHttpRequest(this string requestUri, IHttpRequestCreator requestCreator) => requestUri.CreateHttpRequest(requestCreator);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
-        public static IHttpRequest ToHttpRequest(this Uri requestUri) => ToHttpRequest(requestUri, HttpRequestOptions.DefaultHttpRequestCreator);
+        public static IHttpRequest ToHttpRequest(this Uri requestUri) => requestUri.CreateHttpRequest(HttpRequestOptions.DefaultHttpRequestCreator);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
-        public static IHttpRequest ToHttpRequest(this Uri requestUri, IHttpRequestCreator requestCreator) => requestCreator.CreateRequest(requestUri);
+        public static IHttpRequest ToHttpRequest(this Uri requestUri, IHttpRequestCreator requestCreator) => requestUri.CreateHttpRequest(requestCreator);
 
         #endregion Obslate
 

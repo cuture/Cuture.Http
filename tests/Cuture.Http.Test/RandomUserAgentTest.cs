@@ -14,7 +14,7 @@ namespace Cuture.Http.Test
     {
         #region ·½·¨
 
-        public IHttpRequest GetRequest() => $"{TestServer.TestHost}/api/customrequest/get".ToHttpRequest();
+        public IHttpRequest GetRequest() => $"{TestServer.TestHost}/api/customrequest/get".CreateHttpRequest();
 
         public int GetRequestCount() => 10_000;
 

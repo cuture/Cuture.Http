@@ -92,7 +92,7 @@ namespace Cuture.Http.Test
 
         #region Base
 
-        private IHttpRequest GetRequest() => TestServer.TestHost.ToHttpRequest();
+        private IHttpRequest GetRequest() => TestServer.TestHost.CreateHttpRequest();
 
         #endregion Base
 

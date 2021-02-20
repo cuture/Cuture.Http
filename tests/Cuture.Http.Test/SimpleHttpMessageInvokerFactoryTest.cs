@@ -28,7 +28,7 @@ namespace Cuture.Http.Test
         [TestMethod]
         public async Task AutoReleaseTest()
         {
-            var request = "http://127.0.0.1/index".ToHttpRequest();
+            var request = "http://127.0.0.1/index".CreateHttpRequest();
 
             var firstClientHash = _factory.GetInvoker(request).GetHashCode();
 

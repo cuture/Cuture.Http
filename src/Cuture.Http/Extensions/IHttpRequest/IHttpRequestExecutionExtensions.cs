@@ -10,12 +10,6 @@ using Cuture.Http.Util;
 
 using Newtonsoft.Json.Linq;
 
-#if NETSTANDARD || NETCOREAPP3_1
-
-using System.Text;
-
-#endif
-
 namespace Cuture.Http
 {
     /// <summary>
