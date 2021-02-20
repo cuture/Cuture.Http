@@ -10,7 +10,7 @@ namespace Cuture.Http.Test
     {
         #region Private 字段
 
-        private const int _holdSeconds = 5;
+        private const int HoldSeconds = 5;
 
         #endregion Private 字段
 
@@ -18,7 +18,7 @@ namespace Cuture.Http.Test
 
         protected override SimpleHttpMessageInvokerFactory CreateFactory()
         {
-            return new SimpleHttpMessageInvokerFactory(true, TimeSpan.FromSeconds(_holdSeconds));
+            return new SimpleHttpMessageInvokerFactory(true, TimeSpan.FromSeconds(HoldSeconds));
         }
 
         #endregion Protected 方法
@@ -34,7 +34,7 @@ namespace Cuture.Http.Test
 
             Assert.AreEqual(firstClientHash, _factory.GetInvoker(request).GetHashCode());
 
-            await Task.Delay(TimeSpan.FromSeconds(_holdSeconds + 1));
+            await Task.Delay(TimeSpan.FromSeconds(HoldSeconds + 1));
 
             GC.Collect(2, GCCollectionMode.Forced);
             GC.WaitForPendingFinalizers();

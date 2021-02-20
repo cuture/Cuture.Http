@@ -39,7 +39,7 @@ namespace Cuture.Http.Test
         {
             if (TestServer.HostByTestHost)
             {
-                ServerHost = await TestServer.CreateHostBuilder(new string[0]).StartAsync();
+                ServerHost = await TestServer.CreateHostBuilder(System.Array.Empty<string>()).StartAsync();
             }
             HttpRequestOptions.DefaultConnectionLimit = 200;
         }
@@ -49,7 +49,7 @@ namespace Cuture.Http.Test
         /// </summary>
         /// <param name="count"></param>
         /// <returns></returns>
-        protected int[] Array(int count) => new int[count];
+        protected static int[] Array(int count) => new int[count];
 
         /// <summary>
         /// 并行请求

@@ -77,7 +77,7 @@ namespace Cuture.Http.Test
             var result = await GetRequest().DownloadWithProgressAsync((count, downloaded) =>
             {
                 Interlocked.Increment(ref progressCount);
-                Debug.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")} count:{count},downloaded:{downloaded}");
+                Debug.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} count:{count},downloaded:{downloaded}");
             }, 40960);
 
             Debug.WriteLine($"progressCount:{progressCount}");

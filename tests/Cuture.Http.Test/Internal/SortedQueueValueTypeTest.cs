@@ -10,7 +10,7 @@ namespace Cuture.Http.Test.Internal
     {
         #region Private 字段
 
-        private static readonly Random _random = new Random();
+        private static readonly Random s_random = new Random();
         private SortedQueue<int> _queue;
 
         #endregion Private 字段
@@ -81,7 +81,7 @@ namespace Cuture.Http.Test.Internal
             for (int i = 0; i < count; i++)
             {
                 //插入失败
-                while (!_queue.Enqueue(_random.Next()))
+                while (!_queue.Enqueue(s_random.Next()))
                 {
                 }
             }
