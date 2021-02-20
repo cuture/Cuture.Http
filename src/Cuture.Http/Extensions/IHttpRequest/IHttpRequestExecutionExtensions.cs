@@ -17,19 +17,6 @@ namespace Cuture.Http
     /// </summary>
     public static class IHttpRequestExecutionExtensions
     {
-        #region 构造函数
-
-#if NETSTANDARD || NETCOREAPP3_1
-
-        static IHttpRequestExecutionExtensions()
-        {
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-        }
-
-#endif
-
-        #endregion 构造函数
-
         #region 方法
 
         /// <summary>

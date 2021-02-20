@@ -15,18 +15,22 @@ namespace Cuture.Http
 
         #region Obslate
 
+        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
         public static IHttpRequest ToHttpRequest(this string requestUri) => requestUri.CreateHttpRequest(HttpRequestOptions.DefaultHttpRequestCreator);
 
+        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
         public static IHttpRequest ToHttpRequest(this string requestUri, IHttpRequestCreator requestCreator) => requestUri.CreateHttpRequest(requestCreator);
 
+        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
         public static IHttpRequest ToHttpRequest(this Uri requestUri) => requestUri.CreateHttpRequest(HttpRequestOptions.DefaultHttpRequestCreator);
 
+        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
         public static IHttpRequest ToHttpRequest(this Uri requestUri, IHttpRequestCreator requestCreator) => requestUri.CreateHttpRequest(requestCreator);

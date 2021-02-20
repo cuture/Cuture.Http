@@ -1,4 +1,3 @@
-using System.Text;
 using System.Threading.Tasks;
 
 using Cuture.Http.Test.Server;
@@ -20,8 +19,6 @@ namespace Cuture.Http.Test
             await ParallelRequestAsync(10_000,
                                        () => GetRequest().TryGetAsStringAsync(),
                                        result => Assert.AreEqual(Resource.Index, result.Data));
-            //顺便检查一下编码注册
-            Encoding.GetEncoding("GBK");
         }
 
         #endregion 方法
