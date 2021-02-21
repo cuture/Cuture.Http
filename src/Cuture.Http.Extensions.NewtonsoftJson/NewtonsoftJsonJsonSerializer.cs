@@ -7,13 +7,29 @@ namespace Cuture.Http
     /// </summary>
     public class NewtonsoftJsonJsonSerializer : IJsonSerializer
     {
+        #region Private 字段
+
+        private readonly JsonSerializerSettings? _jsonSerializerSettings;
+
+        #endregion Private 字段
+
+        #region Public 构造函数
+
+        /// <inheritdoc cref="NewtonsoftJsonJsonSerializer"/>
+        public NewtonsoftJsonJsonSerializer(JsonSerializerSettings? jsonSerializerSettings = null)
+        {
+            _jsonSerializerSettings = jsonSerializerSettings;
+        }
+
+        #endregion Public 构造函数
+
         #region Public 方法
 
         /// <inheritdoc/>
-        public T Deserialize<T>(string data) => JsonConvert.DeserializeObject<T>(data);
+        public T? Deserialize<T>(string data) => JsonConvert.DeserializeObject<T>(data, _jsonSerializerSettings);
 
         /// <inheritdoc/>
-        public string Serialize(object value) => JsonConvert.SerializeObject(value);
+        public string Serialize(object value) => JsonConvert.SerializeObject(value, _jsonSerializerSettings!);
 
         #endregion Public 方法
     }

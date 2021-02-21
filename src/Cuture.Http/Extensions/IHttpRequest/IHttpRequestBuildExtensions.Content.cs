@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Cuture.Http
 {
@@ -12,6 +11,7 @@ namespace Cuture.Http
         #region Content
 
 #if NETCOREAPP
+
         /// <summary>
         /// 使用指定数据作为Http请求的Content
         /// </summary>
@@ -125,6 +125,31 @@ namespace Cuture.Http
             return request;
         }
 
+        #region Form
+
+        /// <summary>
+        /// 使用FormContent
+        /// <para/>
+        /// 将 <paramref name="content"/> 使用 <see cref="HttpRequestOptions.DefaultFormDataFormatter"/> 转化为kv字符串,并UrlEncoded
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpRequest WithFormContent(this IHttpRequest request, object content)
+                => request.WithFormContent(content, HttpRequestOptions.DefaultFormDataFormatter);
+
+        /// <summary>
+        /// 使用FormContent
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="content"></param>
+        /// <param name="formatter"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpRequest WithFormContent(this IHttpRequest request, object content, IFormDataFormatter formatter)
+                => request.WithContent(new FormContent(content, formatter));
+
         /// <summary>
         /// 使用FormContent
         /// <paramref name="content"/>为已经urlencode的字符串
@@ -134,30 +159,16 @@ namespace Cuture.Http
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest WithFormContent(this IHttpRequest request, string content)
-        {
-            request.Content?.Dispose();
-            request.Content = new FormContent(content);
-            return request;
-        }
+                => request.WithContent(new FormContent(content));
 
-        /// <summary>
-        /// 使用FormContent
-        /// <paramref name="content"/>将会自动进行Form化
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="content"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest WithFormContent(this IHttpRequest request, object content)
-        {
-            request.Content?.Dispose();
-            request.Content = new FormContent(content);
-            return request;
-        }
+        #endregion Form
+
+        #region Json
 
         /// <summary>
         /// 使用JsonHttpContent
-        /// <paramref name="content"/>会自动进行json序列化
+        /// <para/>
+        /// 将 <paramref name="content"/> 使用 请求设置的 JsonSerializer 或 <see cref="HttpRequestOptions.DefaultJsonSerializer"/> 序列化为json字符串
         /// </summary>
         /// <param name="request"></param>
         /// <param name="content"></param>
@@ -165,18 +176,21 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest WithJsonContent(this IHttpRequest request, object content)
         {
-            request.Content?.Dispose();
-            if (request.IsSetOptions
-                && request.RequestOptions.JsonSerializer != null)
-            {
-                request.Content = new JsonContent(content, JsonContent.ContentType, Encoding.UTF8, request.RequestOptions.JsonSerializer);
-            }
-            else
-            {
-                request.Content = new JsonContent(content);
-            }
-            return request;
+            var jsonSerializer = request.IsSetOptions && request.RequestOptions.JsonSerializer != null
+                                    ? request.RequestOptions.JsonSerializer
+                                    : HttpRequestOptions.DefaultJsonSerializer;
+            return request.WithJsonContent(content, jsonSerializer);
         }
+
+        /// <summary>
+        /// 使用JsonHttpContent
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="content"></param>
+        /// <param name="jsonSerializer"></param>
+        /// <returns></returns>
+        public static IHttpRequest WithJsonContent(this IHttpRequest request, object content, IJsonSerializer jsonSerializer)
+                => request.WithContent(new JsonContent(content, jsonSerializer));
 
         /// <summary>
         /// 使用JsonHttpContent
@@ -187,11 +201,9 @@ namespace Cuture.Http
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest WithJsonContent(this IHttpRequest request, string content)
-        {
-            request.Content?.Dispose();
-            request.Content = new JsonContent(content);
-            return request;
-        }
+                => request.WithContent(new JsonContent(content));
+
+        #endregion Json
 
         #endregion Content
     }

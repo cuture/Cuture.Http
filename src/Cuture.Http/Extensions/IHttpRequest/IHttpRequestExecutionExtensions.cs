@@ -149,12 +149,7 @@ namespace Cuture.Http
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Task<HttpResponseMessage> PostJsonAsync(this IHttpRequest request, object content)
-        {
-            var jsonSerializer = request.IsSetOptions && request.RequestOptions.JsonSerializer != null
-                                    ? request.RequestOptions.JsonSerializer
-                                    : HttpRequestOptions.DefaultJsonSerializer;
-            return request.PostJsonAsync(content, jsonSerializer);
-        }
+                => request.UsePost().WithJsonContent(content).ExecuteAsync();
 
         /// <summary>
         /// 将 <paramref name="content"/> 使用 <paramref name="jsonSerializer"/> 序列化为json字符串后Post
@@ -165,11 +160,7 @@ namespace Cuture.Http
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Task<HttpResponseMessage> PostJsonAsync(this IHttpRequest request, object content, IJsonSerializer jsonSerializer)
-        {
-            request.Content = new JsonContent(content, jsonSerializer);
-            request.Method = HttpMethod.Post;
-            return ExecuteAsync(request);
-        }
+                => request.UsePost().WithJsonContent(content, jsonSerializer).ExecuteAsync();
 
         /// <summary>
         /// 将字符串 <paramref name="json"/> 以 <see cref="JsonContent"/> 进行Post
@@ -179,11 +170,7 @@ namespace Cuture.Http
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Task<HttpResponseMessage> PostJsonAsync(this IHttpRequest request, string json)
-        {
-            request.Content = new JsonContent(json);
-            request.Method = HttpMethod.Post;
-            return ExecuteAsync(request);
-        }
+                => request.UsePost().WithJsonContent(json).ExecuteAsync();
 
         #endregion Json
 
@@ -196,7 +183,8 @@ namespace Cuture.Http
         /// <param name="content"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<HttpResponseMessage> PostFormAsync(this IHttpRequest request, object content) => request.PostFormAsync(content, HttpRequestOptions.DefaultFormDataFormatter);
+        public static Task<HttpResponseMessage> PostFormAsync(this IHttpRequest request, object content)
+                => request.UsePost().WithFormContent(content).ExecuteAsync();
 
         /// <summary>
         /// 将 <paramref name="content"/> 使用 <paramref name="formatter"/> 转化为kv字符串,进行UrlEncoded后Post
@@ -207,27 +195,17 @@ namespace Cuture.Http
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Task<HttpResponseMessage> PostFormAsync(this IHttpRequest request, object content, IFormDataFormatter formatter)
-        {
-            request.Content = new FormContent(content, formatter);
-            request.Method = HttpMethod.Post;
-            return ExecuteAsync(request);
-        }
+                => request.UsePost().WithFormContent(content, formatter).ExecuteAsync();
 
         /// <summary>
-        /// 将
-        /// <paramref name="content"/>
-        /// 进行UrlEncoded后Post
+        /// 将 <paramref name="content"/> 进行UrlEncoded后Post
         /// </summary>
         /// <param name="request"></param>
         /// <param name="content"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Task<HttpResponseMessage> PostFormAsync(this IHttpRequest request, string content)
-        {
-            request.Content = new FormContent(content);
-            request.Method = HttpMethod.Post;
-            return ExecuteAsync(request);
-        }
+                => request.UsePost().WithFormContent(content).ExecuteAsync();
 
         #endregion Form
 

@@ -22,7 +22,10 @@ namespace Cuture.Http
         public SystemJsonFormDataFormatter(JsonDocumentOptions jsonDocumentOptions = default, JsonSerializerOptions? jsonSerializerOptions = null)
         {
             _jsonDocumentOptions = jsonDocumentOptions;
-            _jsonSerializerOptions = jsonSerializerOptions;
+            _jsonSerializerOptions = jsonSerializerOptions ?? new JsonSerializerOptions()
+            {
+                PropertyNameCaseInsensitive = true
+            };
         }
 
         #endregion Public 构造函数

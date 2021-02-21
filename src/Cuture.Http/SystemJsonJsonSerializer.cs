@@ -19,7 +19,10 @@ namespace Cuture.Http
         /// <inheritdoc cref="SystemJsonJsonSerializer"/>
         public SystemJsonJsonSerializer(JsonSerializerOptions? options = null)
         {
-            _options = options;
+            _options = options ?? new JsonSerializerOptions()
+            {
+                PropertyNameCaseInsensitive = true
+            };
         }
 
         #endregion Public 构造函数
