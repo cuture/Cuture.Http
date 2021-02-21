@@ -62,34 +62,31 @@ namespace Cuture.Http
                 }
                 throw new NotSupportedException($"Only {nameof(HttpClient)} support {nameof(HttpCompletionOption)}.{nameof(HttpCompletionOption.ResponseHeadersRead)}.");
             }
-            else
-            {
-                return request.ExecuteAsync();
-            }
+
+            return request.ExecuteAsync();
         }
 
         internal static Task<HttpResponseMessage> ExecuteAsync(this HttpMessageInvoker messageInvoker, IHttpRequest request)
         {
-            var token = request.Token;
-            CancellationTokenSource? cts = null;
-
             if (request.Timeout.HasValue)
             {
-                cts = CancellationTokenSource.CreateLinkedTokenSource();
+                var cts = CancellationTokenSource.CreateLinkedTokenSource(request.Token);
                 cts.CancelAfter(request.Timeout.Value);
-                token = cts.Token;
+
+                var task = request.AllowRedirection
+                            ? messageInvoker.InternalExecuteWithAutoRedirectCoreAsync(request, cts.Token)
+                            : messageInvoker.SendAsync(request.AsRequest(), cts.Token);
+
+                task.ContinueWith(DisposeCancellationTokenSourceInTaskState, cts, TaskContinuationOptions.None);
+
+                return task;
             }
-
-            var task = request.AllowRedirection ? messageInvoker.InternalExecuteWithAutoRedirectCoreAsync(request, token) : messageInvoker.SendAsync(request.AsRequest(), token);
-
-            if (cts != null)
+            else
             {
-                task.ContinueWith(DisposeCancellationTokenSource, cts, TaskContinuationOptions.None);
+                return request.AllowRedirection
+                        ? messageInvoker.InternalExecuteWithAutoRedirectCoreAsync(request, request.Token)
+                        : messageInvoker.SendAsync(request.AsRequest(), request.Token);
             }
-
-            return task;
-
-            static void DisposeCancellationTokenSource(Task task, object? state) => (state as CancellationTokenSource)!.Dispose();
         }
 
         internal static async Task<HttpResponseMessage> InternalExecuteWithAutoRedirectCoreAsync(this HttpMessageInvoker messageInvoker, IHttpRequest request, CancellationToken token)
@@ -293,8 +290,6 @@ namespace Cuture.Http
 
         #region Download
 
-        //TODO 检查Download方法中直接使用request.Token，是否不受超时限制
-
         /// <summary>
         /// 执行请求,将请求结果
         /// <see cref="HttpResponseMessage.Content"/>
@@ -307,7 +302,7 @@ namespace Cuture.Http
         /// <returns></returns>
         public static Task DownloadToStreamAsync(this IHttpRequest request, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
                 => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
-                          .DownloadToStreamAsync(targetStream, request.Token, bufferSize);
+                          .SetRequestContinueTaskWithTimeout(request, (requestTask, token) => requestTask.DownloadToStreamAsync(targetStream, token, bufferSize));
 
         /// <summary>
         /// 执行请求,将请求结果
@@ -324,7 +319,7 @@ namespace Cuture.Http
         /// <returns></returns>
         public static Task DownloadToStreamWithProgressAsync(this IHttpRequest request, Func<long?, long, Task> progressCallback, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
                 => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
-                          .DownloadToStreamWithProgressAsync(targetStream, progressCallback, request.Token, bufferSize);
+                          .SetRequestContinueTaskWithTimeout(request, (requestTask, token) => requestTask.DownloadToStreamWithProgressAsync(targetStream, progressCallback, token, bufferSize));
 
         /// <summary>
         /// 执行请求,将请求结果
@@ -341,7 +336,7 @@ namespace Cuture.Http
         /// <returns></returns>
         public static Task DownloadToStreamWithProgressAsync(this IHttpRequest request, Action<long?, long> progressCallback, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
                 => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
-                          .DownloadToStreamWithProgressAsync(targetStream, progressCallback, request.Token, bufferSize);
+                          .SetRequestContinueTaskWithTimeout(request, (requestTask, token) => requestTask.DownloadToStreamWithProgressAsync(targetStream, progressCallback, token, bufferSize));
 
         /// <summary>
         /// 执行请求,将请求结果
@@ -355,7 +350,7 @@ namespace Cuture.Http
         /// <returns></returns>
         public static Task<byte[]> DownloadWithProgressAsync(this IHttpRequest request, Func<long?, long, Task> progressCallback, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
                 => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
-                          .DownloadWithProgressAsync(progressCallback, request.Token, bufferSize);
+                          .SetRequestContinueTaskWithTimeout(request, (requestTask, token) => requestTask.DownloadWithProgressAsync(progressCallback, token, bufferSize));
 
         /// <summary>
         /// 执行请求,将请求结果
@@ -369,10 +364,34 @@ namespace Cuture.Http
         /// <returns></returns>
         public static Task<byte[]> DownloadWithProgressAsync(this IHttpRequest request, Action<long?, long> progressCallback, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
                 => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
-                          .DownloadWithProgressAsync(progressCallback, request.Token, bufferSize);
+                          .SetRequestContinueTaskWithTimeout(request, (requestTask, token) => requestTask.DownloadWithProgressAsync(progressCallback, token, bufferSize));
 
         #endregion Download
 
         #endregion 执行请求
+
+        #region Private 方法
+
+        private static void DisposeCancellationTokenSourceInTaskState(Task _, object? state) => (state as CancellationTokenSource)!.Dispose();
+
+        private static TTaskResult SetRequestContinueTaskWithTimeout<TTaskResult>(this Task<HttpResponseMessage> requestTask, IHttpRequest request, Func<Task<HttpResponseMessage>, CancellationToken, TTaskResult> createContinueTaskFunc)
+                    where TTaskResult : Task
+        {
+            if (request.Timeout.HasValue)
+            {
+                var cts = CancellationTokenSource.CreateLinkedTokenSource(request.Token);
+                cts.CancelAfter(request.Timeout.Value);
+
+                var task = createContinueTaskFunc(requestTask, cts.Token);
+
+                task.ContinueWith(DisposeCancellationTokenSourceInTaskState, cts, TaskContinuationOptions.None);
+
+                return task;
+            }
+
+            return createContinueTaskFunc(requestTask, request.Token);
+        }
+
+        #endregion Private 方法
     }
 }

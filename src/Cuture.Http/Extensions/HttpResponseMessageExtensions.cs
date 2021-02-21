@@ -406,6 +406,8 @@ namespace Cuture.Http
 
             using var response = await requestTask.ConfigureAwait(false);
 
+            token.ThrowIfCancellationRequested();
+
             var contentLength = response.Content.Headers.ContentLength;
 #if NETCOREAPP
             using var stream =
@@ -454,6 +456,7 @@ namespace Cuture.Http
                 progressCallback(contentLength, count);
             }
 #endif
+            token.ThrowIfCancellationRequested();
         }
 
         /// <summary>

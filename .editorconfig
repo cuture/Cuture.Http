@@ -183,10 +183,6 @@ dotnet_naming_rule.非字段成员_should_be_帕斯卡拼写法.severity = sugge
 dotnet_naming_rule.非字段成员_should_be_帕斯卡拼写法.symbols = 非字段成员
 dotnet_naming_rule.非字段成员_should_be_帕斯卡拼写法.style = 帕斯卡拼写法
 
-dotnet_naming_rule.静态只读字段_should_be_帕斯卡拼写法.severity = suggestion
-dotnet_naming_rule.静态只读字段_should_be_帕斯卡拼写法.symbols = 静态只读字段
-dotnet_naming_rule.静态只读字段_should_be_帕斯卡拼写法.style = 帕斯卡拼写法
-
 dotnet_naming_rule.私有或内部静态字段_should_be_s_起始标记.severity = suggestion
 dotnet_naming_rule.私有或内部静态字段_should_be_s_起始标记.symbols = 私有或内部静态字段
 dotnet_naming_rule.私有或内部静态字段_should_be_s_起始标记.style = s_起始标记
@@ -194,6 +190,10 @@ dotnet_naming_rule.私有或内部静态字段_should_be_s_起始标记.style = 
 dotnet_naming_rule.私有或内部字段_should_be__起始标记.severity = warning
 dotnet_naming_rule.私有或内部字段_should_be__起始标记.symbols = 私有或内部字段
 dotnet_naming_rule.私有或内部字段_should_be__起始标记.style = _起始标记
+
+dotnet_naming_rule.静态只读字段_should_be_帕斯卡拼写法.severity = suggestion
+dotnet_naming_rule.静态只读字段_should_be_帕斯卡拼写法.symbols = 静态只读字段
+dotnet_naming_rule.静态只读字段_should_be_帕斯卡拼写法.style = 帕斯卡拼写法
 
 dotnet_naming_rule.属性_should_be_帕斯卡拼写法.severity = error
 dotnet_naming_rule.属性_should_be_帕斯卡拼写法.symbols = 属性

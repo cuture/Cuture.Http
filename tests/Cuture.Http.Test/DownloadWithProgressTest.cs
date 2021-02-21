@@ -37,6 +37,22 @@ namespace Cuture.Http.Test
 
         #region 方法
 
+        [TestMethod]
+        public async Task DownloadTimeOutTestAsync()
+        {
+            await Assert.ThrowsExceptionAsync<OperationCanceledException>(() => GetRequest().TimeOut(750).DownloadWithProgressAsync((count, downloaded) => { }, 40960));
+        }
+
+        [TestMethod]
+        public async Task DownloadWithUnexpectedContentTestAsync()
+        {
+            var request = TestWebHost.TestHost.CreateHttpRequest();
+            using var stream = new MemoryStream();
+            await request.DownloadToStreamAsync(stream);
+
+            Assert.AreEqual(Resource.Index, Encoding.UTF8.GetString(stream.ToArray()));
+        }
+
         /// <summary>
         /// 获取请求
         /// </summary>
@@ -46,8 +62,6 @@ namespace Cuture.Http.Test
         [TestMethod]
         public async Task ParallelRequestTestAsync()
         {
-            HttpRequestOptions.DefaultConnectionLimit = 500;
-
             var count = 500;
             int progressCount = 0;
 
@@ -88,16 +102,6 @@ namespace Cuture.Http.Test
             using var sha = SHA256.Create();
             var hash = BitConverter.ToString(sha.ComputeHash(result));
             Assert.AreEqual(_hash, hash);
-        }
-
-        [TestMethod]
-        public async Task DownloadWithUnexpectedContentTestAsync()
-        {
-            var request = TestWebHost.TestHost.CreateHttpRequest();
-            using var stream = new MemoryStream();
-            await request.DownloadToStreamAsync(stream);
-
-            Assert.AreEqual(Resource.Index, Encoding.UTF8.GetString(stream.ToArray()));
         }
 
         #endregion 方法
