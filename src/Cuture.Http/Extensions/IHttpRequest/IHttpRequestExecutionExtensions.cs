@@ -84,10 +84,12 @@ namespace Cuture.Http
 
             if (cts != null)
             {
-                task.ContinueWith((task, state) => (state as CancellationTokenSource)!.Dispose(), cts, TaskContinuationOptions.None);
+                task.ContinueWith(DisposeCancellationTokenSource, cts, TaskContinuationOptions.None);
             }
 
             return task;
+
+            static void DisposeCancellationTokenSource(Task task, object? state) => (state as CancellationTokenSource)!.Dispose();
         }
 
         internal static async Task<HttpResponseMessage> InternalExecuteWithAutoRedirectCoreAsync(this HttpMessageInvoker messageInvoker, IHttpRequest request, CancellationToken token)
@@ -271,17 +273,7 @@ namespace Cuture.Http
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Task<T?> GetAsObjectAsync<T>(this IHttpRequest request)
-        {
-            if (request.IsSetOptions
-                && request.RequestOptions.JsonSerializer != null)
-            {
-                return request.ExecuteAsync().ReceiveAsObjectAsync<T>(request.RequestOptions.JsonSerializer);
-            }
-            else
-            {
-                return request.ExecuteAsync().ReceiveAsObjectAsync<T>(HttpRequestOptions.DefaultJsonSerializer);
-            }
-        }
+                => request.ExecuteAsync().ReceiveAsObjectAsync<T>(request.GetJsonSerializerOrDefault());
 
         /// <summary>
         /// 执行请求并尝试以 json 接收返回数据，并解析为类型
@@ -293,17 +285,7 @@ namespace Cuture.Http
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Task<TextHttpOperationResult<T>> TryGetAsObjectAsync<T>(this IHttpRequest request)
-        {
-            if (request.IsSetOptions
-                && request.RequestOptions.JsonSerializer != null)
-            {
-                return request.ExecuteAsync().TryReceiveAsObjectAsync<T>(request.RequestOptions.JsonSerializer);
-            }
-            else
-            {
-                return request.ExecuteAsync().TryReceiveAsObjectAsync<T>(HttpRequestOptions.DefaultJsonSerializer);
-            }
-        }
+                => request.ExecuteAsync().TryReceiveAsObjectAsync<T>(request.GetJsonSerializerOrDefault());
 
         #endregion json as object
 

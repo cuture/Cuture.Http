@@ -176,10 +176,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest WithJsonContent(this IHttpRequest request, object content)
         {
-            var jsonSerializer = request.IsSetOptions && request.RequestOptions.JsonSerializer != null
-                                    ? request.RequestOptions.JsonSerializer
-                                    : HttpRequestOptions.DefaultJsonSerializer;
-            return request.WithJsonContent(content, jsonSerializer);
+            return request.WithJsonContent(content, request.GetJsonSerializerOrDefault());
         }
 
         /// <summary>
