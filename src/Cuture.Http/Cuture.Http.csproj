@@ -36,6 +36,8 @@ var response = await url.CreateHttpRequest()
   <ItemGroup Condition="$(IsLegacyTFM)">
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 
-    <Compile Include="..\Cuture.Http.Extensions.NewtonsoftJson\*.cs" Link="NewtonsoftJson\%(FileName)%(Extension)" />
+    <Compile Include="..\Cuture.Http.Extensions.NewtonsoftJson\**\*.cs"
+             Exclude="..\Cuture.Http.Extensions.NewtonsoftJson\obj\**\*"
+             Link="NewtonsoftJson\%(RecursiveDir)\%(FileName)%(Extension)" />
   </ItemGroup>
 </Project>
