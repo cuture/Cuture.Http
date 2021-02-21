@@ -143,9 +143,10 @@ namespace Cuture.Http
 #if NETCOREAPP
             s_defaultJsonSerializer = new SystemJsonJsonSerializer();
             s_defaultFormDataFormatter = new SystemJsonFormDataFormatter();
-#else
-            s_defaultJsonSerializer = null!;
-            s_defaultFormDataFormatter = null!;
+#endif
+#if LEGACYTFM
+            s_defaultJsonSerializer = new NewtonsoftJsonJsonSerializer();
+            s_defaultFormDataFormatter = new NewtonsoftJsonFormDataFormatter();
 #endif
         }
 

@@ -2,6 +2,8 @@
   <Import Project="../../Common.props" />
 
   <PropertyGroup>
+    <TargetFrameworks>$(NewlyTFMs)</TargetFrameworks>
+
     <RootNamespace>Cuture.Http.Extensions</RootNamespace>
     <Description>用于 Cuture.Http 库的 Newtonsoft.Json 功能支持</Description>
   </PropertyGroup>

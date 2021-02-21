@@ -5,23 +5,6 @@
     /// </summary>
     public static class HttpRequestOptionsNewtonsoftJsonExtensions
     {
-        #region 静态构造函数
-
-        static HttpRequestOptionsNewtonsoftJsonExtensions()
-        {
-            if (HttpRequestOptions.DefaultJsonSerializer is null)
-            {
-                HttpRequestOptions.DefaultJsonSerializer = new NewtonsoftJsonJsonSerializer();
-            }
-
-            if (HttpRequestOptions.DefaultFormDataFormatter is null)
-            {
-                HttpRequestOptions.DefaultFormDataFormatter = new NewtonsoftJsonFormDataFormatter();
-            }
-        }
-
-        #endregion 静态构造函数
-
         #region Public 方法
 
         /// <summary>

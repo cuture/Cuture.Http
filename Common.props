@@ -3,10 +3,27 @@
   <PropertyGroup>
     <Platforms>AnyCPU</Platforms>
 
-    <TargetFrameworks>netstandard2.0;net461;netcoreapp3.1;net5.0</TargetFrameworks>
+    <LegacyTFMs>netstandard2.0;net461</LegacyTFMs>
+    <NewlyTFMs>netcoreapp3.1;net5.0</NewlyTFMs>
+    
     <LangVersion>latest</LangVersion>
 
     <Nullable>enable</Nullable>
+    
+    <IsLegacyTFM>false</IsLegacyTFM>
+    <IsNewlyTFM>false</IsNewlyTFM>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0' or '$(TargetFramework)'=='net461'">
+    <DefineConstants>$(DefineConstants);LEGACYTFM</DefineConstants>
+    <IsLegacyTFM>true</IsLegacyTFM>
+    <IsNewlyTFM>false</IsNewlyTFM>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp3.1' or '$(TargetFramework)'=='net5.0'">
+    <DefineConstants>$(DefineConstants);NEWLYTFM</DefineConstants>
+    <IsLegacyTFM>false</IsLegacyTFM>
+    <IsNewlyTFM>true</IsNewlyTFM>
   </PropertyGroup>
 
   <!--Version-->
