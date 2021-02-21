@@ -19,7 +19,7 @@ namespace Cuture.Http.Test
         #region ×Ö¶Î
 
         private readonly string _hash;
-        private readonly string _url = $"{TestServer.TestHost}/data.dat";
+        private readonly string _url = $"{TestWebHost.TestHost}/data.dat";
 
         #endregion ×Ö¶Î
 
@@ -93,7 +93,7 @@ namespace Cuture.Http.Test
         [TestMethod]
         public async Task DownloadWithUnexpectedContentTestAsync()
         {
-            var request = TestServer.TestHost.CreateHttpRequest();
+            var request = TestWebHost.TestHost.CreateHttpRequest();
             using var stream = new MemoryStream();
             await request.DownloadToStreamAsync(stream);
 

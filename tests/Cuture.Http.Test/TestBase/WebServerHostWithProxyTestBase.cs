@@ -15,6 +15,12 @@ namespace Cuture.Http.Test
 
         #endregion 字段
 
+        #region Protected 属性
+
+        protected override bool UseTestServer => false;
+
+        #endregion Protected 属性
+
         #region 方法
 
         [TestCleanup]

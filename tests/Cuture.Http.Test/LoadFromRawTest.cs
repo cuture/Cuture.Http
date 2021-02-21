@@ -15,6 +15,12 @@ namespace Cuture.Http.Test
 
         const string RawContentString = "{\"actionConfId\":4,\"actionObjectId\":\"3857652\",\"copyrightId11\":\"63793701335\"}";
 
+        [TestInitialize]
+        public void Init()
+        {
+            HttpRequestOptions.DefaultHttpMessageInvokerFactory = new SimpleHttpMessageInvokerFactory();
+        }
+
         [TestMethod]
         public async Task LoadHeadersFromRaw()
         {

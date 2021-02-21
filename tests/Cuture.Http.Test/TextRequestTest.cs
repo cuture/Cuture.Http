@@ -11,7 +11,7 @@ namespace Cuture.Http.Test
     {
         #region ·½·¨
 
-        public IHttpRequest GetRequest() => TestServer.TestHost.CreateHttpRequest();
+        public static IHttpRequest GetRequest() => TestWebHost.TestHost.CreateHttpRequest();
 
         [TestMethod]
         public async Task ParallelRequestTestAsync()

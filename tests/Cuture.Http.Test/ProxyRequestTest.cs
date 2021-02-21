@@ -18,7 +18,7 @@ namespace Cuture.Http.Test
         [TestMethod]
         public async Task DisableProxyRequestTestAsync()
         {
-            var count = 2_000;
+            var count = 50;
 
             ProxyServer.SetAsSystemProxy();
 
@@ -50,8 +50,8 @@ namespace Cuture.Http.Test
         [TestMethod]
         public async Task ProxyRequestTestAsync()
         {
-            var proxyCount = 20;
-            var everyRequestCount = 100;
+            var proxyCount = 5;
+            var everyRequestCount = 20;
 
             var proxys = new List<WebProxy>();
 
@@ -92,7 +92,7 @@ namespace Cuture.Http.Test
 
         #region Base
 
-        private IHttpRequest GetRequest() => TestServer.TestHost.CreateHttpRequest();
+        private IHttpRequest GetRequest() => TestWebHost.TestHost.CreateHttpRequest();
 
         #endregion Base
 

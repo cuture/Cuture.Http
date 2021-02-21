@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
 
 namespace Cuture.Http.Test.Server
 {
-    public class TestServer
+    public class TestWebHost
     {
         #region 字段
 
@@ -15,17 +16,21 @@ namespace Cuture.Http.Test.Server
 
         #region 方法
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        public static IHostBuilder CreateHostBuilder(string[] args, bool useTestServer) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    if (useTestServer)
+                    {
+                        webBuilder.UseTestServer();
+                    }
                     webBuilder.UseStartup<Startup>()
-                    .UseUrls(TestHost);
+                              .UseUrls(TestHost);
                 });
 
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            CreateHostBuilder(args, false).Build().Run();
         }
 
         #endregion 方法

@@ -19,7 +19,7 @@ namespace Cuture.Http.Test
     {
         #region 方法
 
-        public IHttpRequest GetRequest() => $"{TestServer.TestHost}/api/user/update".CreateHttpRequest().UsePost();
+        public IHttpRequest GetRequest() => $"{TestWebHost.TestHost}/api/user/update".CreateHttpRequest().UsePost();
 
         [TestMethod]
         public async Task ParallelRequestTestAsync()
@@ -60,7 +60,7 @@ namespace Cuture.Http.Test
 
             static IHttpRequest GetCallbackRequest()
             {
-                return $"{TestServer.TestHost}/api/user/update/callback".CreateHttpRequest().UsePost();
+                return $"{TestWebHost.TestHost}/api/user/update/callback".CreateHttpRequest().UsePost();
             }
         }
 

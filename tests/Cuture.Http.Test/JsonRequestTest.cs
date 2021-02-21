@@ -51,7 +51,7 @@ namespace Cuture.Http.Test
                                        result => Assert.AreEqual(json, result.Data));
         }
 
-        public IHttpRequest GetRequest() => $"{TestServer.TestHost}/api/user/update".CreateHttpRequest().UsePost();
+        public IHttpRequest GetRequest() => $"{TestWebHost.TestHost}/api/user/update".CreateHttpRequest().UsePost();
 
         private (UserInfo user, string json) NewUserWithJson()
         {

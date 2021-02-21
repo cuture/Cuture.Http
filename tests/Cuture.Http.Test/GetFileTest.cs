@@ -16,7 +16,7 @@ namespace Cuture.Http.Test
         #region ×Ö¶Î
 
         private readonly string _hash;
-        private readonly string _url = $"{TestServer.TestHost}/icon.png";
+        private readonly string _url = $"{TestWebHost.TestHost}/icon.png";
 
         #endregion ×Ö¶Î
 

@@ -119,7 +119,7 @@ namespace Cuture.Http.Test
         {
             if (IsSystemProxy)
             {
-                if (e.HttpClient.Request.Url.StartsWith(TestServer.TestHost))
+                if (e.HttpClient.Request.Url.StartsWith(TestWebHost.TestHost))
                 {
                     lock (SystemProxyInfo)
                     {

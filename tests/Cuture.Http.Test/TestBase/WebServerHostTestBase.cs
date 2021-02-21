@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using Cuture.Http.Test.Server;
 
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -21,27 +22,42 @@ namespace Cuture.Http.Test
 
         #endregion 字段
 
+        #region Protected 属性
+
+        protected virtual bool UseTestServer { get; } = true;
+
+        #endregion Protected 属性
+
         #region 方法
 
         [TestCleanup]
         public virtual async Task CleanupAsync()
         {
-            if (TestServer.HostByTestHost)
+            if (TestWebHost.HostByTestHost)
             {
                 await ServerHost?.StopAsync();
             }
             HttpRequestOptions.DefaultHttpMessageInvokerFactory.Dispose();
-            HttpRequestOptions.DefaultHttpMessageInvokerFactory = new SimpleHttpMessageInvokerFactory();
         }
 
         [TestInitialize]
         public virtual async Task InitAsync()
         {
-            if (TestServer.HostByTestHost)
+            IHttpMessageInvokerFactory invokerFactory = null;
+            if (TestWebHost.HostByTestHost)
             {
-                ServerHost = await TestServer.CreateHostBuilder(System.Array.Empty<string>()).StartAsync();
+                var hostBuilder = TestWebHost.CreateHostBuilder(System.Array.Empty<string>(), UseTestServer);
+                ServerHost = await hostBuilder.StartAsync();
+                if (UseTestServer)
+                {
+                    invokerFactory = new TestHttpMessageInvokerFactory(ServerHost.GetTestClient());
+                }
             }
-            HttpRequestOptions.DefaultConnectionLimit = 200;
+
+            invokerFactory ??= new SimpleHttpMessageInvokerFactory();
+
+            HttpRequestOptions.DefaultConnectionLimit = 10;
+            HttpRequestOptions.DefaultHttpMessageInvokerFactory = invokerFactory;
         }
 
         /// <summary>
@@ -139,6 +155,25 @@ namespace Cuture.Http.Test
             {
                 assertAction(m.Result);
             });
+        }
+
+        protected bool UserAgentEquals(string ua1, string ua2)
+        {
+            Assert.AreEqual(ua1.Length, ua2.Length);
+
+            for (int i = 0; i < ua1.Length; i++)
+            {
+                var ua1Char = ua1[i];
+                var ua2Char = ua2[i];
+                if (ua1Char == ua2Char
+                    || (ua1Char == ' ' && ua2Char == ',')
+                    || (ua1Char == ',' && ua2Char == ' '))
+                {
+                    continue;
+                }
+                return false;
+            }
+            return true;
         }
 
         #endregion 方法

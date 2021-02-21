@@ -16,8 +16,8 @@ namespace Cuture.Http.Test
     {
         #region ×Ö¶Î
 
-        private readonly string _urlMultipartContent = $"{TestServer.TestHost}/api/customrequest/post";
-        private readonly string _urlMultipartFormDataContent = $"{TestServer.TestHost}/api/customrequest/post2";
+        private readonly string _urlMultipartContent = $"{TestWebHost.TestHost}/api/customrequest/post";
+        private readonly string _urlMultipartFormDataContent = $"{TestWebHost.TestHost}/api/customrequest/post2";
         private readonly UserInfo _user1;
         private readonly UserInfo _user2;
         private readonly UserInfo _user3;
@@ -42,7 +42,7 @@ namespace Cuture.Http.Test
         [TestMethod]
         public async Task MultipartContentTestAsync()
         {
-            await ParallelRequestAsync(10_000,
+            await base.ParallelRequestAsync(10_000,
                                         () => GetMultipartContentRequest().TryGetAsObjectAsync<HttpRequestInfo>(),
                                         result =>
                                         {
@@ -57,11 +57,7 @@ namespace Cuture.Http.Test
                                             Assert.AreEqual("POST", requestInfo.Method);
                                             Assert.AreEqual(_urlMultipartContent.ToLowerInvariant(), requestInfo.Url.ToLowerInvariant());
 
-                                            Assert.AreEqual("Header1Value, Header1ValueNew", headers["Header1"]);
-                                            Assert.AreEqual("Header2Value", headers["Header2"]);
-                                            Assert.AreEqual("Header3Value", headers["Header3"]);
-                                            Assert.AreEqual(false, headers.TryGetValue("Header4", out _));
-                                            Assert.AreEqual("Header5ValueNew", headers["Header5"]);
+                                            CheckHeaders(headers);
                                         });
         }
 
@@ -113,11 +109,7 @@ namespace Cuture.Http.Test
                                             Assert.AreEqual("POST", requestInfo.Method);
                                             Assert.AreEqual(_urlMultipartFormDataContent.ToLowerInvariant(), requestInfo.Url.ToLowerInvariant());
 
-                                            Assert.AreEqual("Header1Value, Header1ValueNew", headers["Header1"]);
-                                            Assert.AreEqual("Header2Value", headers["Header2"]);
-                                            Assert.AreEqual("Header3Value", headers["Header3"]);
-                                            Assert.AreEqual(false, headers.TryGetValue("Header4", out _));
-                                            Assert.AreEqual("Header5ValueNew", headers["Header5"]);
+                                            CheckHeaders(headers);
                                         });
         }
 
@@ -143,6 +135,17 @@ namespace Cuture.Http.Test
         }
 
         #endregion MultipartFormDataContent
+
+        private static void CheckHeaders(Dictionary<string, string> headers)
+        {
+            Assert.IsTrue(string.Equals("Header1Value,Header1ValueNew", headers["Header1"])
+                          || string.Equals("Header1Value, Header1ValueNew", headers["Header1"]));
+
+            Assert.AreEqual("Header2Value", headers["Header2"]);
+            Assert.AreEqual("Header3Value", headers["Header3"]);
+            Assert.AreEqual(false, headers.TryGetValue("Header4", out _));
+            Assert.AreEqual("Header5ValueNew", headers["Header5"]);
+        }
 
         #endregion ·½·¨
     }

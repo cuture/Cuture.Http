@@ -43,7 +43,7 @@ namespace Cuture.Http.Test
                                        });
         }
 
-        private IHttpRequest GetRequest() => $"{TestServer.TestHost}/api/redirection".CreateHttpRequest();
+        private IHttpRequest GetRequest() => $"{TestWebHost.TestHost}/api/redirection".CreateHttpRequest();
 
         #endregion 方法
     }

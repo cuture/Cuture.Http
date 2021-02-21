@@ -14,7 +14,7 @@ namespace Cuture.Http.Test
     {
         #region ·½·¨
 
-        public IHttpRequest GetRequest() => $"{TestServer.TestHost}/api/customrequest/get".CreateHttpRequest();
+        public IHttpRequest GetRequest() => $"{TestWebHost.TestHost}/api/customrequest/get".CreateHttpRequest();
 
         public int GetRequestCount() => 10_000;
 
@@ -75,7 +75,7 @@ namespace Cuture.Http.Test
                 Assert.IsNotNull(result);
                 Assert.IsFalse(string.IsNullOrWhiteSpace(userAgent));
 
-                Assert.AreEqual(userAgent, result.Header[HttpHeaderDefinitions.UserAgent]);
+                Assert.IsTrue(UserAgentEquals(userAgent, result.Header[HttpHeaderDefinitions.UserAgent]));
             });
         }
 

@@ -49,7 +49,7 @@ namespace Cuture.Http.Test
                                        result => Assert.AreEqual(form, result.Data));
         }
 
-        public static IHttpRequest GetRequest() => $"{TestServer.TestHost}/api/user/update/form".CreateHttpRequest().UsePost();
+        public static IHttpRequest GetRequest() => $"{TestWebHost.TestHost}/api/user/update/form".CreateHttpRequest().UsePost();
 
         private static (UserInfo user, string form) NewUserWithForm()
         {
