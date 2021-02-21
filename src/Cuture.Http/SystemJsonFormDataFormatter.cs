@@ -46,7 +46,7 @@ namespace Cuture.Http
 
             foreach (var item in jsonDocument.RootElement.EnumerateObject())
             {
-                if (item.Value.GetString() is string value
+                if (item.Value.GetRawText() is string value
                    && !string.IsNullOrEmpty(value))
                 {
                     builder.AppendFormat("{0}={1}&", item.Name, value);
@@ -75,7 +75,7 @@ namespace Cuture.Http
 
             foreach (var item in jsonDocument.RootElement.EnumerateObject())
             {
-                if (item.Value.GetString() is string value
+                if (item.Value.GetRawText() is string value
                    && !string.IsNullOrEmpty(value))
                 {
                     builder.AppendFormat("{0}={1}&", FormContentUtil.Encode(item.Name), FormContentUtil.Encode(value));
