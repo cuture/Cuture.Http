@@ -15,22 +15,22 @@ namespace Cuture.Http
 
         #region Obslate
 
-        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator)"/>
+        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
         public static IHttpRequest ToHttpRequest(this string requestUri) => requestUri.CreateHttpRequest(HttpRequestOptions.DefaultHttpRequestCreator);
 
-        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator)"/>
+        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
         public static IHttpRequest ToHttpRequest(this string requestUri, IHttpRequestCreator requestCreator) => requestUri.CreateHttpRequest(requestCreator);
 
-        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator)"/>
+        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
         public static IHttpRequest ToHttpRequest(this Uri requestUri) => requestUri.CreateHttpRequest(HttpRequestOptions.DefaultHttpRequestCreator);
 
-        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator)"/>
+        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
         public static IHttpRequest ToHttpRequest(this Uri requestUri, IHttpRequestCreator requestCreator) => requestUri.CreateHttpRequest(requestCreator);
@@ -39,15 +39,15 @@ namespace Cuture.Http
 
         #region for string
 
-        /// <inheritdoc cref="CreateHttpRequest(string, IHttpRequestCreator)"/>
+        /// <inheritdoc cref="CreateHttpRequest(string, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest CreateHttpRequest(this string requestUri) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultHttpRequestCreator);
 
-        /// <inheritdoc cref="CreateHttpRequest(string, IHttpRequestCreator)"/>
+        /// <inheritdoc cref="CreateHttpRequest(string, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest CreateHttpRequest(this string requestUri, bool reuseable) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultHttpRequestCreator, reuseable);
 
-        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator)"/>
+        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest CreateHttpRequest(this string requestUri, IHttpRequestCreator requestCreator, bool reuseable = false) => new Uri(requestUri, UriKind.RelativeOrAbsolute).CreateHttpRequest(requestCreator, reuseable);
 
@@ -55,11 +55,11 @@ namespace Cuture.Http
 
         #region for Uri
 
-        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator)"/>
+        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest CreateHttpRequest(this Uri requestUri) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultHttpRequestCreator);
 
-        /// <inheritdoc cref="CreateHttpRequest(string, IHttpRequestCreator)"/>
+        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest CreateHttpRequest(this Uri requestUri, bool reuseable) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultHttpRequestCreator, reuseable);
 

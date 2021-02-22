@@ -33,6 +33,7 @@ namespace Cuture.Http
         /// <summary>
         /// 添加Header
         /// </summary>
+        /// <param name="request"></param>
         /// <param name="key"></param>
         /// <param name="values"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -113,6 +114,7 @@ namespace Cuture.Http
         /// <summary>
         /// 移除Header
         /// </summary>
+        /// <param name="request"></param>
         /// <param name="key"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest RemoveHeader(this IHttpRequest request, string key)
