@@ -27,11 +27,8 @@ namespace Cuture.Http
                 throw new ArgumentException($"“{nameof(contentType)}”不能为 Null 或空白", nameof(contentType));
             }
 
-            request.Content?.Dispose();
-            request.Content = new TypedByteArrayContent(contentLength > 0 ? data.Slice(0, contentLength).ToArray() : data.ToArray(),
-                                                        contentType);
-
-            return request;
+            return request.WithContent(new TypedByteArrayContent(contentLength > 0 ? data.Slice(0, contentLength).ToArray() : data.ToArray(),
+                                                                 contentType));
         }
 
 #endif

@@ -1,4 +1,4 @@
-﻿namespace Cuture.Http.Extensions
+﻿namespace Cuture.Http
 {
     /// <summary>
     /// <see cref="HttpRequestOptions"/>的 Newtonsoft.Json 配置拓展

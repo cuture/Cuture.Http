@@ -16,33 +16,11 @@ namespace Cuture.Http
 
         #region Headers
 
-        /// <summary>
-        /// 从原始的请求数据中加载Header到请求
-        /// <para/>
-        /// Note:
-        /// <para/>
-        /// * <see cref="HttpHeaderDefinitions.Host"/>、<see cref="HttpHeaderDefinitions.ContentType"/>、<see cref="HttpHeaderDefinitions.ContentLength"/>将会被忽略
-        /// <para/>
-        /// * 注意重复添加header的问题
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="rawBase64String"></param>
-        /// <returns></returns>
+        /// <inheritdoc cref="LoadHeadersFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest LoadHeadersFromRaw(this IHttpRequest request, string rawBase64String) => request.LoadHeadersFromRaw(Convert.FromBase64String(rawBase64String));
 
-        /// <summary>
-        /// 从原始的请求数据中加载Header到请求
-        /// <para/>
-        /// Note:
-        /// <para/>
-        /// * <see cref="HttpHeaderDefinitions.Host"/>、<see cref="HttpHeaderDefinitions.ContentType"/>、<see cref="HttpHeaderDefinitions.ContentLength"/>将会被忽略
-        /// <para/>
-        /// * 注意重复添加header的问题
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="rawData"></param>
-        /// <returns></returns>
+        /// <inheritdoc cref="LoadHeadersFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest LoadHeadersFromRaw(this IHttpRequest request, byte[] rawData) => request.LoadHeadersFromRaw(rawData.AsSpan());
 
@@ -70,21 +48,11 @@ namespace Cuture.Http
 
         #region Content
 
-        /// <summary>
-        /// 从原始的请求数据中加载Content到请求
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="rawBase64String"></param>
-        /// <returns></returns>
+        /// <inheritdoc cref="LoadContentFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest LoadContentFromRaw(this IHttpRequest request, string rawBase64String) => request.LoadContentFromRaw(Convert.FromBase64String(rawBase64String));
 
-        /// <summary>
-        /// 从原始的请求数据中加载Content到请求
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="rawData"></param>
-        /// <returns></returns>
+        /// <inheritdoc cref="LoadContentFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest LoadContentFromRaw(this IHttpRequest request, byte[] rawData) => request.LoadContentFromRaw(rawData.AsSpan());
 
@@ -109,33 +77,11 @@ namespace Cuture.Http
 
         #region Headers and Content
 
-        /// <summary>
-        /// 从原始的请求数据中加载Header和Content到请求
-        /// <para/>
-        /// Note:
-        /// <para/>
-        /// * <see cref="HttpHeaderDefinitions.Host"/>将会被忽略
-        /// <para/>
-        /// * 注意重复添加header的问题
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="rawBase64String"></param>
-        /// <returns></returns>
+        /// <inheritdoc cref="LoadHeadersAndContentFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest LoadHeadersAndContentFromRaw(this IHttpRequest request, string rawBase64String) => request.LoadHeadersAndContentFromRaw(Convert.FromBase64String(rawBase64String));
 
-        /// <summary>
-        /// 从原始的请求数据中加载Header和Content到请求
-        /// <para/>
-        /// Note:
-        /// <para/>
-        /// * <see cref="HttpHeaderDefinitions.Host"/>将会被忽略
-        /// <para/>
-        /// * 注意重复添加header的问题
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="rawData"></param>
-        /// <returns></returns>
+        /// <inheritdoc cref="LoadHeadersAndContentFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest LoadHeadersAndContentFromRaw(this IHttpRequest request, byte[] rawData) => request.LoadHeadersAndContentFromRaw(rawData.AsSpan());
 
