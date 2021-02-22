@@ -81,7 +81,7 @@ namespace Cuture.Http
 
                 var task = request.AllowRedirection
                             ? messageInvoker.InternalExecuteWithAutoRedirectCoreAsync(request, cts.Token)
-                            : messageInvoker.SendAsync(request.AsRequest(), cts.Token);
+                            : messageInvoker.SendAsync(request.GetHttpRequestMessage(), cts.Token);
 
                 task.ContinueWith(DisposeCancellationTokenSourceInTaskState, cts, TaskContinuationOptions.None);
 
@@ -91,7 +91,7 @@ namespace Cuture.Http
             {
                 return request.AllowRedirection
                         ? messageInvoker.InternalExecuteWithAutoRedirectCoreAsync(request, request.Token)
-                        : messageInvoker.SendAsync(request.AsRequest(), request.Token);
+                        : messageInvoker.SendAsync(request.GetHttpRequestMessage(), request.Token);
             }
         }
 
@@ -99,7 +99,7 @@ namespace Cuture.Http
         {
             Uri? redirectUri;
             HttpResponseMessage tmpResponse = null!;
-            var innerRequest = request.AsRequest();
+            var innerRequest = request.GetHttpRequestMessage();
 
             for (int i = 0; i <= request.MaxAutomaticRedirections; i++)
             {

@@ -28,9 +28,7 @@ namespace Cuture.Http
 
         #region 属性
 
-        /// <summary>
-        /// 是否允许重定向
-        /// </summary>
+        /// <inheritdoc/>
         public bool AllowRedirection { get; set; }
 
         /// <summary>
@@ -39,24 +37,16 @@ namespace Cuture.Http
         /// </summary>
         public bool DisableProxy { get; set; } = HttpRequestOptions.DisableUseDefaultProxyByDefault;
 
-        /// <summary>
-        /// 是否已设置请求选项
-        /// </summary>
+        /// <inheritdoc/>
         public bool IsSetOptions => _options != null;
 
-        /// <summary>
-        /// 自动循环处理的最大重定向次数
-        /// </summary>
+        /// <inheritdoc/>
         public int MaxAutomaticRedirections { get; set; } = HttpRequestOptions.MaxAutomaticRedirections;
 
-        /// <summary>
-        /// Web代理
-        /// </summary>
+        /// <inheritdoc/>
         public IWebProxy? Proxy { get; set; }
 
-        /// <summary>
-        /// 请求选项
-        /// </summary>
+        /// <inheritdoc/>
         public HttpRequestOptions RequestOptions
         {
             get
@@ -71,14 +61,10 @@ namespace Cuture.Http
             set => _options = value;
         }
 
-        /// <summary>
-        /// 超时时间
-        /// </summary>
+        /// <inheritdoc/>
         public int? Timeout { get; set; }
 
-        /// <summary>
-        /// 取消标记
-        /// </summary>
+        /// <inheritdoc/>
         public CancellationToken Token { get; set; }
 
         #endregion 属性
@@ -146,12 +132,9 @@ namespace Cuture.Http
             return this;
         }
 
-        /// <summary>
-        /// 获取 <see cref="HttpRequestMessage"/>
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public HttpRequestMessage AsRequest() => this;
+        public HttpRequestMessage GetHttpRequestMessage() => this;
 
         /// <summary>
         /// 移除Header

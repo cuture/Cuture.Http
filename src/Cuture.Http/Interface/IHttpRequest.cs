@@ -65,7 +65,7 @@ namespace Cuture.Http
         Uri RequestUri { get; }
 
         /// <summary>
-        /// 超时时间
+        /// 超时时间（毫秒）
         /// </summary>
         int? Timeout { get; set; }
 
@@ -96,7 +96,7 @@ namespace Cuture.Http
         /// 获取 <see cref="HttpRequestMessage"/>
         /// </summary>
         /// <returns></returns>
-        HttpRequestMessage AsRequest();
+        HttpRequestMessage GetHttpRequestMessage();
 
         /// <summary>
         /// 移除Header
