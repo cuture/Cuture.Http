@@ -16,6 +16,13 @@ namespace Cuture.Http
         /// <returns></returns>
         IHttpRequest CreateRequest(Uri requestUri);
 
+        /// <summary>
+        /// 使用 <paramref name="requestUri"/> 创建可重复进行请求的 <see cref="IHttpRequest"/>
+        /// </summary>
+        /// <param name="requestUri"></param>
+        /// <returns></returns>
+        IHttpRequest CreateReuseableRequest(Uri requestUri);
+
         #endregion 方法
     }
 }

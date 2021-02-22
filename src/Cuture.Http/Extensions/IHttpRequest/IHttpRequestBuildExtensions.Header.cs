@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 using Cuture.Http.Util;
@@ -21,7 +22,30 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest AddHeader(this IHttpRequest request, string key, string value)
         {
-            request.AddHeader(key, value);
+            if (string.IsNullOrEmpty(value))
+            {
+                return request.RemoveHeader(key);
+            }
+            request.Headers.Add(key, value);
+            return request;
+        }
+
+        /// <summary>
+        /// 添加Header
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="values"></param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpRequest AddHeader(this IHttpRequest request, string key, IEnumerable<string> values)
+        {
+            if (values is null || !values.Any())
+            {
+                request.Headers.Remove(key);
+            }
+            else
+            {
+                request.Headers.Add(key, values);
+            }
             return request;
         }
 
@@ -83,6 +107,17 @@ namespace Cuture.Http
         {
             request.RemoveHeader(key);
             request.AddHeader(key, value);
+            return request;
+        }
+
+        /// <summary>
+        /// 移除Header
+        /// </summary>
+        /// <param name="key"></param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpRequest RemoveHeader(this IHttpRequest request, string key)
+        {
+            request.Headers.Remove(key);
             return request;
         }
 

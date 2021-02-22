@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -32,7 +31,7 @@ namespace Cuture.Http
         /// <summary>
         /// Headers
         /// </summary>
-        HttpRequestHeaders Headers { get; }
+        HttpHeaders Headers { get; }
 
         /// <summary>
         /// 是否设置了请求选项
@@ -50,14 +49,14 @@ namespace Cuture.Http
         HttpMethod Method { get; set; }
 
         /// <summary>
-        /// 请求选项（应该在构建请求早期进行设置）
-        /// </summary>
-        HttpRequestOptions RequestOptions { get; set; }
-
-        /// <summary>
         /// Web代理
         /// </summary>
         IWebProxy? Proxy { get; set; }
+
+        /// <summary>
+        /// 请求选项（应该在构建请求早期进行设置）
+        /// </summary>
+        HttpRequestOptions RequestOptions { get; set; }
 
         /// <summary>
         /// 请求的Uri
@@ -74,35 +73,18 @@ namespace Cuture.Http
         /// </summary>
         CancellationToken Token { get; set; }
 
+        /// <inheritdoc cref="HttpVersion"/>
+        Version? Version { get; set; }
+
         #endregion 属性
 
         #region 方法
-
-        /// <summary>
-        /// 添加Header
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        IHttpRequest AddHeader(string key, string value);
-
-        /// <summary>
-        /// 添加Header
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="values"></param>
-        IHttpRequest AddHeader(string key, IEnumerable<string> values);
 
         /// <summary>
         /// 获取 <see cref="HttpRequestMessage"/>
         /// </summary>
         /// <returns></returns>
         HttpRequestMessage GetHttpRequestMessage();
-
-        /// <summary>
-        /// 移除Header
-        /// </summary>
-        /// <param name="key"></param>
-        void RemoveHeader(string key);
 
         #endregion 方法
     }
