@@ -17,24 +17,22 @@ namespace Cuture.Http
         #region json as JsonObject
 
         /// <summary>
-        /// 执行请求并以 json 接收返回数据，并解析为
-        /// <see cref="JObject"/>
-        /// 对象
+        /// 执行请求并以 json 接收返回数据，并解析为 <see cref="JObject"/> 对象
         /// </summary>
         /// <param name="request"></param>
+        /// <param name="jsonLoadSetting"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<JObject?> GetAsJsonAsync(this IHttpRequest request) => request.ExecuteAsync().ReceiveAsJsonAsync();
+        public static Task<JObject?> GetAsJsonAsync(this IHttpRequest request, JsonLoadSettings? jsonLoadSetting = null) => request.ExecuteAsync().ReceiveAsJsonAsync(jsonLoadSetting);
 
         /// <summary>
-        /// 执行请求并尝试以 json 接收返回数据，并解析为
-        /// <see cref="JObject"/>
-        /// 对象
+        /// 执行请求并尝试以 json 接收返回数据，并解析为 <see cref="JObject"/> 对象
         /// </summary>
         /// <param name="request"></param>
+        /// <param name="jsonLoadSetting"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<TextHttpOperationResult<JObject>> TryGetAsJsonAsync(this IHttpRequest request) => request.ExecuteAsync().TryReceiveAsJsonAsync();
+        public static Task<TextHttpOperationResult<JObject>> TryGetAsJsonAsync(this IHttpRequest request, JsonLoadSettings? jsonLoadSetting = null) => request.ExecuteAsync().TryReceiveAsJsonAsync(jsonLoadSetting);
 
         #endregion json as JsonObject
 

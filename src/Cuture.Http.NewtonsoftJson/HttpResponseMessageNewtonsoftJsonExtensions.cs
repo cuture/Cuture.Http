@@ -20,21 +20,23 @@ namespace Cuture.Http
         /// 以 json 接收返回数据，并解析为 <see cref="JObject"/> 对象
         /// </summary>
         /// <param name="requestTask"></param>
+        /// <param name="jsonLoadSetting"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<JObject?> ReceiveAsJsonAsync(this Task<HttpResponseMessage> requestTask)
+        public static async Task<JObject?> ReceiveAsJsonAsync(this Task<HttpResponseMessage> requestTask, JsonLoadSettings? jsonLoadSetting = null)
         {
             using var response = await requestTask.ConfigureAwait(false);
-            return await response.ReceiveAsJsonAsync().ConfigureAwait(false);
+            return await response.ReceiveAsJsonAsync(jsonLoadSetting).ConfigureAwait(false);
         }
 
         /// <summary>
         /// 尝试以 json 接收返回数据，并解析为 <see cref="JObject"/> 对象
         /// </summary>
         /// <param name="requestTask"></param>
+        /// <param name="jsonLoadSetting"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<TextHttpOperationResult<JObject>> TryReceiveAsJsonAsync(this Task<HttpResponseMessage> requestTask)
+        public static async Task<TextHttpOperationResult<JObject>> TryReceiveAsJsonAsync(this Task<HttpResponseMessage> requestTask, JsonLoadSettings? jsonLoadSetting = null)
         {
             var result = new TextHttpOperationResult<JObject>();
             try
@@ -46,7 +48,7 @@ namespace Cuture.Http
 
                 if (!string.IsNullOrEmpty(json))
                 {
-                    result.Data = JObject.Parse(json);
+                    result.Data = JObject.Parse(json, jsonLoadSetting);
                 }
             }
             catch (Exception ex)
@@ -66,16 +68,17 @@ namespace Cuture.Http
         /// 获取请求返回的JObject对象
         /// </summary>
         /// <param name="responseMessage"></param>
+        /// <param name="jsonLoadSetting"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<JObject?> ReceiveAsJsonAsync(this HttpResponseMessage responseMessage)
+        public static async Task<JObject?> ReceiveAsJsonAsync(this HttpResponseMessage responseMessage, JsonLoadSettings? jsonLoadSetting = null)
         {
             using (responseMessage)
             {
                 var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
                 if (!string.IsNullOrEmpty(json))
                 {
-                    return JObject.Parse(json);
+                    return JObject.Parse(json, jsonLoadSetting);
                 }
                 return null;
             }

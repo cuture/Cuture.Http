@@ -7,6 +7,12 @@ using System.Threading.Tasks;
 
 using Cuture.Http.Util;
 
+#if NEWLYTFM
+
+using System.Text.Json;
+
+#endif
+
 namespace Cuture.Http
 {
     /// <summary>
@@ -257,6 +263,32 @@ namespace Cuture.Http
         public static Task<HttpOperationResult<string>> TryGetAsStringAsync(this IHttpRequest request) => request.ExecuteAsync().TryReceiveAsStringAsync();
 
         #endregion String
+
+#if NEWLYTFM
+
+        #region json as jsonDocument
+
+        /// <summary>
+        /// 执行请求并以 json 接收返回数据，并解析为 <see cref="JsonDocument"/> 对象
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="jsonDocumentOptions"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Task<JsonDocument?> GetAsJsonDocumentAsync(this IHttpRequest request, JsonDocumentOptions jsonDocumentOptions = default) => request.ExecuteAsync().ReceiveAsJsonDocumentAsync(jsonDocumentOptions);
+
+        /// <summary>
+        /// 执行请求并尝试以 json 接收返回数据，并解析为 <see cref="JsonDocument"/> 对象
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="jsonDocumentOptions"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Task<TextHttpOperationResult<JsonDocument>> TryGetAsJsonDocumentAsync(this IHttpRequest request, JsonDocumentOptions jsonDocumentOptions = default) => request.ExecuteAsync().TryReceiveAsJsonDocumentAsync(jsonDocumentOptions);
+
+        #endregion json as jsonDocument
+
+#endif
 
         #region json as object
 

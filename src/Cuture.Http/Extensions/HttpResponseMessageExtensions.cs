@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 #if NETCOREAPP
 
 using System.Buffers;
+using System.Text.Json;
 
 #endif
 
@@ -102,6 +103,56 @@ namespace Cuture.Http
         }
 
         #endregion String
+
+#if NETCOREAPP
+
+        #region json as JsonDocument
+
+        /// <summary>
+        /// 以 json 接收返回数据，并解析为 <see cref="JsonDocument"/> 对象
+        /// </summary>
+        /// <param name="requestTask"></param>
+        /// <param name="jsonDocumentOptions"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static async Task<JsonDocument?> ReceiveAsJsonDocumentAsync(this Task<HttpResponseMessage> requestTask, JsonDocumentOptions jsonDocumentOptions = default)
+        {
+            using var response = await requestTask.ConfigureAwait(false);
+            return await response.ReceiveAsJsonDocumentAsync(jsonDocumentOptions).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// 尝试以 json 接收返回数据，并解析为 <see cref="JsonDocument"/> 对象
+        /// </summary>
+        /// <param name="requestTask"></param>
+        /// <param name="jsonDocumentOptions"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static async Task<TextHttpOperationResult<JsonDocument>> TryReceiveAsJsonDocumentAsync(this Task<HttpResponseMessage> requestTask, JsonDocumentOptions jsonDocumentOptions = default)
+        {
+            var result = new TextHttpOperationResult<JsonDocument>();
+            try
+            {
+                result.ResponseMessage = await requestTask.ConfigureAwait(false);
+
+                var json = await result.ResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                result.Text = json;
+
+                if (!string.IsNullOrEmpty(json))
+                {
+                    result.Data = JsonDocument.Parse(json, jsonDocumentOptions);
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Exception = ex;
+            }
+            return result;
+        }
+
+        #endregion json as JsonDocument
+
+#endif
 
         #region json as object
 
@@ -554,6 +605,8 @@ namespace Cuture.Http
             return location;
         }
 
+        #region ReceiveData
+
         /// <summary>
         /// 获取请求返回的字符串
         /// </summary>
@@ -589,6 +642,26 @@ namespace Cuture.Http
             }
         }
 
+#if NETCOREAPP
+
+        /// <summary>
+        /// 获取请求返回值并转换为<see cref="JsonDocument"/>对象
+        /// </summary>
+        /// <param name="responseMessage"></param>
+        /// <param name="jsonDocumentOptions"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static async Task<JsonDocument?> ReceiveAsJsonDocumentAsync(this HttpResponseMessage responseMessage, JsonDocumentOptions jsonDocumentOptions = default)
+        {
+            using (responseMessage)
+            {
+                var stream = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                return await JsonDocument.ParseAsync(stream, jsonDocumentOptions).ConfigureAwait(false);
+            }
+        }
+
+#endif
+
         /// <summary>
         /// 获取请求返回的字符串
         /// </summary>
@@ -602,6 +675,8 @@ namespace Cuture.Http
                 return await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
             }
         }
+
+        #endregion ReceiveData
 
         /// <summary>
         /// 获取请求返回头的 Set-Cookie 字符串内容
