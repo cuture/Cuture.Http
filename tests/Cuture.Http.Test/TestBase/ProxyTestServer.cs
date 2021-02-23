@@ -44,8 +44,10 @@ namespace Cuture.Http.Test
 
         private readonly ProxyServer _proxyServer = new ProxyServer(false, false, false)
         {
-            ThreadPoolWorkerThread = 100,
-            MaxCachedConnections = 100,
+            ThreadPoolWorkerThread = 3,
+            MaxCachedConnections = 3,
+            ReuseSocket = true,
+            TcpTimeWaitSeconds = 30,
         };
 
         public bool IsSystemProxy { get; set; } = false;

@@ -47,11 +47,18 @@ namespace Cuture.Http.Test
             ProxyServer.DisableSystemProxy();
         }
 
+        [TestInitialize]
+        public override async Task InitAsync()
+        {
+            await base.InitAsync();
+            HttpRequestOptions.DefaultConnectionLimit = 2;
+        }
+
         [TestMethod]
         public async Task ProxyRequestTestAsync()
         {
             var proxyCount = 5;
-            var everyRequestCount = 20;
+            var everyRequestCount = 10;
 
             var proxys = new List<WebProxy>();
 
