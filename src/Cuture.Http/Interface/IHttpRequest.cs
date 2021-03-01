@@ -56,7 +56,7 @@ namespace Cuture.Http
         /// <summary>
         /// 请求选项（应该在构建请求早期进行设置）
         /// </summary>
-        HttpRequestOptions RequestOptions { get; set; }
+        HttpRequestExecutionOptions ExecutionOptions { get; set; }
 
         /// <summary>
         /// 请求的Uri

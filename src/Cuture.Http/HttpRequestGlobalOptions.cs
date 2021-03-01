@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
 using System.Runtime.CompilerServices;
 
 namespace Cuture.Http
 {
     /// <summary>
-    /// 请求选项
+    /// http请求默认全局选项
     /// </summary>
-    public class HttpRequestOptions
+    public static class HttpRequestGlobalOptions
     {
         #region CONST
 
@@ -56,23 +55,7 @@ namespace Cuture.Http
 
         #endregion Static Fields
 
-        #region Fields
-
-        private IJsonSerializer? _jsonSerializer;
-        private IHttpMessageInvokerFactory? _messageInvokerFactory;
-
-        #endregion Fields
-
         #region Static Properties
-
-        /// <summary>
-        /// 全局使用的默认请求选项
-        /// </summary>
-        public static HttpRequestOptions Default { get; } = new HttpRequestOptions()
-        {
-            MessageInvokerFactory = DefaultHttpMessageInvokerFactory,
-            JsonSerializer = DefaultJsonSerializer,
-        };
 
         /// <summary>
         /// 获取或设置 <see cref="ServicePoint"/> 对象所允许的最大并发连接数。
@@ -100,7 +83,7 @@ namespace Cuture.Http
         public static IHttpMessageInvokerFactory DefaultHttpMessageInvokerFactory
         {
             get => s_defaultHttpMessageInvokerFactory;
-            set => SetOption(ref s_defaultHttpMessageInvokerFactory, ref Default._messageInvokerFactory, value);
+            set => SetOption(ref s_defaultHttpMessageInvokerFactory, ref HttpRequestExecutionOptions.Default._messageInvokerFactory, value);
         }
 
         /// <inheritdoc cref="s_defaultHttpRequestCreator"/>
@@ -114,7 +97,7 @@ namespace Cuture.Http
         public static IJsonSerializer DefaultJsonSerializer
         {
             get => s_defaultJsonSerializer;
-            set => SetOption(ref s_defaultJsonSerializer, ref Default._jsonSerializer, value);
+            set => SetOption(ref s_defaultJsonSerializer, ref HttpRequestExecutionOptions.Default._jsonSerializer, value);
         }
 
         /// <summary>
@@ -138,7 +121,8 @@ namespace Cuture.Http
 
         #region 静态构造函数
 
-        static HttpRequestOptions()
+        /// <inheritdoc/>
+        static HttpRequestGlobalOptions()
         {
 #if NETCOREAPP
             s_defaultJsonSerializer = new SystemJsonJsonSerializer();
@@ -151,47 +135,6 @@ namespace Cuture.Http
         }
 
         #endregion 静态构造函数
-
-        #region Public 属性
-
-        /// <summary>
-        /// Json序列化器
-        /// </summary>
-        public IJsonSerializer? JsonSerializer { get => _jsonSerializer; set => _jsonSerializer = value; }
-
-        /// <summary>
-        /// 用于请求的 <see cref="HttpMessageInvoker"/>
-        /// <para/>
-        /// 设置此选项将覆盖自动重定向、代理请求、压缩、Cookie等请求设置
-        /// <para/>
-        /// 选项优先级
-        /// <para/>
-        /// <see cref="MessageInvoker"/> > <see cref="MessageInvokerFactory"/>
-        /// </summary>
-        public HttpMessageInvoker? MessageInvoker { get; set; }
-
-        /// <summary>
-        /// 用于请求的 <see cref="IHttpMessageInvokerFactory"/>
-        /// <para/>
-        /// 选项优先级
-        /// <para/>
-        /// 设置此选项将覆盖自动重定向、代理请求、压缩、Cookie等请求设置
-        /// <para/>
-        /// <see cref="MessageInvoker"/> > <see cref="MessageInvokerFactory"/>
-        /// </summary>
-        public IHttpMessageInvokerFactory? MessageInvokerFactory { get => _messageInvokerFactory; set => _messageInvokerFactory = value; }
-
-        #endregion Public 属性
-
-        #region Public 方法
-
-        /// <summary>
-        /// 获取一份浅表复制
-        /// </summary>
-        /// <returns></returns>
-        public HttpRequestOptions Copy() => (MemberwiseClone() as HttpRequestOptions)!;
-
-        #endregion Public 方法
 
         #region Private 方法
 

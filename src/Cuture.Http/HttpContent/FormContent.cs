@@ -73,7 +73,7 @@ namespace Cuture.Http
         }
 
         /// <inheritdoc cref="FormContent(object, string, Encoding, IFormDataFormatter)"/>
-        public FormContent(object content, string contentType, Encoding encoding) : this(content, contentType, encoding, HttpRequestOptions.DefaultFormDataFormatter)
+        public FormContent(object content, string contentType, Encoding encoding) : this(content, contentType, encoding, HttpRequestGlobalOptions.DefaultFormDataFormatter)
         {
         }
 

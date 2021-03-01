@@ -35,14 +35,14 @@ namespace Cuture.Http
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        public static string ToEncodedForm(this object content) => HttpRequestOptions.DefaultFormDataFormatter.FormatToEncoded(content);
+        public static string ToEncodedForm(this object content) => HttpRequestGlobalOptions.DefaultFormDataFormatter.FormatToEncoded(content);
 
         /// <summary>
         /// 获取对象的form表单
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        public static string ToForm(this object content) => HttpRequestOptions.DefaultFormDataFormatter.Format(content);
+        public static string ToForm(this object content) => HttpRequestGlobalOptions.DefaultFormDataFormatter.Format(content);
 
         #endregion 方法
     }

@@ -30,10 +30,10 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static HttpMessageInvoker InternalGetHttpMessageInvoker(IHttpRequest request)
         {
-            var options = request.IsSetOptions ? request.RequestOptions : HttpRequestOptions.Default;
+            var options = request.IsSetOptions ? request.ExecutionOptions : HttpRequestExecutionOptions.Default;
             return options.MessageInvoker
                         ?? options.MessageInvokerFactory?.GetInvoker(request)
-                        ?? throw new ArgumentException($"HttpRequestOptions's {nameof(HttpRequestOptions.MessageInvoker)}、{nameof(HttpRequestOptions.MessageInvokerFactory)} cannot both be null.");
+                        ?? throw new ArgumentException($"HttpRequestOptions's {nameof(HttpRequestExecutionOptions.MessageInvoker)}、{nameof(HttpRequestExecutionOptions.MessageInvokerFactory)} cannot both be null.");
         }
 
         #endregion 方法
@@ -147,7 +147,7 @@ namespace Cuture.Http
         #region Json
 
         /// <summary>
-        /// 将 <paramref name="content"/> 使用 请求设置的 JsonSerializer 或 <see cref="HttpRequestOptions.DefaultJsonSerializer"/> 序列化为json字符串后Post
+        /// 将 <paramref name="content"/> 使用 请求设置的 JsonSerializer 或 <see cref="HttpRequestGlobalOptions.DefaultJsonSerializer"/> 序列化为json字符串后Post
         /// </summary>
         /// <param name="request"></param>
         /// <param name="content"></param>
@@ -182,7 +182,7 @@ namespace Cuture.Http
         #region Form
 
         /// <summary>
-        /// 将 <paramref name="content"/> 使用 <see cref="HttpRequestOptions.DefaultFormDataFormatter"/> 转化为kv字符串,进行UrlEncoded后Post
+        /// 将 <paramref name="content"/> 使用 <see cref="HttpRequestGlobalOptions.DefaultFormDataFormatter"/> 转化为kv字符串,进行UrlEncoded后Post
         /// </summary>
         /// <param name="request"></param>
         /// <param name="content"></param>
@@ -332,7 +332,7 @@ namespace Cuture.Http
         /// <param name="targetStream"></param>
         /// <param name="bufferSize"></param>
         /// <returns></returns>
-        public static Task DownloadToStreamAsync(this IHttpRequest request, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
+        public static Task DownloadToStreamAsync(this IHttpRequest request, Stream targetStream, int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
                 => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
                           .SetRequestContinueTaskWithTimeout(request, (requestTask, token) => requestTask.DownloadToStreamAsync(targetStream, token, bufferSize));
 
@@ -349,7 +349,7 @@ namespace Cuture.Http
         /// <param name="targetStream"></param>
         /// <param name="bufferSize"></param>
         /// <returns></returns>
-        public static Task DownloadToStreamWithProgressAsync(this IHttpRequest request, Func<long?, long, Task> progressCallback, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
+        public static Task DownloadToStreamWithProgressAsync(this IHttpRequest request, Func<long?, long, Task> progressCallback, Stream targetStream, int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
                 => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
                           .SetRequestContinueTaskWithTimeout(request, (requestTask, token) => requestTask.DownloadToStreamWithProgressAsync(targetStream, progressCallback, token, bufferSize));
 
@@ -366,7 +366,7 @@ namespace Cuture.Http
         /// <param name="targetStream"></param>
         /// <param name="bufferSize"></param>
         /// <returns></returns>
-        public static Task DownloadToStreamWithProgressAsync(this IHttpRequest request, Action<long?, long> progressCallback, Stream targetStream, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
+        public static Task DownloadToStreamWithProgressAsync(this IHttpRequest request, Action<long?, long> progressCallback, Stream targetStream, int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
                 => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
                           .SetRequestContinueTaskWithTimeout(request, (requestTask, token) => requestTask.DownloadToStreamWithProgressAsync(targetStream, progressCallback, token, bufferSize));
 
@@ -380,7 +380,7 @@ namespace Cuture.Http
         /// <param name="progressCallback"></param>
         /// <param name="bufferSize"></param>
         /// <returns></returns>
-        public static Task<byte[]> DownloadWithProgressAsync(this IHttpRequest request, Func<long?, long, Task> progressCallback, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
+        public static Task<byte[]> DownloadWithProgressAsync(this IHttpRequest request, Func<long?, long, Task> progressCallback, int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
                 => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
                           .SetRequestContinueTaskWithTimeout(request, (requestTask, token) => requestTask.DownloadWithProgressAsync(progressCallback, token, bufferSize));
 
@@ -394,7 +394,7 @@ namespace Cuture.Http
         /// <param name="progressCallback"></param>
         /// <param name="bufferSize"></param>
         /// <returns></returns>
-        public static Task<byte[]> DownloadWithProgressAsync(this IHttpRequest request, Action<long?, long> progressCallback, int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
+        public static Task<byte[]> DownloadWithProgressAsync(this IHttpRequest request, Action<long?, long> progressCallback, int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
                 => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
                           .SetRequestContinueTaskWithTimeout(request, (requestTask, token) => requestTask.DownloadWithProgressAsync(progressCallback, token, bufferSize));
 

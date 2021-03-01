@@ -127,14 +127,14 @@ namespace Cuture.Http
         /// <summary>
         /// 使用FormContent
         /// <para/>
-        /// 将 <paramref name="content"/> 使用 <see cref="HttpRequestOptions.DefaultFormDataFormatter"/> 转化为kv字符串,并UrlEncoded
+        /// 将 <paramref name="content"/> 使用 <see cref="HttpRequestGlobalOptions.DefaultFormDataFormatter"/> 转化为kv字符串,并UrlEncoded
         /// </summary>
         /// <param name="request"></param>
         /// <param name="content"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest WithFormContent(this IHttpRequest request, object content)
-                => request.WithFormContent(content, HttpRequestOptions.DefaultFormDataFormatter);
+                => request.WithFormContent(content, HttpRequestGlobalOptions.DefaultFormDataFormatter);
 
         /// <summary>
         /// 使用FormContent
@@ -165,7 +165,7 @@ namespace Cuture.Http
         /// <summary>
         /// 使用JsonHttpContent
         /// <para/>
-        /// 将 <paramref name="content"/> 使用 请求设置的 JsonSerializer 或 <see cref="HttpRequestOptions.DefaultJsonSerializer"/> 序列化为json字符串
+        /// 将 <paramref name="content"/> 使用 请求设置的 JsonSerializer 或 <see cref="HttpRequestGlobalOptions.DefaultJsonSerializer"/> 序列化为json字符串
         /// </summary>
         /// <param name="request"></param>
         /// <param name="content"></param>

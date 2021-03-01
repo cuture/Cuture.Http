@@ -18,7 +18,7 @@ namespace Cuture.Http.Test
         [TestInitialize]
         public void Init()
         {
-            HttpRequestOptions.DefaultHttpMessageInvokerFactory = new SimpleHttpMessageInvokerFactory();
+            HttpRequestGlobalOptions.DefaultHttpMessageInvokerFactory = new SimpleHttpMessageInvokerFactory();
         }
 
         [TestMethod]

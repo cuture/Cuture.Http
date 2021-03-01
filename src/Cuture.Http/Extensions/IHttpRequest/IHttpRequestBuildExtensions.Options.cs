@@ -178,7 +178,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest UseClient(this IHttpRequest request, HttpMessageInvoker httpMessageInvoker)
         {
-            request.RequestOptions.MessageInvoker = httpMessageInvoker;
+            request.ExecutionOptions.MessageInvoker = httpMessageInvoker;
             return request;
         }
 
@@ -191,7 +191,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest UseInvokerFactory(this IHttpRequest request, IHttpMessageInvokerFactory messageInvokerFactory)
         {
-            request.RequestOptions.MessageInvokerFactory = messageInvokerFactory;
+            request.ExecutionOptions.MessageInvokerFactory = messageInvokerFactory;
             return request;
         }
 
@@ -204,7 +204,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest UseJsonSerializer(this IHttpRequest request, IJsonSerializer jsonSerializer)
         {
-            request.RequestOptions.JsonSerializer = jsonSerializer;
+            request.ExecutionOptions.JsonSerializer = jsonSerializer;
             return request;
         }
 
@@ -215,9 +215,9 @@ namespace Cuture.Http
         /// <param name="options"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest WithOption(this IHttpRequest request, HttpRequestOptions options)
+        public static IHttpRequest WithOption(this IHttpRequest request, HttpRequestExecutionOptions options)
         {
-            request.RequestOptions = options;
+            request.ExecutionOptions = options;
             return request;
         }
 

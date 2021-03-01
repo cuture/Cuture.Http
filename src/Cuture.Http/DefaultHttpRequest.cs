@@ -23,7 +23,7 @@ namespace Cuture.Http
     {
         #region Private 字段
 
-        private HttpRequestOptions? _options;
+        private HttpRequestExecutionOptions? _options;
 
         #endregion Private 字段
 
@@ -34,27 +34,27 @@ namespace Cuture.Http
 
         /// <summary>
         /// 禁用Proxy
-        /// <para/>初始值为 <see cref="HttpRequestOptions.DisableUseDefaultProxyByDefault"/>
+        /// <para/>初始值为 <see cref="HttpRequestGlobalOptions.DisableUseDefaultProxyByDefault"/>
         /// </summary>
-        public bool DisableProxy { get; set; } = HttpRequestOptions.DisableUseDefaultProxyByDefault;
+        public bool DisableProxy { get; set; } = HttpRequestGlobalOptions.DisableUseDefaultProxyByDefault;
 
         /// <inheritdoc/>
         public bool IsSetOptions => _options != null;
 
         /// <inheritdoc/>
-        public int MaxAutomaticRedirections { get; set; } = HttpRequestOptions.MaxAutomaticRedirections;
+        public int MaxAutomaticRedirections { get; set; } = HttpRequestGlobalOptions.MaxAutomaticRedirections;
 
         /// <inheritdoc/>
         public IWebProxy? Proxy { get; set; }
 
         /// <inheritdoc/>
-        public HttpRequestOptions RequestOptions
+        public HttpRequestExecutionOptions ExecutionOptions
         {
             get
             {
                 if (_options is null)
                 {
-                    _options = HttpRequestOptions.Default.Copy();
+                    _options = HttpRequestExecutionOptions.Default.Clone();
                 }
 
                 return _options;

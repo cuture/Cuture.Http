@@ -26,12 +26,12 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static IHttpRequest SetDefaultHeaders(IHttpRequest request)
         {
-            if (HttpRequestOptions.DefaultHttpHeaders.Count == 0)
+            if (HttpRequestGlobalOptions.DefaultHttpHeaders.Count == 0)
             {
                 return request;
             }
 
-            foreach (var item in HttpRequestOptions.DefaultHttpHeaders)
+            foreach (var item in HttpRequestGlobalOptions.DefaultHttpHeaders)
             {
                 request.Headers.TryAddWithoutValidation(item.Key, item.Value);
             }

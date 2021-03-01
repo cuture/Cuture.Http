@@ -18,7 +18,7 @@ namespace Cuture.Http
         /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
-        public static IHttpRequest ToHttpRequest(this string requestUri) => requestUri.CreateHttpRequest(HttpRequestOptions.DefaultHttpRequestCreator);
+        public static IHttpRequest ToHttpRequest(this string requestUri) => requestUri.CreateHttpRequest(HttpRequestGlobalOptions.DefaultHttpRequestCreator);
 
         /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -28,7 +28,7 @@ namespace Cuture.Http
         /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Obsolete("使用 CreateHttpRequest 方法替代")]
-        public static IHttpRequest ToHttpRequest(this Uri requestUri) => requestUri.CreateHttpRequest(HttpRequestOptions.DefaultHttpRequestCreator);
+        public static IHttpRequest ToHttpRequest(this Uri requestUri) => requestUri.CreateHttpRequest(HttpRequestGlobalOptions.DefaultHttpRequestCreator);
 
         /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -41,11 +41,11 @@ namespace Cuture.Http
 
         /// <inheritdoc cref="CreateHttpRequest(string, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest CreateHttpRequest(this string requestUri) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultHttpRequestCreator);
+        public static IHttpRequest CreateHttpRequest(this string requestUri) => CreateHttpRequest(requestUri, HttpRequestGlobalOptions.DefaultHttpRequestCreator);
 
         /// <inheritdoc cref="CreateHttpRequest(string, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest CreateHttpRequest(this string requestUri, bool reuseable) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultHttpRequestCreator, reuseable);
+        public static IHttpRequest CreateHttpRequest(this string requestUri, bool reuseable) => CreateHttpRequest(requestUri, HttpRequestGlobalOptions.DefaultHttpRequestCreator, reuseable);
 
         /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -57,11 +57,11 @@ namespace Cuture.Http
 
         /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest CreateHttpRequest(this Uri requestUri) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultHttpRequestCreator);
+        public static IHttpRequest CreateHttpRequest(this Uri requestUri) => CreateHttpRequest(requestUri, HttpRequestGlobalOptions.DefaultHttpRequestCreator);
 
         /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest CreateHttpRequest(this Uri requestUri, bool reuseable) => CreateHttpRequest(requestUri, HttpRequestOptions.DefaultHttpRequestCreator, reuseable);
+        public static IHttpRequest CreateHttpRequest(this Uri requestUri, bool reuseable) => CreateHttpRequest(requestUri, HttpRequestGlobalOptions.DefaultHttpRequestCreator, reuseable);
 
         /// <summary>
         /// 创建Http请求
@@ -82,7 +82,7 @@ namespace Cuture.Http
         /// <inheritdoc cref="CreateRequest(HttpMessageInvoker, Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, string requestUri)
-                => CreateRequest(httpMessageInvoker, requestUri, HttpRequestOptions.DefaultHttpRequestCreator);
+                => CreateRequest(httpMessageInvoker, requestUri, HttpRequestGlobalOptions.DefaultHttpRequestCreator);
 
         /// <inheritdoc cref="CreateRequest(HttpMessageInvoker, Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -97,12 +97,12 @@ namespace Cuture.Http
         /// <inheritdoc cref="CreateRequest(HttpMessageInvoker, Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, Uri requestUri)
-                => CreateRequest(httpMessageInvoker, requestUri, HttpRequestOptions.DefaultHttpRequestCreator);
+                => CreateRequest(httpMessageInvoker, requestUri, HttpRequestGlobalOptions.DefaultHttpRequestCreator);
 
         /// <inheritdoc cref="CreateRequest(HttpMessageInvoker, Uri, IHttpRequestCreator, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest CreateRequest(this HttpMessageInvoker httpMessageInvoker, Uri requestUri, bool reuseable)
-                => CreateRequest(httpMessageInvoker, requestUri, HttpRequestOptions.DefaultHttpRequestCreator, reuseable);
+                => CreateRequest(httpMessageInvoker, requestUri, HttpRequestGlobalOptions.DefaultHttpRequestCreator, reuseable);
 
         /// <summary>
         /// 创建Http请求

@@ -34,13 +34,13 @@ namespace Cuture.Http.Test
 
             Assert.AreEqual(0, ProxyServer.SystemProxyInfo.RequestTime);
 
-            HttpRequestOptions.DisableUseDefaultProxyByDefault = true;
+            HttpRequestGlobalOptions.DisableUseDefaultProxyByDefault = true;
 
             await ParallelRequestAsync(count,
                                        () => GetRequest().TryGetAsStringAsync(),
                                        AssertAction);
 
-            HttpRequestOptions.DisableUseDefaultProxyByDefault = false;
+            HttpRequestGlobalOptions.DisableUseDefaultProxyByDefault = false;
 
             Assert.AreEqual(0, ProxyServer.SystemProxyInfo.RequestTime);
 
@@ -51,7 +51,7 @@ namespace Cuture.Http.Test
         public override async Task InitAsync()
         {
             await base.InitAsync();
-            HttpRequestOptions.DefaultConnectionLimit = 2;
+            HttpRequestGlobalOptions.DefaultConnectionLimit = 2;
         }
 
         [TestMethod]

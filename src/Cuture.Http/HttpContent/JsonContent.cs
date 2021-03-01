@@ -40,7 +40,7 @@ namespace Cuture.Http
         }
 
         /// <inheritdoc cref="JsonContent(object, string, Encoding, IJsonSerializer)"/>
-        public JsonContent(object content, string contentType, Encoding encoding) : this(content, contentType, encoding, HttpRequestOptions.DefaultJsonSerializer)
+        public JsonContent(object content, string contentType, Encoding encoding) : this(content, contentType, encoding, HttpRequestGlobalOptions.DefaultJsonSerializer)
         {
         }
 

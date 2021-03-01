@@ -11,9 +11,9 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static IJsonSerializer GetJsonSerializerOrDefault(this IHttpRequest request)
         {
-            return request.IsSetOptions && request.RequestOptions.JsonSerializer != null
-                                    ? request.RequestOptions.JsonSerializer
-                                    : HttpRequestOptions.DefaultJsonSerializer;
+            return request.IsSetOptions && request.ExecutionOptions.JsonSerializer != null
+                                    ? request.ExecutionOptions.JsonSerializer
+                                    : HttpRequestGlobalOptions.DefaultJsonSerializer;
         }
 
         #endregion Internal 方法

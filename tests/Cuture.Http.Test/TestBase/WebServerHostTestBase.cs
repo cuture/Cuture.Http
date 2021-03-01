@@ -37,7 +37,7 @@ namespace Cuture.Http.Test
             {
                 await ServerHost?.StopAsync();
             }
-            HttpRequestOptions.DefaultHttpMessageInvokerFactory.Dispose();
+            HttpRequestGlobalOptions.DefaultHttpMessageInvokerFactory.Dispose();
         }
 
         [TestInitialize]
@@ -56,8 +56,8 @@ namespace Cuture.Http.Test
 
             invokerFactory ??= new SimpleHttpMessageInvokerFactory();
 
-            HttpRequestOptions.DefaultConnectionLimit = 10;
-            HttpRequestOptions.DefaultHttpMessageInvokerFactory = invokerFactory;
+            HttpRequestGlobalOptions.DefaultConnectionLimit = 10;
+            HttpRequestGlobalOptions.DefaultHttpMessageInvokerFactory = invokerFactory;
         }
 
         /// <summary>

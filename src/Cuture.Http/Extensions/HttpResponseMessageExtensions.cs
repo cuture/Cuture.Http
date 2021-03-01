@@ -169,7 +169,7 @@ namespace Cuture.Http
         public static async Task<T?> ReceiveAsObjectAsync<T>(this Task<HttpResponseMessage> requestTask, ISerializer<string>? serializer = null)
         {
             using var response = await requestTask.ConfigureAwait(false);
-            return await response.ReceiveAsObjectAsync<T>(serializer ?? HttpRequestOptions.DefaultJsonSerializer).ConfigureAwait(false);
+            return await response.ReceiveAsObjectAsync<T>(serializer ?? HttpRequestGlobalOptions.DefaultJsonSerializer).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace Cuture.Http
 
                 if (!string.IsNullOrEmpty(json))
                 {
-                    result.Data = (serializer ?? HttpRequestOptions.DefaultJsonSerializer).Deserialize<T>(json);
+                    result.Data = (serializer ?? HttpRequestGlobalOptions.DefaultJsonSerializer).Deserialize<T>(json);
                 }
             }
             catch (Exception ex)
@@ -223,7 +223,7 @@ namespace Cuture.Http
         public static async Task DownloadToStreamAsync(this Task<HttpResponseMessage> requestTask,
                                                        Stream targetStream,
                                                        CancellationToken token,
-                                                       int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
+                                                       int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
         {
             if (requestTask is null)
             {
@@ -308,7 +308,7 @@ namespace Cuture.Http
                                                                    Stream targetStream,
                                                                    Func<long?, long, Task> progressCallback,
                                                                    CancellationToken token,
-                                                                   int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
+                                                                   int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
         {
             if (requestTask is null)
             {
@@ -400,7 +400,7 @@ namespace Cuture.Http
         public static async Task<byte[]> DownloadWithProgressAsync(this Task<HttpResponseMessage> requestTask,
                                                                    Func<long?, long, Task> progressCallback,
                                                                    CancellationToken token,
-                                                                   int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
+                                                                   int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
         {
             using var mStream = new MemoryStream(512_000);
 
@@ -433,7 +433,7 @@ namespace Cuture.Http
                                                                    Stream targetStream,
                                                                    Action<long?, long> progressCallback,
                                                                    CancellationToken token,
-                                                                   int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
+                                                                   int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
         {
             if (requestTask is null)
             {
@@ -527,7 +527,7 @@ namespace Cuture.Http
         public static async Task<byte[]> DownloadWithProgressAsync(this Task<HttpResponseMessage> requestTask,
                                                                    Action<long?, long> progressCallback,
                                                                    CancellationToken token,
-                                                                   int bufferSize = HttpRequestOptions.DefaultDownloadBufferSize)
+                                                                   int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
         {
             using var mStream = new MemoryStream(512_000);
 
@@ -636,7 +636,7 @@ namespace Cuture.Http
                 var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
                 if (!string.IsNullOrEmpty(json))
                 {
-                    return (serializer ?? HttpRequestOptions.DefaultJsonSerializer).Deserialize<T>(json);
+                    return (serializer ?? HttpRequestGlobalOptions.DefaultJsonSerializer).Deserialize<T>(json);
                 }
                 return default;
             }
