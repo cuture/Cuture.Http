@@ -31,7 +31,7 @@
     <VersionMajor>2</VersionMajor>
     <VersionMinor>0</VersionMinor>
     <VersionPatch>0</VersionPatch>
-    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionPatch)-alpha0002</VersionPrefix>
+    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionPatch)-alpha0003</VersionPrefix>
   </PropertyGroup>
 
   <!--Package Info-->

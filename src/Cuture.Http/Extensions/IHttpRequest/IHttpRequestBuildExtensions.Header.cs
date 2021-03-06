@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -10,7 +11,39 @@ namespace Cuture.Http
 
     public static partial class IHttpRequestBuildExtensions
     {
-        #region Header
+        #region HeaderSetting
+
+        #region Accept
+
+        /// <summary>
+        /// 设置<see cref="HttpHeaderDefinitions.Accept"/>头
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpRequest Accept(this IHttpRequest request, string type)
+        {
+            if (string.IsNullOrWhiteSpace(type))
+            {
+                throw new ArgumentException($"“{nameof(type)}”不能为 null 或空白。", nameof(type));
+            }
+
+            return request.AddNewHeader(HttpHeaderDefinitions.Accept, type);
+        }
+
+        /// <summary>
+        /// 设置<see cref="HttpHeaderDefinitions.Accept"/>头的值为<see cref="JsonContent.ContentType"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpRequest AcceptJson(this IHttpRequest request)
+        {
+            return request.AddNewHeader(HttpHeaderDefinitions.Accept, JsonContent.ContentType);
+        }
+
+        #endregion Accept
 
         /// <summary>
         /// 添加Header
@@ -176,6 +209,6 @@ namespace Cuture.Http
             return request;
         }
 
-        #endregion Header
+        #endregion HeaderSetting
     }
 }

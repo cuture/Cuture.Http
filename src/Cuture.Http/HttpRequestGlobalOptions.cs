@@ -113,7 +113,7 @@ namespace Cuture.Http
         /// <summary>
         /// 自动循环处理的最大重定向次数
         /// </summary>
-        public static int MaxAutomaticRedirections { get => s_maxAutomaticRedirections; set => s_maxAutomaticRedirections = value > 0 ? value : throw new ArgumentOutOfRangeException($"{nameof(MaxAutomaticRedirections)} Must be greater than 0"); }
+        public static int MaxAutomaticRedirections { get => s_maxAutomaticRedirections; set => s_maxAutomaticRedirections = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(MaxAutomaticRedirections), "Must be greater than 0"); }
 
         #endregion Static Properties
 
