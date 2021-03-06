@@ -19,7 +19,7 @@ namespace Cuture.Http
         /// <returns></returns>
         public static HttpClient CreateDefaultClient()
         {
-            return new HttpClient(CreateDefaultClientHandler());
+            return new FinalizeableHttpClient(CreateDefaultClientHandler());
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Cuture.Http
         /// <returns></returns>
         public static HttpClient CreateProxyDisabledDefaultClient()
         {
-            return new HttpClient(CreateDefaultClientHandler().DisableProxy());
+            return new FinalizeableHttpClient(CreateDefaultClientHandler().DisableProxy());
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Cuture.Http
             var httpClientHandler = CreateDefaultClientHandler();
             httpClientHandler.UseProxy = true;
             httpClientHandler.Proxy = webProxy;
-            return new HttpClient(httpClientHandler);
+            return new FinalizeableHttpClient(httpClientHandler);
         }
 
         #endregion Public 方法
