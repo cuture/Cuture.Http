@@ -5,11 +5,11 @@
 
     <LegacyTFMs>netstandard2.0;net461</LegacyTFMs>
     <NewlyTFMs>netcoreapp3.1;net5.0</NewlyTFMs>
-    
+
     <LangVersion>latest</LangVersion>
 
     <Nullable>enable</Nullable>
-    
+
     <IsLegacyTFM>false</IsLegacyTFM>
     <IsNewlyTFM>false</IsNewlyTFM>
   </PropertyGroup>
@@ -31,7 +31,7 @@
     <VersionMajor>2</VersionMajor>
     <VersionMinor>0</VersionMinor>
     <VersionPatch>0</VersionPatch>
-    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionPatch)-alpha0004</VersionPrefix>
+    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionPatch)</VersionPrefix>
   </PropertyGroup>
 
   <!--Package Info-->
