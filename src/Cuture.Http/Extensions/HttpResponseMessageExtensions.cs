@@ -126,21 +126,29 @@ namespace Cuture.Http
         /// </summary>
         /// <param name="requestTask"></param>
         /// <param name="jsonDocumentOptions"></param>
+        /// <param name="textRequired">需要原始文本</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<TextHttpOperationResult<JsonDocument>> TryReceiveAsJsonDocumentAsync(this Task<HttpResponseMessage> requestTask, JsonDocumentOptions jsonDocumentOptions = default)
+        public static async Task<TextHttpOperationResult<JsonDocument>> TryReceiveAsJsonDocumentAsync(this Task<HttpResponseMessage> requestTask, JsonDocumentOptions jsonDocumentOptions = default, bool textRequired = false)
         {
             var result = new TextHttpOperationResult<JsonDocument>();
             try
             {
                 result.ResponseMessage = await requestTask.ConfigureAwait(false);
 
-                var json = await result.ResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-                result.Text = json;
-
-                if (!string.IsNullOrEmpty(json))
+                if (!textRequired)
                 {
-                    result.Data = JsonDocument.Parse(json, jsonDocumentOptions);
+                    result.Data = await result.ResponseMessage.ReceiveAsJsonDocumentAsync(jsonDocumentOptions).ConfigureAwait(false);
+                }
+                else
+                {
+                    var json = await result.ResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    result.Text = json;
+
+                    if (!string.IsNullOrEmpty(json))
+                    {
+                        result.Data = JsonDocument.Parse(json, jsonDocumentOptions);
+                    }
                 }
             }
             catch (Exception ex)
@@ -180,20 +188,29 @@ namespace Cuture.Http
         /// <typeparam name="T"></typeparam>
         /// <param name="requestTask"></param>
         /// <param name="serializer"></param>
+        /// <param name="textRequired">需要原始文本</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<TextHttpOperationResult<T>> TryReceiveAsObjectAsync<T>(this Task<HttpResponseMessage> requestTask, ISerializer<string>? serializer = null)
+        public static async Task<TextHttpOperationResult<T>> TryReceiveAsObjectAsync<T>(this Task<HttpResponseMessage> requestTask, ISerializer<string>? serializer = null, bool textRequired = false)
         {
             var result = new TextHttpOperationResult<T>();
             try
             {
                 result.ResponseMessage = await requestTask.ConfigureAwait(false);
-                var json = await result.ResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-                result.Text = json;
 
-                if (!string.IsNullOrEmpty(json))
+                if (!textRequired)
                 {
-                    result.Data = (serializer ?? HttpRequestGlobalOptions.DefaultJsonSerializer).Deserialize<T>(json);
+                    result.Data = await result.ResponseMessage.ReceiveAsObjectAsync<T>(serializer);
+                }
+                else
+                {
+                    var json = await result.ResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    result.Text = json;
+
+                    if (!string.IsNullOrEmpty(json))
+                    {
+                        result.Data = (serializer ?? HttpRequestGlobalOptions.DefaultJsonSerializer).Deserialize<T>(json);
+                    }
                 }
             }
             catch (Exception ex)
@@ -633,12 +650,8 @@ namespace Cuture.Http
         {
             using (responseMessage)
             {
-                var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-                if (!string.IsNullOrEmpty(json))
-                {
-                    return (serializer ?? HttpRequestGlobalOptions.DefaultJsonSerializer).Deserialize<T>(json);
-                }
-                return default;
+                using var stream = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                return await (serializer ?? HttpRequestGlobalOptions.DefaultJsonSerializer).DeserializeAsync<T>(stream);
             }
         }
 

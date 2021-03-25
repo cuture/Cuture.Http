@@ -1,4 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using System.IO;
+using System.Threading.Tasks;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Cuture.Http
 {
@@ -27,6 +31,16 @@ namespace Cuture.Http
 
         /// <inheritdoc/>
         public T? Deserialize<T>(string data) => JsonConvert.DeserializeObject<T>(data, _jsonSerializerSettings);
+
+        /// <inheritdoc/>
+        public async Task<T?> DeserializeAsync<T>(Stream stream)
+        {
+            using var jsonTextReader = new JsonTextReader(new StreamReader(stream));
+
+            var jToken = await JToken.LoadAsync(jsonTextReader).ConfigureAwait(false);
+
+            return jToken.ToObject<T>(JsonSerializer.CreateDefault(_jsonSerializerSettings));
+        }
 
         /// <inheritdoc/>
         public string Serialize(object value) => JsonConvert.SerializeObject(value, _jsonSerializerSettings!);

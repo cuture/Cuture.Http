@@ -1,5 +1,7 @@
 ﻿#if NETCOREAPP
+using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Cuture.Http
 {
@@ -31,6 +33,12 @@ namespace Cuture.Http
 
         /// <inheritdoc/>
         public T? Deserialize<T>(string data) => JsonSerializer.Deserialize<T>(data, _options);
+
+        /// <inheritdoc/>
+        public Task<T?> DeserializeAsync<T>(Stream stream)
+        {
+            return JsonSerializer.DeserializeAsync<T?>(stream, _options).AsTask();
+        }
 
         /// <inheritdoc/>
         public string Serialize(object value) => JsonSerializer.Serialize(value, _options);

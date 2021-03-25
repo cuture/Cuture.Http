@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Cuture.Http
@@ -34,21 +36,29 @@ namespace Cuture.Http
         /// </summary>
         /// <param name="requestTask"></param>
         /// <param name="jsonLoadSetting"></param>
+        /// <param name="textRequired">需要原始文本</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<TextHttpOperationResult<JObject>> TryReceiveAsJsonAsync(this Task<HttpResponseMessage> requestTask, JsonLoadSettings? jsonLoadSetting = null)
+        public static async Task<TextHttpOperationResult<JObject>> TryReceiveAsJsonAsync(this Task<HttpResponseMessage> requestTask, JsonLoadSettings? jsonLoadSetting = null, bool textRequired = false)
         {
             var result = new TextHttpOperationResult<JObject>();
             try
             {
                 result.ResponseMessage = await requestTask.ConfigureAwait(false);
 
-                var json = await result.ResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-                result.Text = json;
-
-                if (!string.IsNullOrEmpty(json))
+                if (!textRequired)
                 {
-                    result.Data = JObject.Parse(json, jsonLoadSetting);
+                    result.Data = await result.ResponseMessage.ReceiveAsJsonAsync(jsonLoadSetting).ConfigureAwait(false);
+                }
+                else
+                {
+                    var json = await result.ResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    result.Text = json;
+
+                    if (!string.IsNullOrEmpty(json))
+                    {
+                        result.Data = JObject.Parse(json, jsonLoadSetting);
+                    }
                 }
             }
             catch (Exception ex)
@@ -75,12 +85,9 @@ namespace Cuture.Http
         {
             using (responseMessage)
             {
-                var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-                if (!string.IsNullOrEmpty(json))
-                {
-                    return JObject.Parse(json, jsonLoadSetting);
-                }
-                return null;
+                var stream = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                using var jsonTextReader = new JsonTextReader(new StreamReader(stream));
+                return await JObject.LoadAsync(jsonTextReader, jsonLoadSetting);
             }
         }
 

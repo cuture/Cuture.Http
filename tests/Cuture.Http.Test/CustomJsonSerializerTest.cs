@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
@@ -143,6 +144,12 @@ namespace Cuture.Http.Test
                 return JsonSerializer.Deserialize<T>(data);
             }
 
+            public async Task<T> DeserializeAsync<T>(Stream stream)
+            {
+                var json = await new StreamReader(stream).ReadToEndAsync();
+                return Deserialize<T>(json);
+            }
+
             public string Serialize(object value)
             {
                 return JsonSerializer.Serialize(value);
@@ -159,6 +166,12 @@ namespace Cuture.Http.Test
             {
                 var json = Regex.Match(data, "{.+}").Value;
                 return JsonSerializer.Deserialize<T>(json);
+            }
+
+            public async Task<T> DeserializeAsync<T>(Stream stream)
+            {
+                var json = await new StreamReader(stream).ReadToEndAsync();
+                return Deserialize<T>(json);
             }
 
             public string Serialize(object value)
