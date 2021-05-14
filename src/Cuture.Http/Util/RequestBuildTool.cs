@@ -12,32 +12,26 @@ namespace Cuture.Http
     /// </summary>
     public static class RequestBuildTool
     {
-        /// <summary>
-        /// 从请求的原始数据的base64字符串构建请求
-        /// </summary>
-        /// <param name="rawBase64String"></param>
-        /// <returns></returns>
+        /// <inheritdoc cref="FromRaw(ReadOnlySpan{byte}, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest FromRaw(string rawBase64String) => FromRaw(Convert.FromBase64String(rawBase64String));
+        public static IHttpRequest FromRaw(string rawBase64String, bool ignoreLargeRawData = false) => FromRaw(Convert.FromBase64String(rawBase64String), ignoreLargeRawData);
+
+        /// <inheritdoc cref="FromRaw(ReadOnlySpan{byte}, bool)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpRequest FromRaw(byte[] data, bool ignoreLargeRawData = false) => FromRaw(data.AsSpan(), ignoreLargeRawData);
 
         /// <summary>
         /// 从请求的原始数据构建请求
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">请求的原始数据</param>
+        /// <param name="ignoreLargeRawData">原始数据过大时，构建成本可能过大，默认会抛出异常。此参数可以避免异常抛出</param>
         /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest FromRaw(byte[] data) => FromRaw(data.AsSpan());
-
-        /// <summary>
-        /// 从请求的原始数据构建请求
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public static IHttpRequest FromRaw(ReadOnlySpan<byte> data)
+        public static IHttpRequest FromRaw(ReadOnlySpan<byte> data, bool ignoreLargeRawData = false)
         {
-            if (data.Length > 5 * 1024 * 1024)
+            if (!ignoreLargeRawData
+                && data.Length > 5 * 1024 * 1024)
             {
-                throw new ArgumentOutOfRangeException($"the data (length:{data.Length}) is too large, This is not the recommend way to use it.");
+                throw new ArgumentOutOfRangeException(nameof(data), $"the data (length:{data.Length}) is too large, This is not the recommend way to use it.");
             }
 
             ReadHttpRequestLine(ref data, out var methodSpan, out var urlSpan, out _);
