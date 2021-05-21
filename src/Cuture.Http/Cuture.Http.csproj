@@ -1,25 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../../Common.props" />
+  <Import Project="../../description.props" />
 
   <PropertyGroup>
     <TargetFrameworks>$(LegacyTFMs);$(NewlyTFMs)</TargetFrameworks>
-    
+
     <NoWarn>CA1062;CA1200;CA1303;CA1054;CA2234</NoWarn>
-
-    <Description>用于快速进行Http请求的链式拓展方法库
-
-Example Usage:
-var url = "http://www.domain.com/api";
-var response = await url.CreateHttpRequest()
-                        .UseUserAgent(UserAgents.FireFox)
-                        .AddHeader("header1", "header1Value")
-                        .UsePost()
-                        .TimeOut(3000)
-                        .WithCancellationToken(token)
-                        .WithFormContent($"key={value.UrlEncode()}")
-                        //Some Other Options
-                        .TryGetAsStringAsync();
-    </Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -36,8 +22,6 @@ var response = await url.CreateHttpRequest()
   <ItemGroup Condition="$(IsLegacyTFM)">
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 
-    <Compile Include="..\Cuture.Http.NewtonsoftJson\**\*.cs"
-             Exclude="..\Cuture.Http.NewtonsoftJson\obj\**\*"
-             Link="NewtonsoftJson\%(RecursiveDir)\%(FileName)%(Extension)" />
+    <Compile Include="..\Cuture.Http.NewtonsoftJson\**\*.cs" Exclude="..\Cuture.Http.NewtonsoftJson\obj\**\*" Link="NewtonsoftJson\%(RecursiveDir)\%(FileName)%(Extension)" />
   </ItemGroup>
 </Project>
