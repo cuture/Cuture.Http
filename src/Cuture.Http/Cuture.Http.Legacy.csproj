@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <BuildIntermediatePath>./obj/normal</BuildIntermediatePath>
+    <BuildIntermediatePath>./obj/legacy</BuildIntermediatePath>
     <BaseIntermediateOutputPath>$(BuildIntermediatePath)</BaseIntermediateOutputPath>
     <MSBuildProjectExtensionsPath>$(BuildIntermediatePath)</MSBuildProjectExtensionsPath>
   </PropertyGroup>
@@ -8,18 +8,12 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <Import Project="../../common.props" />
-  <Import Project="../../description.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>$(LegacyTFMs);$(NewlyTFMs)</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+    <TargetFrameworks>$(LegacyTFMs)</TargetFrameworks>
 
-    <OutputPath>./bin/normal</OutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <OutputPath>./bin/legacy</OutputPath>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net461'">
@@ -27,16 +21,12 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(IsLegacyTFM)">
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 
     <Compile Include="..\Cuture.Http.NewtonsoftJson\**\*.cs" Exclude="..\Cuture.Http.NewtonsoftJson\obj\**\*" Link="NewtonsoftJson\%(RecursiveDir)\%(FileName)%(Extension)" />
 
     <Compile Remove=".\**\*.Newly.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(IsNewlyTFM)">
-    <Compile Remove=".\**\*.Legacy.cs" />
   </ItemGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />

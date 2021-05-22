@@ -12,8 +12,16 @@
 
     <IsLegacyTFM>false</IsLegacyTFM>
     <IsNewlyTFM>false</IsNewlyTFM>
+
+    <NoWarn>CA1062;CA1200;CA1303;CA1054;CA2234</NoWarn>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+  
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0' or '$(TargetFramework)'=='net461'">
     <DefineConstants>$(DefineConstants);LEGACYTFM</DefineConstants>
     <IsLegacyTFM>true</IsLegacyTFM>
