@@ -1,5 +1,4 @@
-﻿#if NETCOREAPP
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -10,10 +9,7 @@ namespace Cuture.Http.Internal
     /// </summary>
     internal static class HttpRawDataReadTool
     {
-        /// <summary>
-        /// 空格分隔符
-        /// </summary>
-        public const byte SpaceSeparator = (byte)' ';
+        #region Public 字段
 
         /// <summary>
         /// 冒号分隔符
@@ -21,14 +17,13 @@ namespace Cuture.Http.Internal
         public const byte ColonSeparator = (byte)':';
 
         /// <summary>
-        /// 新行分隔符
+        /// 空格分隔符
         /// </summary>
-        internal static readonly byte[] NewLineSeparator = new[] { (byte)'\r', (byte)'\n' };
+        public const byte SpaceSeparator = (byte)' ';
 
-        /// <summary>
-        /// 新行分隔符
-        /// </summary>
-        internal static ReadOnlySpan<byte> NewLineSeparatorSpan => NewLineSeparator.AsSpan();
+        #endregion Public 字段
+
+        #region Internal 字段
 
         /// <summary>
         /// Header结束分隔符
@@ -36,9 +31,27 @@ namespace Cuture.Http.Internal
         internal static readonly byte[] HeaderEndSeparator = new[] { (byte)'\r', (byte)'\n', (byte)'\r', (byte)'\n' };
 
         /// <summary>
+        /// 新行分隔符
+        /// </summary>
+        internal static readonly byte[] NewLineSeparator = new[] { (byte)'\r', (byte)'\n' };
+
+        #endregion Internal 字段
+
+        #region Internal 属性
+
+        /// <summary>
         /// Header结束分隔符
         /// </summary>
         internal static ReadOnlySpan<byte> HeaderEndSeparatorSpan => HeaderEndSeparator.AsSpan();
+
+        /// <summary>
+        /// 新行分隔符
+        /// </summary>
+        internal static ReadOnlySpan<byte> NewLineSeparatorSpan => NewLineSeparator.AsSpan();
+
+        #endregion Internal 属性
+
+        #region Public 方法
 
         /// <summary>
         /// 读取Header的值（自动忽略头部的空格）
@@ -113,6 +126,7 @@ namespace Cuture.Http.Internal
             }
             return ReadAndReduceData(ref data, index, terminal.Length);
         }
+
+        #endregion Public 方法
     }
 }
-#endif

@@ -1,5 +1,4 @@
-﻿#if NETCOREAPP
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 
 namespace Cuture.Http
@@ -93,4 +92,3 @@ namespace Cuture.Http
         #endregion Public 方法
     }
 }
-#endif

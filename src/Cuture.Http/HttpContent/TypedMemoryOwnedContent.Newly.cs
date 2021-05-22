@@ -1,11 +1,5 @@
-﻿#if NEWLYTFM
-using System;
+﻿using System;
 using System.Buffers;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Cuture.Http
 {
@@ -14,6 +8,8 @@ namespace Cuture.Http
     /// </summary>
     public class TypedMemoryOwnedContent : MemoryOwnedContent
     {
+        #region Public 构造函数
+
         /// <inheritdoc cref="TypedMemoryOwnedContent(IMemoryOwner{byte},int,int,string)"/>
         public TypedMemoryOwnedContent(IMemoryOwner<byte> memoryOwner, int start, string contentType)
             : this(memoryOwner.Memory[start..], memoryOwner, contentType)
@@ -48,6 +44,7 @@ namespace Cuture.Http
 
             Headers.TryAddWithoutValidation(HttpHeaderDefinitions.ContentType, contentType);
         }
+
+        #endregion Public 构造函数
     }
 }
-#endif

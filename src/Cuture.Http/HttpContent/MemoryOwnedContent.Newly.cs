@@ -1,11 +1,6 @@
-﻿#if NEWLYTFM
-using System;
+﻿using System;
 using System.Buffers;
-using System.IO;
-using System.Net;
 using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Cuture.Http
 {
@@ -14,6 +9,8 @@ namespace Cuture.Http
     /// </summary>
     public class MemoryOwnedContent : DisposeRequiredReadOnlyMemoryContent
     {
+        #region Public 构造函数
+
         /// <inheritdoc cref="MemoryOwnedContent(IMemoryOwner{byte},int,int)"/>
         public MemoryOwnedContent(IMemoryOwner<byte> memoryOwner, int start)
             : this(memoryOwner.Memory[start..], memoryOwner)
@@ -40,6 +37,7 @@ namespace Cuture.Http
             : base(content, memoryOwner)
         {
         }
+
+        #endregion Public 构造函数
     }
 }
-#endif

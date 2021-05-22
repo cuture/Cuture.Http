@@ -1,5 +1,4 @@
-﻿#if NETCOREAPP
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -12,6 +11,8 @@ namespace Cuture.Http
     /// </summary>
     public static class RequestBuildTool
     {
+        #region Public 方法
+
         /// <inheritdoc cref="FromRaw(ReadOnlySpan{byte}, bool)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IHttpRequest FromRaw(string rawBase64String, bool ignoreLargeRawData = false) => FromRaw(Convert.FromBase64String(rawBase64String), ignoreLargeRawData);
@@ -52,33 +53,9 @@ namespace Cuture.Http
             return request;
         }
 
-        /// <summary>
-        /// 读取请求行
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="method"></param>
-        /// <param name="url"></param>
-        /// <param name="version"></param>
-        internal static void ReadHttpRequestLine(ref ReadOnlySpan<byte> data, out ReadOnlySpan<byte> method, out ReadOnlySpan<byte> url, out ReadOnlySpan<byte> version)
-        {
-            method = ReadSegmentData(ref data, SpaceSeparator);
-            if (method.IsEmpty)
-            {
-                throw new ArgumentException("not found “method” in data. Please check the raw data.");
-            }
+        #endregion Public 方法
 
-            url = ReadSegmentData(ref data, SpaceSeparator);
-            if (url.IsEmpty)
-            {
-                throw new ArgumentException("not found “url” in data. Please check the raw data.");
-            }
-
-            version = ReadSegmentData(ref data, NewLineSeparatorSpan);
-            if (version.IsEmpty)
-            {
-                throw new ArgumentException("not found “version” in data. Please check the raw data.");
-            }
-        }
+        #region Internal 方法
 
         /// <summary>
         /// 加载header到指定<see cref="System.Net.Http.Headers.HttpHeaders"/>，并返回contentLength和contentType
@@ -126,6 +103,35 @@ namespace Cuture.Http
 
             return (contentLength, contentType);
         }
+
+        /// <summary>
+        /// 读取请求行
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="method"></param>
+        /// <param name="url"></param>
+        /// <param name="version"></param>
+        internal static void ReadHttpRequestLine(ref ReadOnlySpan<byte> data, out ReadOnlySpan<byte> method, out ReadOnlySpan<byte> url, out ReadOnlySpan<byte> version)
+        {
+            method = ReadSegmentData(ref data, SpaceSeparator);
+            if (method.IsEmpty)
+            {
+                throw new ArgumentException("not found “method” in data. Please check the raw data.");
+            }
+
+            url = ReadSegmentData(ref data, SpaceSeparator);
+            if (url.IsEmpty)
+            {
+                throw new ArgumentException("not found “url” in data. Please check the raw data.");
+            }
+
+            version = ReadSegmentData(ref data, NewLineSeparatorSpan);
+            if (version.IsEmpty)
+            {
+                throw new ArgumentException("not found “version” in data. Please check the raw data.");
+            }
+        }
+
+        #endregion Internal 方法
     }
 }
-#endif

@@ -1,5 +1,4 @@
-﻿#if NEWLYTFM
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -15,14 +14,31 @@ namespace Cuture.Http
     /// </summary>
     public class DisposeRequiredReadOnlyMemoryContent : HttpContent
     {
+        #region Private 字段
+
         private readonly ReadOnlyMemory<byte> _content;
         private readonly IDisposable _disposable;
+
+        #endregion Private 字段
+
+        #region Public 构造函数
 
         /// <inheritdoc cref="DisposeRequiredReadOnlyMemoryContent"/>
         public DisposeRequiredReadOnlyMemoryContent(ReadOnlyMemory<byte> content, IDisposable disposable)
         {
             _content = content;
             _disposable = disposable;
+        }
+
+        #endregion Public 构造函数
+
+        #region Protected 方法
+
+        /// <inheritdoc/>
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            _disposable.Dispose();
         }
 
         /// <inheritdoc/>
@@ -48,12 +64,6 @@ namespace Cuture.Http
             return true;
         }
 
-        /// <inheritdoc/>
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-            _disposable.Dispose();
-        }
+        #endregion Protected 方法
     }
 }
-#endif

@@ -1,6 +1,4 @@
-﻿#if NETCOREAPP
-
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -127,5 +125,3 @@ namespace Cuture.Http
         #endregion 方法
     }
 }
-
-#endif
