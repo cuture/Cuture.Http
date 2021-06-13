@@ -87,7 +87,7 @@ namespace Cuture.Http
             {
                 var stream = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 using var jsonTextReader = new JsonTextReader(new StreamReader(stream));
-                return await JObject.LoadAsync(jsonTextReader, jsonLoadSetting);
+                return await JObject.LoadAsync(jsonTextReader, jsonLoadSetting).ConfigureAwait(false);
             }
         }
 

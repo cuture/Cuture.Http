@@ -200,7 +200,7 @@ namespace Cuture.Http
 
                 if (!textRequired)
                 {
-                    result.Data = await result.ResponseMessage.ReceiveAsObjectAsync<T>(serializer);
+                    result.Data = await result.ResponseMessage.ReceiveAsObjectAsync<T>(serializer).ConfigureAwait(false);
                 }
                 else
                 {
@@ -651,7 +651,7 @@ namespace Cuture.Http
             using (responseMessage)
             {
                 using var stream = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                return await (serializer ?? HttpRequestGlobalOptions.DefaultJsonSerializer).DeserializeAsync<T>(stream);
+                return await (serializer ?? HttpRequestGlobalOptions.DefaultJsonSerializer).DeserializeAsync<T>(stream).ConfigureAwait(false);
             }
         }
 
