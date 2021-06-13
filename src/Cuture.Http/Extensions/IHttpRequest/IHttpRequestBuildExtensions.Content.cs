@@ -2,6 +2,12 @@
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 
+#if NEWLYTFM
+
+using System.Buffers;
+
+#endif
+
 namespace Cuture.Http
 {
     //此文件主要包含 Content 相关的拓展方法
@@ -9,29 +15,6 @@ namespace Cuture.Http
     public static partial class IHttpRequestBuildExtensions
     {
         #region Content
-
-#if NETCOREAPP
-
-        /// <summary>
-        /// 使用指定数据作为Http请求的Content
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="data">content的数据</param>
-        /// <param name="contentType">Content-Type</param>
-        /// <param name="contentLength">数据长度（如果小于0，则会使用data的全部数据作为Content）</param>
-        /// <returns></returns>
-        public static IHttpRequest WithContent(this IHttpRequest request, in ReadOnlySpan<byte> data, string contentType, int contentLength = -1)
-        {
-            if (string.IsNullOrWhiteSpace(contentType))
-            {
-                throw new ArgumentException($"“{nameof(contentType)}”不能为 Null 或空白", nameof(contentType));
-            }
-
-            return request.WithContent(new TypedByteArrayContent(contentLength > 0 ? data.Slice(0, contentLength).ToArray() : data.ToArray(),
-                                                                 contentType));
-        }
-
-#endif
 
         /// <summary>
         /// 为请求添加HttpContent;
@@ -121,6 +104,52 @@ namespace Cuture.Http
             request.Content = httpContent;
             return request;
         }
+
+#if NEWLYTFM
+
+        /// <summary>
+        /// 使用指定数据作为Http请求的Content
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="data">content的数据</param>
+        /// <param name="contentType">Content-Type</param>
+        /// <param name="contentLength">数据长度（如果小于0，则会使用data的全部数据作为Content）</param>
+        /// <returns></returns>
+        public static IHttpRequest WithContent(this IHttpRequest request, in ReadOnlySpan<byte> data, string contentType, int contentLength = -1)
+        {
+            if (string.IsNullOrWhiteSpace(contentType))
+            {
+                throw new ArgumentException($"“{nameof(contentType)}”不能为 Null 或空白", nameof(contentType));
+            }
+
+            return request.WithContent(new TypedByteArrayContent(contentLength > 0 ? data.Slice(0, contentLength).ToArray() : data.ToArray(),
+                                                                 contentType));
+        }
+
+        /// <summary>
+        /// 使用指定数据作为Http请求的Content
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="data">content的数据</param>
+        /// <param name="contentType">Content-Type</param>
+        /// <param name="memoryOwner"></param>
+        /// <returns></returns>
+        internal static IHttpRequest WithContent(this IHttpRequest request, in ReadOnlyMemory<byte> data, string contentType, IMemoryOwner<byte>? memoryOwner = null)
+        {
+            if (memoryOwner is null)
+            {
+                return request.WithContent(data.Span, contentType, -1);
+            }
+
+            if (string.IsNullOrWhiteSpace(contentType))
+            {
+                throw new ArgumentException($"“{nameof(contentType)}”不能为 Null 或空白", nameof(contentType));
+            }
+
+            return request.WithContent(new TypedMemoryOwnedContent(memoryOwner, data, contentType));
+        }
+
+#endif
 
         #region Form
 

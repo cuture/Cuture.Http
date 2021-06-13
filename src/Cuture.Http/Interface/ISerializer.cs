@@ -23,7 +23,7 @@ namespace Cuture.Http
         /// 从流反序列化数据到对象
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="data"></param>
+        /// <param name="stream"></param>
         /// <returns></returns>
         Task<T?> DeserializeAsync<T>(Stream stream);
 

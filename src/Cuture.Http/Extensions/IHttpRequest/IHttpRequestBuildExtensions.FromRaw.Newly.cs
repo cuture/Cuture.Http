@@ -118,7 +118,8 @@ namespace Cuture.Http
         /// <param name="encoding"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static (int contentLength, string contentType) LoadHeaders(this IHttpRequest request, ref ReadOnlySpan<byte> data, Encoding? encoding = null) => RequestBuildTool.LoadHeaders(ref data, request.Headers, encoding);
+        internal static (int contentLength, string contentType) LoadHeaders(this IHttpRequest request, ref ReadOnlySpan<byte> data, Encoding? encoding = null) 
+            => RequestBuildTool.LoadHeaders(ref data, request.Headers, encoding);
 
         #endregion Internal
 

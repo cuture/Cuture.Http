@@ -9,7 +9,7 @@ namespace Cuture.Http
     /// <summary>
     /// http请求
     /// </summary>
-    public interface IHttpRequest
+    public interface IHttpRequest : IDisposable
     {
         #region 属性
 
@@ -27,6 +27,11 @@ namespace Cuture.Http
         /// 禁用Proxy
         /// </summary>
         bool DisableProxy { get; set; }
+
+        /// <summary>
+        /// 请求选项（应该在构建请求早期进行设置）
+        /// </summary>
+        HttpRequestExecutionOptions ExecutionOptions { get; set; }
 
         /// <summary>
         /// Headers
@@ -52,11 +57,6 @@ namespace Cuture.Http
         /// Web代理
         /// </summary>
         IWebProxy? Proxy { get; set; }
-
-        /// <summary>
-        /// 请求选项（应该在构建请求早期进行设置）
-        /// </summary>
-        HttpRequestExecutionOptions ExecutionOptions { get; set; }
 
         /// <summary>
         /// 请求的Uri

@@ -12,30 +12,30 @@ namespace Cuture.Http
 
         /// <inheritdoc cref="TypedMemoryOwnedContent(IMemoryOwner{byte},int,int,string)"/>
         public TypedMemoryOwnedContent(IMemoryOwner<byte> memoryOwner, int start, string contentType)
-            : this(memoryOwner.Memory[start..], memoryOwner, contentType)
+            : this(memoryOwner, memoryOwner.Memory[start..], contentType)
         {
         }
 
         /// <summary>
-        /// <inheritdoc cref="TypedMemoryOwnedContent(ReadOnlyMemory{byte},IMemoryOwner{byte},string)"/>
+        /// <inheritdoc cref="TypedMemoryOwnedContent(IMemoryOwner{byte},ReadOnlyMemory{byte},string)"/>
         /// </summary>
         /// <param name="memoryOwner"><see cref="IMemoryOwner{T}"/></param>
         /// <param name="start"><paramref name="memoryOwner"/> 中数据的切片起点</param>
         /// <param name="length"><paramref name="memoryOwner"/> 中数据的切片长度</param>
         /// <param name="contentType">ContentType</param>
         public TypedMemoryOwnedContent(IMemoryOwner<byte> memoryOwner, int start, int length, string contentType)
-            : this(memoryOwner.Memory.Slice(start, length), memoryOwner, contentType)
+            : this(memoryOwner, memoryOwner.Memory.Slice(start, length), contentType)
         {
         }
 
         /// <summary>
         /// <inheritdoc cref="TypedMemoryOwnedContent"/>
         /// </summary>
-        /// <param name="content">内容数据</param>
         /// <param name="memoryOwner"><see cref="IMemoryOwner{T}"/></param>
+        /// <param name="content">内容数据</param>
         /// <param name="contentType">ContentType</param>
-        public TypedMemoryOwnedContent(ReadOnlyMemory<byte> content, IMemoryOwner<byte> memoryOwner, string contentType)
-            : base(content, memoryOwner)
+        public TypedMemoryOwnedContent(IMemoryOwner<byte> memoryOwner, ReadOnlyMemory<byte> content, string contentType)
+            : base(memoryOwner, content)
         {
             if (string.IsNullOrWhiteSpace(contentType))
             {

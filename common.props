@@ -13,6 +13,8 @@
     <IsLegacyTFM>false</IsLegacyTFM>
     <IsNewlyTFM>false</IsNewlyTFM>
 
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
     <NoWarn>CA1062;CA1200;CA1303;CA1054;CA2234</NoWarn>
   </PropertyGroup>
 
@@ -59,11 +61,7 @@
   </PropertyGroup>
 
   <!--Buid-->
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
-
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.*" PrivateAssets="All" />
   </ItemGroup>
 </Project>

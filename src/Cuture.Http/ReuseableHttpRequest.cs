@@ -16,6 +16,7 @@ namespace Cuture.Http
     {
         #region Private 字段
 
+        private bool _disposedValue;
         private HttpRequestExecutionOptions? _options;
 
         #endregion Private 字段
@@ -35,21 +36,6 @@ namespace Cuture.Http
         public bool DisableProxy { get; set; } = HttpRequestGlobalOptions.DisableUseDefaultProxyByDefault;
 
         /// <inheritdoc/>
-        public HttpHeaders Headers => new SimpleHttpRequestHeaders();
-
-        /// <inheritdoc/>
-        public bool IsSetOptions => _options != null;
-
-        /// <inheritdoc/>
-        public int MaxAutomaticRedirections { get; set; } = HttpRequestGlobalOptions.MaxAutomaticRedirections;
-
-        /// <inheritdoc/>
-        public HttpMethod Method { get; set; } = HttpMethod.Get;
-
-        /// <inheritdoc/>
-        public IWebProxy? Proxy { get; set; }
-
-        /// <inheritdoc/>
         public HttpRequestExecutionOptions ExecutionOptions
         {
             get
@@ -63,6 +49,21 @@ namespace Cuture.Http
             }
             set => _options = value;
         }
+
+        /// <inheritdoc/>
+        public HttpHeaders Headers => new SimpleHttpRequestHeaders();
+
+        /// <inheritdoc/>
+        public bool IsSetOptions => _options != null;
+
+        /// <inheritdoc/>
+        public int MaxAutomaticRedirections { get; set; } = HttpRequestGlobalOptions.MaxAutomaticRedirections;
+
+        /// <inheritdoc/>
+        public HttpMethod Method { get; set; } = HttpMethod.Get;
+
+        /// <inheritdoc/>
+        public IWebProxy? Proxy { get; set; }
 
         /// <inheritdoc/>
         public Uri RequestUri { get; }
@@ -106,6 +107,7 @@ namespace Cuture.Http
 
             CopyHeaders(message.Headers, Headers);
 
+            //HACK 确认Content是否可重用
             if (Content != null)
             {
                 message.Content = Content;
@@ -123,5 +125,41 @@ namespace Cuture.Http
         }
 
         #endregion 方法
+
+        #region Dispose
+
+        /// <summary>
+        ///
+        /// </summary>
+        ~ReuseableHttpRequest()
+        {
+            Dispose(disposing: false);
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                _disposedValue = true;
+
+                if (Content is not null)
+                {
+                    Content.Dispose();
+                }
+            }
+        }
+
+        #endregion Dispose
     }
 }

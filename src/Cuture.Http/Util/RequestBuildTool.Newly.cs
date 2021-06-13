@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Buffers;
+using System.Buffers.Text;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -13,28 +15,55 @@ namespace Cuture.Http
     {
         #region Public 方法
 
-        /// <inheritdoc cref="FromRaw(ReadOnlySpan{byte}, bool)"/>
+        /// <inheritdoc cref="FromRaw(ReadOnlyMemory{byte}, IMemoryOwner{byte}?)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest FromRaw(string rawBase64String, bool ignoreLargeRawData = false) => FromRaw(Convert.FromBase64String(rawBase64String), ignoreLargeRawData);
+        public static IHttpRequest FromRaw(string rawBase64String)
+        {
+            var length = Base64.GetMaxDecodedFromUtf8Length(rawBase64String.Length);
+            var memoryOwner = MemoryPool<byte>.Shared.Rent(length);
 
-        /// <inheritdoc cref="FromRaw(ReadOnlySpan{byte}, bool)"/>
+            if (Convert.TryFromBase64String(rawBase64String, memoryOwner.Memory.Span, out var bytesWritten))
+            {
+                try
+                {
+                    return FromRaw(memoryOwner.Memory.Slice(0, bytesWritten), memoryOwner);
+                }
+                catch
+                {
+                    memoryOwner.Dispose();
+                    throw;
+                }
+            }
+
+            memoryOwner.Dispose();
+
+            throw new ArgumentException($"无法正确解析base64数据", nameof(rawBase64String));
+        }
+
+        /// <inheritdoc cref="FromRaw(ReadOnlyMemory{byte}, IMemoryOwner{byte}?)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest FromRaw(byte[] data, bool ignoreLargeRawData = false) => FromRaw(data.AsSpan(), ignoreLargeRawData);
+        public static IHttpRequest FromRaw(byte[] data) => FromRaw(data.AsMemory(), null);
 
         /// <summary>
         /// 从请求的原始数据构建请求
         /// </summary>
         /// <param name="data">请求的原始数据</param>
-        /// <param name="ignoreLargeRawData">原始数据过大时，构建成本可能过大，默认会抛出异常。此参数可以避免异常抛出</param>
         /// <returns></returns>
-        public static IHttpRequest FromRaw(ReadOnlySpan<byte> data, bool ignoreLargeRawData = false)
-        {
-            if (!ignoreLargeRawData
-                && data.Length > 5 * 1024 * 1024)
-            {
-                throw new ArgumentOutOfRangeException(nameof(data), $"the data (length:{data.Length}) is too large, This is not the recommend way to use it.");
-            }
+        public static IHttpRequest FromRaw(ReadOnlySpan<byte> data) => FromRaw(data.ToArray().AsMemory(), null);
 
+        /// <summary>
+        /// 从请求的原始数据构建请求
+        /// </summary>
+        /// <param name="memory">请求的原始数据</param>
+        /// <param name="memoryOwner">数据所有者（如果数据是 <see cref="IMemoryOwner{T}"/> 的切片的话），在请求使用结束后归还内存</param>
+        /// <returns></returns>
+        public static IHttpRequest FromRaw(ReadOnlyMemory<byte> memory, IMemoryOwner<byte>? memoryOwner = null)
+        {
+            var data = memory.Span;
+
+            var totalLength = data.Length;
+
+            //HACK 考虑支持 Version
             ReadHttpRequestLine(ref data, out var methodSpan, out var urlSpan, out _);
 
             var encoding = Encoding.UTF8;
@@ -43,12 +72,14 @@ namespace Cuture.Http
             var request = url.CreateHttpRequest()
                              .UseVerb(encoding.GetString(methodSpan));
 
-            var (contentLength, contentType) = request.LoadHeaders(ref data, encoding);
+            var (_, contentType) = request.LoadHeaders(ref data, encoding);
 
             if (data.Length > 0)
             {
-                request.WithContent(data, contentType, contentLength);
+                return request.WithContent(memory[(totalLength - data.Length)..], contentType, memoryOwner);
             }
+
+            memoryOwner?.Dispose();
 
             return request;
         }
