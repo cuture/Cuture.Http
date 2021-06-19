@@ -32,26 +32,18 @@
     <IsNewlyTFM>true</IsNewlyTFM>
   </PropertyGroup>
 
-  <!--Version-->
-  <PropertyGroup>
-    <VersionMajor>2</VersionMajor>
-    <VersionMinor>0</VersionMinor>
-    <VersionPatch>2</VersionPatch>
-    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionPatch)</VersionPrefix>
-  </PropertyGroup>
-
   <!--Package Info-->
   <PropertyGroup>
     <PackageIdPrefix>Cuture.Http</PackageIdPrefix>
     <Authors>Stratos</Authors>
-    <Company></Company>
+    
+    <VersionPrefix>2.0.3</VersionPrefix>
+
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/cuture/Cuture.Http.git</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/cuture/Cuture.Http</PackageProjectUrl>
 
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
-    <AssemblyVersion>$(VersionMajor).$(VersionMinor).$(VersionPatch).0</AssemblyVersion>
-    <FileVersion>$(AssemblyVersion)</FileVersion>
 
     <PackageTags>http request httprequest httpclient httphelper</PackageTags>
   </PropertyGroup>
@@ -64,4 +56,8 @@
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <PackageReference Include="ConfigureAwaitChecker.Analyzer" Version="5.*" PrivateAssets="All" />
   </ItemGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
 </Project>
