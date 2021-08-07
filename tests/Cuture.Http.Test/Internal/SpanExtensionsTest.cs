@@ -52,10 +52,8 @@ namespace Cuture.Http.Test.Internal
         [DataRow("0123456789", '9', "012345678", "")]
         [DataRow("0123456789", '-', "0123456789", "0123456789")]
         [DataRow("01234567890123456789", '4', "01234567890123", "56789")]
-        public void TruncationOneElementEndTest(string source, string indentifierString, string targetFront, string targetBack)
+        public void TruncationOneElementEndTest(string source, char indentifier, string targetFront, string targetBack)
         {
-            //测试不允许传入char参数？临时解决方案
-            var indentifier = indentifierString.First();
             var sourceSpan = source.AsSpan();
             var @default = new string(sourceSpan.TruncationEnd(indentifier));
             Assert.AreEqual(targetBack, @default);
@@ -71,10 +69,8 @@ namespace Cuture.Http.Test.Internal
         [DataRow("0123456789", '9', "012345678", "")]
         [DataRow("0123456789", '-', "0123456789", "0123456789")]
         [DataRow("01234567890123456789", '4', "0123", "567890123456789")]
-        public void TruncationOneElementStartTest(string source, string indentifierString, string targetFront, string targetBack)
+        public void TruncationOneElementStartTest(string source, char indentifier, string targetFront, string targetBack)
         {
-            //测试不允许传入char参数？临时解决方案
-            var indentifier = indentifierString.First();
             var sourceSpan = source.AsSpan();
             var @default = new string(sourceSpan.TruncationStart(indentifier));
             Assert.AreEqual(targetBack, @default);

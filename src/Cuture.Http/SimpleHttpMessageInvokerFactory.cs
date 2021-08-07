@@ -220,8 +220,15 @@ namespace Cuture.Http
         {
             if (_releaseTokenSource != null)
             {
-                _releaseTokenSource.Cancel(true);
-                _releaseTokenSource.Dispose();
+                try
+                {
+                    _releaseTokenSource.Cancel();
+                }
+                catch { }
+                finally
+                {
+                    _releaseTokenSource.Dispose();
+                }
                 _releaseTokenSource = null;
             }
         }

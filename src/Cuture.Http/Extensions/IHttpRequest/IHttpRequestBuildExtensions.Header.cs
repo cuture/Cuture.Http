@@ -157,6 +157,20 @@ namespace Cuture.Http
         }
 
         /// <summary>
+        /// 使用BearerToken<para/>
+        /// 添加 Authorization: Bearer token 到header中
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpRequest UseBearerToken(this IHttpRequest request, string token)
+        {
+            request.AddNewHeader(HttpHeaderDefinitions.Authorization, $"Bearer {token}");
+            return request;
+        }
+
+        /// <summary>
         /// 使用Cookie
         /// </summary>
         /// <param name="request"></param>
