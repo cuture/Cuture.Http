@@ -16,7 +16,7 @@ namespace Cuture.Http
         /// <param name="data"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string Encode(string data)
+        public static string Encode(string? data)
         {
             if (string.IsNullOrEmpty(data))
             {
@@ -35,7 +35,7 @@ namespace Cuture.Http
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        public static string ToEncodedForm(this object content) => HttpRequestGlobalOptions.DefaultFormDataFormatter.FormatToEncoded(content);
+        public static string ToEncodedForm(this object content) => HttpRequestGlobalOptions.DefaultFormDataFormatter.Format(content, new(true));
 
         /// <summary>
         /// 获取对象的form表单

@@ -12,35 +12,28 @@ namespace Cuture.Http
         #region Public 方法
 
         /// <inheritdoc/>
-        public string Format(object obj)
+        public string Format(object obj, FormDataFormatOptions options = default)
         {
             var jobject = JObject.FromObject(obj);
             var kvs = jobject.Children().Select(m =>
             {
                 if (m is JProperty property)
                 {
-                    return $"{property.Name}={property.Value}";
+                    return property;
                 }
                 return null;
-            });
+            }).Where(m => m != null);
 
-            return string.Join("&", kvs);
-        }
-
-        /// <inheritdoc/>
-        public string FormatToEncoded(object obj)
-        {
-            var jobject = JObject.FromObject(obj);
-            var kvs = jobject.Children().Select(m =>
+            if (options.RemoveEmptyKey)
             {
-                if (m is JProperty property)
-                {
-                    return $"{FormContentUtil.Encode(property.Name)}={FormContentUtil.Encode(property.Value.ToString())}";
-                }
-                return null;
-            });
+                kvs = kvs.Where(m => !string.IsNullOrWhiteSpace(m!.Value.ToString()));
+            }
 
-            return string.Join("&", kvs);
+            var items = options.UrlEncode
+                            ? kvs.Select(m => $"{FormContentUtil.Encode(m!.Name)}={FormContentUtil.Encode(m!.Value.ToString())}")
+                            : kvs.Select(m => $"{m!.Name}={m!.Value}");
+
+            return string.Join("&", items);
         }
 
         #endregion Public 方法

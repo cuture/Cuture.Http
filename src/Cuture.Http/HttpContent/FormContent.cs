@@ -108,7 +108,7 @@ namespace Cuture.Http
 
             if (string.IsNullOrEmpty(data))
             {
-                data = formatter.FormatToEncoded(content);
+                data = formatter.Format(content, new(true));
             }
 
             return encoding.GetBytes(data);

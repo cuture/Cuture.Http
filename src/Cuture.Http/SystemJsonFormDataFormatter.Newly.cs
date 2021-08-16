@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 
 namespace Cuture.Http
@@ -23,7 +25,10 @@ namespace Cuture.Http
             _jsonDocumentOptions = jsonDocumentOptions;
             _jsonSerializerOptions = jsonSerializerOptions ?? new JsonSerializerOptions()
             {
-                PropertyNameCaseInsensitive = true
+                AllowTrailingCommas = true,
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                PropertyNameCaseInsensitive = true,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
         }
 
@@ -32,61 +37,28 @@ namespace Cuture.Http
         #region Public 方法
 
         /// <inheritdoc/>
-        public string Format(object obj)
+        public string Format(object obj, FormDataFormatOptions options = default)
         {
             if (obj is null)
             {
                 return string.Empty;
             }
+
             var jsonData = JsonSerializer.SerializeToUtf8Bytes(obj, _jsonSerializerOptions);
             using var jsonDocument = JsonDocument.Parse(jsonData, _jsonDocumentOptions);
 
-            var builder = new StringBuilder(512);
+            IEnumerable<JsonProperty> kvs = jsonDocument.RootElement.EnumerateObject();
 
-            foreach (var item in jsonDocument.RootElement.EnumerateObject())
+            if (options.RemoveEmptyKey)
             {
-                if (item.Value.GetRawText() is string value
-                   && !string.IsNullOrEmpty(value))
-                {
-                    builder.AppendFormat("{0}={1}&", item.Name, value);
-                }
+                kvs = kvs.Where(m => !string.IsNullOrWhiteSpace(m.Value.ToString()));
             }
 
-            if (builder.Length > 0)
-            {
-                builder.Length -= 1;
-            }
+            var items = options.UrlEncode
+                            ? kvs.Select(m => $"{FormContentUtil.Encode(m.Name)}={FormContentUtil.Encode(m.Value.ToString())}")
+                            : kvs.Select(m => $"{m.Name}={m.Value}");
 
-            return builder.ToString();
-        }
-
-        /// <inheritdoc/>
-        public string FormatToEncoded(object obj)
-        {
-            if (obj is null)
-            {
-                return string.Empty;
-            }
-            var jsonData = JsonSerializer.SerializeToUtf8Bytes(obj, _jsonSerializerOptions);
-            using var jsonDocument = JsonDocument.Parse(jsonData, _jsonDocumentOptions);
-
-            var builder = new StringBuilder(512);
-
-            foreach (var item in jsonDocument.RootElement.EnumerateObject())
-            {
-                if (item.Value.GetRawText() is string value
-                   && !string.IsNullOrEmpty(value))
-                {
-                    builder.AppendFormat("{0}={1}&", FormContentUtil.Encode(item.Name), FormContentUtil.Encode(value));
-                }
-            }
-
-            if (builder.Length > 0)
-            {
-                builder.Length -= 1;
-            }
-
-            return builder.ToString();
+            return string.Join("&", items);
         }
 
         #endregion Public 方法
