@@ -9,12 +9,6 @@ namespace Cuture.Http
     /// </summary>
     public static class HeadersExtension
     {
-        #region 字段
-
-        private static readonly Random s_random = new Random();
-
-        #endregion 字段
-
         #region 方法
 
         /// <summary>
@@ -24,13 +18,15 @@ namespace Cuture.Http
         public static string GetRandomIpAddress()
         {
             var sb = new StringBuilder();
-            sb.Append(s_random.Next(11, 240));
+
+            var random = SharedRandom.Shared;
+            sb.Append(random.Next(11, 240));
             sb.Append('.');
-            sb.Append(s_random.Next(1, 250));
+            sb.Append(random.Next(1, 250));
             sb.Append('.');
-            sb.Append(s_random.Next(1, 240));
+            sb.Append(random.Next(1, 240));
             sb.Append('.');
-            sb.Append(s_random.Next(1, 240));
+            sb.Append(random.Next(1, 240));
             return sb.ToString();
         }
 

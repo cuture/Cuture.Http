@@ -37,11 +37,6 @@ namespace Cuture.Http
         /// </summary>
         public const string IExplore = "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko";
 
-        /// <summary>
-        /// 随机数生成器
-        /// </summary>
-        private static readonly Random s_random = new Random();
-
         #endregion 字段
 
         #region 方法
@@ -55,7 +50,8 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomChromeVersion()
         {
-            return $"Chrome/{s_random.Next(49, 89)}.0.{s_random.Next(3000, 5500)}.{s_random.Next(50, 200)}";
+            var random = SharedRandom.Shared;
+            return $"Chrome/{random.Next(49, 89)}.0.{random.Next(3000, 5500)}.{random.Next(50, 200)}";
         }
 
         /// <summary>
@@ -65,7 +61,8 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomEdgeVersion()
         {
-            return $"Edge/{s_random.Next(15, 19)}.{s_random.Next(10240, 19200)}";
+            var random = SharedRandom.Shared;
+            return $"Edge/{random.Next(15, 19)}.{random.Next(10240, 19200)}";
         }
 
         #endregion BrowserVersion
@@ -79,7 +76,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomAddOn()
         {
-            return (s_random.Next(2)) switch
+            return (SharedRandom.Shared.Next(2)) switch
             {
                 1 => string.Empty,
                 _ => "AppleWebKit/537.36",
@@ -93,7 +90,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomBrowser()
         {
-            return (s_random.Next(4)) switch
+            return (SharedRandom.Shared.Next(4)) switch
             {
                 2 => RandomEdgeVersion(),
                 _ => RandomChromeVersion(),
@@ -107,7 +104,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomFirefoxPlatform(int version)
         {
-            return (s_random.Next(7)) switch
+            return SharedRandom.Shared.Next(7) switch
             {
                 1 => $"(Windows NT 10.0; rv:{version}.0)",
                 2 => $"(Windows NT 6.1; Win64; x64; rv:{version}.0)",
@@ -126,7 +123,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomLast()
         {
-            return (s_random.Next(4)) switch
+            return SharedRandom.Shared.Next(4) switch
             {
                 1 => RandomEdgeVersion(),
                 2 => $"Safari/537.36 {RandomEdgeVersion()}",
@@ -140,23 +137,25 @@ namespace Cuture.Http
         /// <returns></returns>
         private static string RandomModified()
         {
-            switch (s_random.Next(7))
+            var random = SharedRandom.Shared;
+
+            switch (random.Next(7))
             {
                 case 0: //搜狗
                     return "SE 2.X MetaSr 1.0";
 
                 case 1: //QQ
-                    StringBuilder uaBuilderQQ = new StringBuilder("Core/1.");
-                    uaBuilderQQ.Append(s_random.Next(61, 74));
+                    var uaBuilderQQ = new StringBuilder("Core/1.");
+                    uaBuilderQQ.Append(random.Next(61, 74));
                     uaBuilderQQ.Append('.');
-                    uaBuilderQQ.Append(s_random.Next(6200, 7600));
+                    uaBuilderQQ.Append(random.Next(6200, 7600));
                     uaBuilderQQ.Append('.');
-                    int qqInternal = s_random.Next(200, 800);
+                    int qqInternal = random.Next(200, 800);
                     uaBuilderQQ.Append(qqInternal);
                     uaBuilderQQ.Append(" QQBrowser/10.");
-                    uaBuilderQQ.Append(s_random.Next(1, 5));
+                    uaBuilderQQ.Append(random.Next(1, 5));
                     uaBuilderQQ.Append('.');
-                    uaBuilderQQ.Append(s_random.Next(2000, 3500));
+                    uaBuilderQQ.Append(random.Next(2000, 3500));
                     uaBuilderQQ.Append('.');
                     uaBuilderQQ.Append(qqInternal);
 
@@ -165,14 +164,14 @@ namespace Cuture.Http
                     return "LBBROWSER";
 
                 case 3: //2345
-                    StringBuilder uaBuilder2345 = new StringBuilder("2345Explorer/");
-                    uaBuilder2345.Append(s_random.Next(8, 11));
+                    var uaBuilder2345 = new StringBuilder("2345Explorer/");
+                    uaBuilder2345.Append(random.Next(8, 11));
                     uaBuilder2345.Append('.');
-                    uaBuilder2345.Append(s_random.Next(1, 5));
+                    uaBuilder2345.Append(random.Next(1, 5));
                     uaBuilder2345.Append('.');
-                    uaBuilder2345.Append(s_random.Next(1, 5));
+                    uaBuilder2345.Append(random.Next(1, 5));
                     uaBuilder2345.Append('.');
-                    uaBuilder2345.Append(s_random.Next(16500, 18200));
+                    uaBuilder2345.Append(random.Next(16500, 18200));
 
                     return uaBuilder2345.ToString();    // "2345Explorer/9.2.1.17116";
                 default:
@@ -187,7 +186,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomPlatform()
         {
-            return (s_random.Next(7)) switch
+            return SharedRandom.Shared.Next(7) switch
             {
                 1 => "(Windows NT 10.0)",
                 2 => "(Windows NT 6.1; Win64; x64)",
@@ -206,7 +205,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string RandomTag()
         {
-            return (s_random.Next(3)) switch
+            return SharedRandom.Shared.Next(3) switch
             {
                 1 => "Gecko/20100101",
                 2 => "like Gecko",
@@ -233,7 +232,7 @@ namespace Cuture.Http
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string RandomFirefoxUserAgent()
         {
-            var version = s_random.Next(60, 87);
+            var version = SharedRandom.Shared.Next(60, 87);
             return $"Mozilla/5.0 {RandomFirefoxPlatform(version)} Gecko/20100101 Firefox/{version}.0";
         }
 

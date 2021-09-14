@@ -51,12 +51,12 @@ namespace Cuture.Http
         /// <summary>
         /// 默认的 <see cref="HttpClient"/>
         /// </summary>
-        private WeakReference<HttpClient> _client = new WeakReference<HttpClient>(null!);
+        private WeakReference<HttpClient> _client = new(null!);
 
         /// <summary>
         /// 禁用Proxy的 <see cref="HttpClient"/>
         /// </summary>
-        private WeakReference<HttpClient> _directlyClient = new WeakReference<HttpClient>(null!);
+        private WeakReference<HttpClient> _directlyClient = new(null!);
 
         #endregion Client
 
@@ -65,7 +65,7 @@ namespace Cuture.Http
         /// <summary>
         /// 有代理信息的 <see cref="HttpClient"/>
         /// </summary>
-        private Lazy<ConcurrentDictionary<int, WeakReference<HttpClient>>> _proxyClients = new Lazy<ConcurrentDictionary<int, WeakReference<HttpClient>>>();
+        private Lazy<ConcurrentDictionary<int, WeakReference<HttpClient>>> _proxyClients = new();
 
         /// 有代理信息的 <see cref="HttpClient"/>
         public ConcurrentDictionary<int, WeakReference<HttpClient>> ProxyClients { get => _proxyClients.Value; }

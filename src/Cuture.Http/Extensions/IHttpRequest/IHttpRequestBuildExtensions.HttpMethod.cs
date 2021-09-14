@@ -71,7 +71,7 @@ namespace Cuture.Http
         {
             if (string.IsNullOrWhiteSpace(httpMethod))
             {
-                throw new ArgumentNullException($"{nameof(httpMethod)} must has a value");
+                throw new ArgumentNullException(nameof(httpMethod), "must has a value");
             }
             var method = httpMethod switch
             {

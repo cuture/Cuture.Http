@@ -8,12 +8,13 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <Import Project="../../common.props" />
-  <Import Project="../../description.props" />
 
   <PropertyGroup>
     <TargetFrameworks>$(LegacyTFMs);$(NewlyTFMs)</TargetFrameworks>
 
     <OutputPath>./bin/normal</OutputPath>
+
+    <Description>用于快速进行Http请求的链式拓展方法库</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -37,6 +38,10 @@
 
   <ItemGroup Condition="$(IsNewlyTFM)">
     <Compile Remove=".\**\*.Legacy.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\readme.md" Link="readme.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
