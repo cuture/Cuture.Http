@@ -15,6 +15,7 @@
     <OutputPath>./bin/normal</OutputPath>
 
     <Description>用于快速进行Http请求的链式拓展方法库</Description>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
