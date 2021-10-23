@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers;
 using System.Buffers.Text;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -17,7 +18,7 @@ namespace Cuture.Http
 
         /// <inheritdoc cref="FromRaw(ReadOnlyMemory{byte}, IMemoryOwner{byte}?)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest FromRaw(string rawBase64String)
+        public static IHttpRequest FromRawBase64(string rawBase64String)
         {
             var length = Base64.GetMaxDecodedFromUtf8Length(rawBase64String.Length);
             var memoryOwner = MemoryPool<byte>.Shared.Rent(length);
@@ -50,6 +51,14 @@ namespace Cuture.Http
         /// <param name="data">请求的原始数据</param>
         /// <returns></returns>
         public static IHttpRequest FromRaw(ReadOnlySpan<byte> data) => FromRaw(data.ToArray().AsMemory(), null);
+
+        /// <summary>
+        /// 读取存放原始请求信息的文件，<inheritdoc cref="FromRaw(ReadOnlyMemory{byte}, IMemoryOwner{byte}?)"/>
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IHttpRequest FromRawFile(string filePath) => FromRaw(File.ReadAllBytes(filePath).AsMemory(), null);
 
         /// <summary>
         /// 从请求的原始数据构建请求

@@ -28,7 +28,7 @@ namespace Cuture.Http
         /// <param name="request"></param>
         /// <param name="httpContent"></param>
         /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("由于代码自动组装Content的不透明和不准确，建议自行组装，或充分测试")]
         public static IHttpRequest AddContent(this IHttpRequest request, HttpContent httpContent)
         {
             //HACK 处理httpContent为MultipartFormDataContent和MultipartContent时的情况
@@ -68,6 +68,7 @@ namespace Cuture.Http
         /// <param name="name"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("由于代码自动组装Content的不透明和不准确，建议自行组装，或充分测试")]
         public static IHttpRequest AddContent(this IHttpRequest request, HttpContent httpContent, string name)
         {
             //HACK 处理httpContent为MultipartFormDataContent和MultipartContent时的情况

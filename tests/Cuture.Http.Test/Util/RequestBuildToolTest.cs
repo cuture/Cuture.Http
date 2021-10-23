@@ -29,7 +29,7 @@ namespace Cuture.Http.Test.Util
         public async Task BuildGetRequestAsync()
         {
             var rawBase64Str = "R0VUIGh0dHA6Ly9kZXRlY3Rwb3J0YWwuZmlyZWZveC5jb20vc3VjY2Vzcy50eHQgSFRUUC8xLjENCkhvc3Q6IGRldGVjdHBvcnRhbC5maXJlZm94LmNvbQ0KVXNlci1BZ2VudDogTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NDsgcnY6ODQuMCkgR2Vja28vMjAxMDAxMDEgRmlyZWZveC84NC4wDQpBY2NlcHQ6ICovKg0KQWNjZXB0LUxhbmd1YWdlOiB6aC1DTix6aDtxPTAuOCx6aC1UVztxPTAuNyx6aC1ISztxPTAuNSxlbi1VUztxPTAuMyxlbjtxPTAuMg0KQWNjZXB0LUVuY29kaW5nOiBnemlwLCBkZWZsYXRlDQpDYWNoZS1Db250cm9sOiBuby1jYWNoZQ0KUHJhZ21hOiBuby1jYWNoZQ0KRE5UOiAxDQpDb25uZWN0aW9uOiBrZWVwLWFsaXZlDQoNCg==";
-            var request = RequestBuildTool.FromRaw(rawBase64Str);
+            var request = RequestBuildTool.FromRawBase64(rawBase64Str);
             var httpRst = await request.TryGetAsStringAsync();
             Assert.IsTrue(httpRst.IsSuccessStatusCode);
         }
@@ -47,7 +47,7 @@ namespace Cuture.Http.Test.Util
 
             static async Task<bool> RunAsync()
             {
-                var request = RequestBuildTool.FromRaw(PostRawBase64String);
+                var request = RequestBuildTool.FromRawBase64(PostRawBase64String);
                 var httpRst = await request.TryGetAsStringAsync();
 
                 return httpRst.IsSuccessStatusCode;
