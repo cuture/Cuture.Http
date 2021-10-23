@@ -4,7 +4,7 @@
     <Platforms>AnyCPU</Platforms>
 
     <LegacyTFMs>netstandard2.0;net461</LegacyTFMs>
-    <NewlyTFMs>netcoreapp3.1;net5.0</NewlyTFMs>
+    <NewlyTFMs>netcoreapp3.1;net5.0;net6.0</NewlyTFMs>
 
     <Nullable>enable</Nullable>
 
@@ -26,7 +26,7 @@
     <IsNewlyTFM>false</IsNewlyTFM>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp3.1' or '$(TargetFramework)'=='net5.0'">
+  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp3.1' or '$(TargetFramework)'=='net5.0' or '$(TargetFramework)'=='net6.0'">
     <DefineConstants>$(DefineConstants);NEWLYTFM</DefineConstants>
     <IsLegacyTFM>false</IsLegacyTFM>
     <IsNewlyTFM>true</IsNewlyTFM>

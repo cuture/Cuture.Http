@@ -1,5 +1,7 @@
 ﻿<Project>
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
+    <McrVersionNet5>5.0.*</McrVersionNet5>
+    <McrVersionNet6>6.0.*-*</McrVersionNet6>
   </PropertyGroup>
 </Project>
