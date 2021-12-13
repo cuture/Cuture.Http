@@ -598,11 +598,12 @@ namespace Cuture.Http
                 return null;
             }
 
-            if (string.Equals(requestUri.Scheme, "https", StringComparison.OrdinalIgnoreCase)
-                && string.Equals(location.Scheme, "https", StringComparison.OrdinalIgnoreCase))
-            {
-                return null;
-            }
+            //记不清为什么有这个逻辑了。。。
+            //if (string.Equals(requestUri.Scheme, "https", StringComparison.OrdinalIgnoreCase)
+            //    && string.Equals(location.Scheme, "https", StringComparison.OrdinalIgnoreCase))
+            //{
+            //    return null;
+            //}
 
             if (!location.IsAbsoluteUri)
             {
