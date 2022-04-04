@@ -30,14 +30,14 @@ public static class FormContentUtil
     /// </summary>
     /// <param name="content"></param>
     /// <returns></returns>
-    public static string ToEncodedForm(this object content) => HttpRequestGlobalOptions.DefaultFormDataFormatter.Format(content, new(true));
+    public static string ToEncodedForm(object content) => HttpRequestGlobalOptions.DefaultFormDataFormatter.Format(content, new(true));
 
     /// <summary>
     /// 获取对象的form表单
     /// </summary>
     /// <param name="content"></param>
     /// <returns></returns>
-    public static string ToForm(this object content) => HttpRequestGlobalOptions.DefaultFormDataFormatter.Format(content);
+    public static string ToForm(object content) => HttpRequestGlobalOptions.DefaultFormDataFormatter.Format(content);
 
     #endregion 方法
 }
