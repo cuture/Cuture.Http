@@ -51,7 +51,7 @@ public static class UserAgents
     private static string RandomChromeVersion(int minVersion = 49, int maxVersion = 105)
     {
         var random = Random.Shared;
-        return $"Chrome/{random.Next(minVersion, maxVersion)}.0.{random.Next(3000, 600)}.{random.Next(50, 300)}";
+        return $"Chrome/{random.Next(minVersion, maxVersion)}.0.{random.Next(3000, 6000)}.{random.Next(50, 300)}";
     }
 
     /// <summary>

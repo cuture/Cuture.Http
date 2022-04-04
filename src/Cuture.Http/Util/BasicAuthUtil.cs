@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Buffers;
+using System.Buffers.Text;
 using System.Text;
 
 namespace Cuture.Http.Util;
@@ -26,7 +28,8 @@ public static class BasicAuthUtil
     /// <param name="password"></param>
     /// <param name="encoding"></param>
     /// <returns></returns>
-    public static string Encode(string userName, string password, Encoding? encoding = null) => $"{userName}:{password}".EncodeBase64(encoding ?? Encoding.UTF8);
+    public static string Encode(string userName, string password, Encoding? encoding = null)
+        => $"{userName}:{password}".EncodeBase64(encoding ?? Encoding.UTF8);
 
     /// <summary>
     /// 编码为HttpHeader的值（附加Basic到字符串头部）
@@ -35,7 +38,8 @@ public static class BasicAuthUtil
     /// <param name="password"></param>
     /// <param name="encoding"></param>
     /// <returns></returns>
-    public static string EncodeToHeader(string userName, string password, Encoding? encoding = null) => $"Basic {Encode(userName, password, encoding)}";
+    public static string EncodeToHeader(string userName, string password, Encoding? encoding = null)
+        => $"Basic {Encode(userName, password, encoding)}";
 
     /// <summary>
     /// 尝试解码BasicAuth的值
@@ -54,38 +58,45 @@ public static class BasicAuthUtil
             return false;
         }
 
-        var splitIndex = value.IndexOf(' ', StringComparison.Ordinal);
+        var span = value.AsSpan();
+
+        var splitIndex = span.IndexOf(' ');
 
         if (splitIndex > 0) //移除头部的 Basic
         {
-            value = value.Substring(splitIndex + 1, value.Length - splitIndex - 1);
+            span = span.Slice(splitIndex + 1, value.Length - splitIndex - 1);
         }
+
+        var buffer = ArrayPool<byte>.Shared.Rent(Base64.GetMaxDecodedFromUtf8Length(span.Length));
+        Span<byte> bufferSpan = buffer;
 
         try
         {
-            var bytes = Convert.FromBase64String(value);
-            splitIndex = -1;
-            for (int i = 0; i < bytes.Length; i++)
+            if (!Convert.TryFromBase64Chars(span, bufferSpan, out var bytesWritten))
             {
-                if (bytes[i] == ':')
-                {
-                    splitIndex = i;
-                    break;
-                }
+                userName = null;
+                password = null;
+                return false;
             }
+
+            splitIndex = bufferSpan.IndexOf((byte)':');
+
             if (splitIndex > 0)
             {
                 encoding ??= Encoding.UTF8;
-                userName = encoding.GetString(bytes, 0, splitIndex);
-                password = encoding.GetString(bytes, splitIndex + 1, bytes.Length - splitIndex - 1);
+                userName = encoding.GetString(bufferSpan[..splitIndex]);
+                password = encoding.GetString(bufferSpan.Slice(splitIndex + 1, bytesWritten - splitIndex - 1));
                 return true;
             }
         }
-#pragma warning disable CA1031 // 不捕获常规异常类型
-        catch { }
-#pragma warning restore CA1031 // 不捕获常规异常类型
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(buffer);
+        }
+
         userName = null;
         password = null;
+
         return false;
     }
 

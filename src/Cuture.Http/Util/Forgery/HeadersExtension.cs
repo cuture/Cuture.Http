@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Cuture.Http;
 
@@ -17,17 +16,9 @@ public static class HeadersExtension
     /// <returns></returns>
     public static string GetRandomIpAddress()
     {
-        var sb = new StringBuilder();
-
         var random = Random.Shared;
-        sb.Append(random.Next(11, 240));
-        sb.Append('.');
-        sb.Append(random.Next(1, 250));
-        sb.Append('.');
-        sb.Append(random.Next(1, 240));
-        sb.Append('.');
-        sb.Append(random.Next(1, 240));
-        return sb.ToString();
+
+        return $"{random.Next(11, 240)}.{random.Next(1, 250)}.{random.Next(1, 240)}.{random.Next(1, 240)}";
     }
 
     /// <summary>
