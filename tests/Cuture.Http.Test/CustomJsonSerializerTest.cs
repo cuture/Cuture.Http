@@ -4,6 +4,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Cuture.Http.Test.Server;
@@ -144,7 +145,7 @@ public class CustomJsonSerializerTest : WebServerHostTestBase
             return JsonSerializer.Deserialize<T>(data);
         }
 
-        public async Task<T> DeserializeAsync<T>(Stream stream)
+        public async ValueTask<T> DeserializeAsync<T>(Stream stream, CancellationToken cancellationToken = default)
         {
             var json = await new StreamReader(stream).ReadToEndAsync();
             return Deserialize<T>(json);
@@ -168,7 +169,7 @@ public class CustomJsonSerializerTest : WebServerHostTestBase
             return JsonSerializer.Deserialize<T>(json);
         }
 
-        public async Task<T> DeserializeAsync<T>(Stream stream)
+        public async ValueTask<T> DeserializeAsync<T>(Stream stream, CancellationToken cancellationToken = default)
         {
             var json = await new StreamReader(stream).ReadToEndAsync();
             return Deserialize<T>(json);

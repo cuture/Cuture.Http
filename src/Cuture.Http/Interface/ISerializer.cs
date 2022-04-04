@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cuture.Http;
@@ -24,8 +25,9 @@ public interface ISerializer<TData>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="stream"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<T?> DeserializeAsync<T>(Stream stream);
+    ValueTask<T?> DeserializeAsync<T>(Stream stream, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// 序列化到数据

@@ -56,20 +56,16 @@ public class MemoryOwnedContent : DisposeRequiredContent
     #region Protected 方法
 
     /// <inheritdoc/>
-    protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context)
-        => stream.WriteAsync(_content).AsTask();
-
-#if NET5_0_OR_GREATER
-
-    /// <inheritdoc/>
     protected override void SerializeToStream(Stream stream, TransportContext? context, CancellationToken cancellationToken)
         => stream.Write(_content.Span);
 
     /// <inheritdoc/>
+    protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context)
+        => stream.WriteAsync(_content).AsTask();
+
+    /// <inheritdoc/>
     protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context, CancellationToken cancellationToken)
         => stream.WriteAsync(_content, cancellationToken).AsTask();
-
-#endif
 
     /// <inheritdoc/>
     protected override bool TryComputeLength(out long length)

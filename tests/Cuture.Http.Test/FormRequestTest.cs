@@ -59,8 +59,8 @@ public class FormRequestTest : WebServerHostTestBase
             Name = "TestUser中文😂😂😂"
         };
 
-        var form = user.ToForm();
-        var encodedForm = user.ToEncodedForm();
+        var form = FormContentUtil.ToForm(user);
+        var encodedForm = FormContentUtil.ToEncodedForm(user);
 
         Debug.WriteLine($"New UserInfo: {form}\nEncodedForm: {encodedForm}");
 

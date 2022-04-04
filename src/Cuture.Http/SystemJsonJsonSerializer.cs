@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cuture.Http;
@@ -34,9 +35,9 @@ public class SystemJsonJsonSerializer : IJsonSerializer
     public T? Deserialize<T>(string data) => JsonSerializer.Deserialize<T>(data, _options);
 
     /// <inheritdoc/>
-    public Task<T?> DeserializeAsync<T>(Stream stream)
+    public ValueTask<T?> DeserializeAsync<T>(Stream stream, CancellationToken cancellationToken = default)
     {
-        return JsonSerializer.DeserializeAsync<T?>(stream, _options).AsTask();
+        return JsonSerializer.DeserializeAsync<T?>(stream, _options, cancellationToken);
     }
 
     /// <inheritdoc/>

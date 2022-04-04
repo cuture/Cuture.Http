@@ -19,7 +19,7 @@ public static class HeadersExtension
     {
         var sb = new StringBuilder();
 
-        var random = SharedRandom.Shared;
+        var random = Random.Shared;
         sb.Append(random.Next(11, 240));
         sb.Append('.');
         sb.Append(random.Next(1, 250));

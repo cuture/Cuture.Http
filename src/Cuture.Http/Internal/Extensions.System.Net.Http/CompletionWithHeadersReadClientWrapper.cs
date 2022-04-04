@@ -33,11 +33,7 @@ internal class CompletionWithHeadersReadClientWrapper : HttpMessageInvoker
 
     #region Public 方法
 
-#if NET
-
     public override HttpResponseMessage Send(HttpRequestMessage request, CancellationToken cancellationToken) => _client.Send(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-
-#endif
 
     public override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) => _client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 

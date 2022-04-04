@@ -50,7 +50,7 @@ public static class UserAgents
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string RandomChromeVersion()
     {
-        var random = SharedRandom.Shared;
+        var random = Random.Shared;
         return $"Chrome/{random.Next(49, 89)}.0.{random.Next(3000, 5500)}.{random.Next(50, 200)}";
     }
 
@@ -61,7 +61,7 @@ public static class UserAgents
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string RandomEdgeVersion()
     {
-        var random = SharedRandom.Shared;
+        var random = Random.Shared;
         return $"Edge/{random.Next(15, 19)}.{random.Next(10240, 19200)}";
     }
 
@@ -76,7 +76,7 @@ public static class UserAgents
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string RandomAddOn()
     {
-        return (SharedRandom.Shared.Next(2)) switch
+        return (Random.Shared.Next(2)) switch
         {
             1 => string.Empty,
             _ => "AppleWebKit/537.36",
@@ -90,7 +90,7 @@ public static class UserAgents
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string RandomBrowser()
     {
-        return (SharedRandom.Shared.Next(4)) switch
+        return (Random.Shared.Next(4)) switch
         {
             2 => RandomEdgeVersion(),
             _ => RandomChromeVersion(),
@@ -104,7 +104,7 @@ public static class UserAgents
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string RandomFirefoxPlatform(int version)
     {
-        return SharedRandom.Shared.Next(7) switch
+        return Random.Shared.Next(7) switch
         {
             1 => $"(Windows NT 10.0; rv:{version}.0)",
             2 => $"(Windows NT 6.1; Win64; x64; rv:{version}.0)",
@@ -123,7 +123,7 @@ public static class UserAgents
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string RandomLast()
     {
-        return SharedRandom.Shared.Next(4) switch
+        return Random.Shared.Next(4) switch
         {
             1 => RandomEdgeVersion(),
             2 => $"Safari/537.36 {RandomEdgeVersion()}",
@@ -137,7 +137,7 @@ public static class UserAgents
     /// <returns></returns>
     private static string RandomModified()
     {
-        var random = SharedRandom.Shared;
+        var random = Random.Shared;
 
         switch (random.Next(7))
         {
@@ -186,7 +186,7 @@ public static class UserAgents
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string RandomPlatform()
     {
-        return SharedRandom.Shared.Next(7) switch
+        return Random.Shared.Next(7) switch
         {
             1 => "(Windows NT 10.0)",
             2 => "(Windows NT 6.1; Win64; x64)",
@@ -205,7 +205,7 @@ public static class UserAgents
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string RandomTag()
     {
-        return SharedRandom.Shared.Next(3) switch
+        return Random.Shared.Next(3) switch
         {
             1 => "Gecko/20100101",
             2 => "like Gecko",
@@ -232,7 +232,7 @@ public static class UserAgents
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string RandomFirefoxUserAgent()
     {
-        var version = SharedRandom.Shared.Next(60, 87);
+        var version = Random.Shared.Next(60, 87);
         return $"Mozilla/5.0 {RandomFirefoxPlatform(version)} Gecko/20100101 Firefox/{version}.0";
     }
 
