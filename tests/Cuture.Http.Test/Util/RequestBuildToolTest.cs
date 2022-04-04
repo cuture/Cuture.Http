@@ -1,6 +1,4 @@
-﻿#if NETCOREAPP
-
-using System;
+﻿using System;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -79,5 +77,3 @@ namespace Cuture.Http.Test.Util
         #endregion Public 方法
     }
 }
-
-#endif

@@ -289,12 +289,7 @@ namespace Cuture.Http
 
             if (proxy is WebProxy webProxy)
             {
-                proxyHash = proxyHash * -1521134295 + webProxy.Address!.OriginalString
-#if NETCOREAPP
-                                                        .GetHashCode(StringComparison.Ordinal);
-#else
-                                                        .GetHashCode();
-#endif
+                proxyHash = proxyHash * -1521134295 + webProxy.Address!.OriginalString.GetHashCode(StringComparison.Ordinal);
             }
             else
             {
@@ -303,25 +298,14 @@ namespace Cuture.Http
                 {
                     return GetClientInWeakReference(_client, () => HttpClientUtil.CreateDefaultClient());
                 }
-                proxyHash = proxyHash * -1521134295 + proxyUri.OriginalString
-#if NETCOREAPP
-                                                        .GetHashCode(StringComparison.Ordinal);
-#else
-                                                        .GetHashCode();
-#endif
+                proxyHash = proxyHash * -1521134295 + proxyUri.OriginalString.GetHashCode(StringComparison.Ordinal);
             }
 
             if (proxy.Credentials?.GetCredential(request.RequestUri, string.Empty) is NetworkCredential credential)
             {
-#if NETCOREAPP
                 proxyHash = proxyHash * -1521134295 + credential.UserName.GetHashCode(StringComparison.Ordinal);
                 proxyHash = proxyHash * -1521134295 + credential.Password.GetHashCode(StringComparison.Ordinal);
                 proxyHash = proxyHash * -1521134295 + credential.Domain.GetHashCode(StringComparison.Ordinal);
-#else
-                proxyHash = proxyHash * -1521134295 + credential.UserName.GetHashCode();
-                proxyHash = proxyHash * -1521134295 + credential.Password.GetHashCode();
-                proxyHash = proxyHash * -1521134295 + credential.Domain.GetHashCode();
-#endif
             }
 
             if (!weakReferenceDictionary.TryGetValue(proxyHash, out WeakReference<HttpClient>? clientWR))

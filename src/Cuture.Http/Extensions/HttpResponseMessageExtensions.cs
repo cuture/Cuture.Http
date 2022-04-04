@@ -1,17 +1,12 @@
 ﻿using System;
+using System.Buffers;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-
-#if NETCOREAPP
-
-using System.Buffers;
-using System.Text.Json;
-
-#endif
 
 namespace Cuture.Http
 {
@@ -104,8 +99,6 @@ namespace Cuture.Http
 
         #endregion String
 
-#if NETCOREAPP
-
         #region json as JsonDocument
 
         /// <summary>
@@ -159,8 +152,6 @@ namespace Cuture.Http
         }
 
         #endregion json as JsonDocument
-
-#endif
 
         #region json as object
 
@@ -260,7 +251,7 @@ namespace Cuture.Http
             using var response = await requestTask.ConfigureAwait(false);
 
             var contentLength = response.Content.Headers.ContentLength;
-#if NETCOREAPP
+
             using var stream =
 #if NET
         await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false);
@@ -282,23 +273,6 @@ namespace Cuture.Http
                 count += size;
                 await targetStream.WriteAsync(buffer.Memory.Slice(0, size), token).ConfigureAwait(false);
             }
-#else
-            using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            var buffer = new byte[bufferSize];
-            var count = 0L;
-
-            while (!token.IsCancellationRequested
-                   && (contentLength == null || count < contentLength.Value))
-            {
-                var size = await stream.ReadAsync(buffer, 0, bufferSize, token).ConfigureAwait(false);
-                if (size == 0)
-                {
-                    break;
-                }
-                count += size;
-                await targetStream.WriteAsync(buffer, 0, size, token).ConfigureAwait(false);
-            }
-#endif
         }
 
         #region WithProgress
@@ -350,7 +324,7 @@ namespace Cuture.Http
             using var response = await requestTask.ConfigureAwait(false);
 
             var contentLength = response.Content.Headers.ContentLength;
-#if NETCOREAPP
+
             using var stream =
 #if NET
         await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false);
@@ -376,28 +350,6 @@ namespace Cuture.Http
 
                 await progressCallback(contentLength, count).ConfigureAwait(false);
             }
-#else
-            using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-
-            var buffer = new byte[bufferSize];
-            var count = 0L;
-
-            await progressCallback(contentLength, count).ConfigureAwait(false);
-
-            while (!token.IsCancellationRequested
-                   && (contentLength == null || count < contentLength.Value))
-            {
-                var size = await stream.ReadAsync(buffer, 0, bufferSize, token).ConfigureAwait(false);
-                if (size == 0)
-                {
-                    break;
-                }
-                count += size;
-                await targetStream.WriteAsync(buffer, 0, size, token).ConfigureAwait(false);
-
-                await progressCallback(contentLength, count).ConfigureAwait(false);
-            }
-#endif
         }
 
         /// <summary>
@@ -477,7 +429,7 @@ namespace Cuture.Http
             token.ThrowIfCancellationRequested();
 
             var contentLength = response.Content.Headers.ContentLength;
-#if NETCOREAPP
+
             using var stream =
 #if NET
         await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false);
@@ -503,27 +455,7 @@ namespace Cuture.Http
 
                 progressCallback(contentLength, count);
             }
-#else
-            using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            var buffer = new byte[bufferSize];
-            var count = 0L;
 
-            progressCallback(contentLength, count);
-
-            while (!token.IsCancellationRequested
-                   && (contentLength == null || count < contentLength.Value))
-            {
-                var size = await stream.ReadAsync(buffer, 0, bufferSize, token).ConfigureAwait(false);
-                if (size == 0)
-                {
-                    break;
-                }
-                count += size;
-                await targetStream.WriteAsync(buffer, 0, size, token).ConfigureAwait(false);
-
-                progressCallback(contentLength, count);
-            }
-#endif
             token.ThrowIfCancellationRequested();
         }
 
@@ -640,25 +572,6 @@ namespace Cuture.Http
         }
 
         /// <summary>
-        /// 获取请求返回的json对象
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="responseMessage"></param>
-        /// <param name="serializer"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task<T?> ReceiveAsObjectAsync<T>(this HttpResponseMessage responseMessage, ISerializer<string>? serializer = null)
-        {
-            using (responseMessage)
-            {
-                using var stream = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                return await (serializer ?? HttpRequestGlobalOptions.DefaultJsonSerializer).DeserializeAsync<T>(stream).ConfigureAwait(false);
-            }
-        }
-
-#if NETCOREAPP
-
-        /// <summary>
         /// 获取请求返回值并转换为<see cref="JsonDocument"/>对象
         /// </summary>
         /// <param name="responseMessage"></param>
@@ -674,7 +587,22 @@ namespace Cuture.Http
             }
         }
 
-#endif
+        /// <summary>
+        /// 获取请求返回的json对象
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="responseMessage"></param>
+        /// <param name="serializer"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static async Task<T?> ReceiveAsObjectAsync<T>(this HttpResponseMessage responseMessage, ISerializer<string>? serializer = null)
+        {
+            using (responseMessage)
+            {
+                using var stream = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                return await (serializer ?? HttpRequestGlobalOptions.DefaultJsonSerializer).DeserializeAsync<T>(stream).ConfigureAwait(false);
+            }
+        }
 
         /// <summary>
         /// 获取请求返回的字符串

@@ -22,12 +22,7 @@ namespace Cuture.Http
             {
                 return string.Empty;
             }
-            return Uri.EscapeDataString(data)
-#if NETCOREAPP
-                .Replace("%20", "+", StringComparison.Ordinal);
-#else
-                .Replace("%20", "+");
-#endif
+            return Uri.EscapeDataString(data).Replace("%20", "+", StringComparison.Ordinal);
         }
 
         /// <summary>

@@ -37,9 +37,7 @@ namespace Cuture.Http
 
         ~FinalizeableHttpClient()
         {
-#if DEBUG
             System.Diagnostics.Debug.WriteLine("~FinalizeableHttpClient");
-#endif
             Dispose(true);
         }
 

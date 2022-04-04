@@ -64,8 +64,6 @@ namespace Cuture.Http.Test
         #endregion Private 类
     }
 
-#if NETCOREAPP3_1_OR_GREATER
-
     [TestClass]
     public class SystemJsonFormDataFormatterTest : FormDataFormatterTest
     {
@@ -78,6 +76,4 @@ namespace Cuture.Http.Test
 
         #endregion Protected 方法
     }
-
-#endif
 }

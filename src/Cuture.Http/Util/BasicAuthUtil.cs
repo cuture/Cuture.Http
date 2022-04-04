@@ -54,12 +54,8 @@ namespace Cuture.Http.Util
                 return false;
             }
 
-            var splitIndex =
-#if NETCOREAPP
-                value.IndexOf(' ', StringComparison.Ordinal);
-#else
-                value.IndexOf(' ');
-#endif
+            var splitIndex = value.IndexOf(' ', StringComparison.Ordinal);
+
             if (splitIndex > 0) //移除头部的 Basic
             {
                 value = value.Substring(splitIndex + 1, value.Length - splitIndex - 1);

@@ -121,14 +121,7 @@ namespace Cuture.Http
             {
                 return EmptyContent;
             }
-            return encoding.GetBytes(
-                    data
-#if NETCOREAPP
-                        .Replace("%20", "+", StringComparison.Ordinal)
-#else
-                        .Replace("%20", "+")
-#endif
-                        );
+            return encoding.GetBytes(data.Replace("%20", "+", StringComparison.Ordinal));
         }
 
         #endregion 方法

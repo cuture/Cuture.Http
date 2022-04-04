@@ -1,6 +1,4 @@
-﻿#if NETCOREAPP
-
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -62,5 +60,3 @@ namespace Cuture.Http.Test
         }
     }
 }
-
-#endif

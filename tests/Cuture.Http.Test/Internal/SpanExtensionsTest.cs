@@ -1,6 +1,4 @@
-﻿#if NETCOREAPP
-
-using System;
+﻿using System;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -83,5 +81,3 @@ namespace Cuture.Http.Test.Internal
         #endregion Public 方法
     }
 }
-
-#endif

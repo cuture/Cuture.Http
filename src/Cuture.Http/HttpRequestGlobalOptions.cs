@@ -124,10 +124,8 @@ namespace Cuture.Http
         /// <inheritdoc/>
         static HttpRequestGlobalOptions()
         {
-#if NETCOREAPP
             s_defaultJsonSerializer = new SystemJsonJsonSerializer();
             s_defaultFormDataFormatter = new SystemJsonFormDataFormatter();
-#endif
         }
 
         #endregion 静态构造函数
