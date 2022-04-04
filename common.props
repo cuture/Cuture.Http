@@ -3,33 +3,9 @@
   <PropertyGroup>
     <Platforms>AnyCPU</Platforms>
 
-    <LegacyTFMs>netstandard2.0;net461</LegacyTFMs>
-    <NewlyTFMs>netcoreapp3.1;net5.0;net6.0</NewlyTFMs>
-
     <Nullable>enable</Nullable>
 
-    <IsLegacyTFM>false</IsLegacyTFM>
-    <IsNewlyTFM>false</IsNewlyTFM>
-
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="obj\**" />
-    <EmbeddedResource Remove="obj\**" />
-    <None Remove="obj\**" />
-  </ItemGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0' or '$(TargetFramework)'=='net461'">
-    <DefineConstants>$(DefineConstants);LEGACYTFM</DefineConstants>
-    <IsLegacyTFM>true</IsLegacyTFM>
-    <IsNewlyTFM>false</IsNewlyTFM>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp3.1' or '$(TargetFramework)'=='net5.0' or '$(TargetFramework)'=='net6.0'">
-    <DefineConstants>$(DefineConstants);NEWLYTFM</DefineConstants>
-    <IsLegacyTFM>false</IsLegacyTFM>
-    <IsNewlyTFM>true</IsNewlyTFM>
   </PropertyGroup>
 
   <!--Package Info-->

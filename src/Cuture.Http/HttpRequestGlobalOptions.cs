@@ -128,10 +128,6 @@ namespace Cuture.Http
             s_defaultJsonSerializer = new SystemJsonJsonSerializer();
             s_defaultFormDataFormatter = new SystemJsonFormDataFormatter();
 #endif
-#if LEGACYTFM
-            s_defaultJsonSerializer = new NewtonsoftJsonJsonSerializer();
-            s_defaultFormDataFormatter = new NewtonsoftJsonFormDataFormatter();
-#endif
         }
 
         #endregion 静态构造函数

@@ -64,19 +64,6 @@ namespace Cuture.Http.Test
         #endregion Private 类
     }
 
-    [TestClass]
-    public class NewtonsoftJsonFormDataFormatterTest : FormDataFormatterTest
-    {
-        #region Protected 方法
-
-        protected override IFormDataFormatter InitFormatter()
-        {
-            return new NewtonsoftJsonFormDataFormatter();
-        }
-
-        #endregion Protected 方法
-    }
-
 #if NETCOREAPP3_1_OR_GREATER
 
     [TestClass]

@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
-
-#if NEWLYTFM
-
 using System.Buffers;
-
-#endif
 
 namespace Cuture.Http
 {
@@ -106,8 +101,6 @@ namespace Cuture.Http
             return request;
         }
 
-#if NEWLYTFM
-
         /// <summary>
         /// 使用指定数据作为Http请求的Content
         /// </summary>
@@ -149,8 +142,6 @@ namespace Cuture.Http
 
             return request.WithContent(new TypedMemoryOwnedContent(memoryOwner, data, contentType));
         }
-
-#endif
 
         #region Form
 

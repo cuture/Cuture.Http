@@ -2,16 +2,11 @@
 using System.IO;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Cuture.Http.Util;
-
-#if NEWLYTFM
-
-using System.Text.Json;
-
-#endif
 
 namespace Cuture.Http
 {
@@ -264,8 +259,6 @@ namespace Cuture.Http
 
         #endregion String
 
-#if NEWLYTFM
-
         #region json as jsonDocument
 
         /// <summary>
@@ -287,8 +280,6 @@ namespace Cuture.Http
         public static Task<TextHttpOperationResult<JsonDocument>> TryGetAsJsonDocumentAsync(this IHttpRequest request, JsonDocumentOptions jsonDocumentOptions = default) => request.ExecuteAsync().TryReceiveAsJsonDocumentAsync(jsonDocumentOptions);
 
         #endregion json as jsonDocument
-
-#endif
 
         #region json as object
 
