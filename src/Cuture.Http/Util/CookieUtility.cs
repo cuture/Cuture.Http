@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Text;
 
 namespace Cuture.Http.Util;
@@ -15,7 +14,14 @@ public static class CookieUtility
     /// <summary>
     /// 需要忽略cookie的关键字集合
     /// </summary>
-    private static readonly string[] s_ignoreCookieKey = new string[] { "Domain", "Expires", "HttpOnly", "Path", "Max-Age" };
+    private static readonly char[][] s_ignoreCookieKey = new char[][]
+    {
+        "Domain".ToCharArray(),
+        "Expires".ToCharArray(),
+        "HttpOnly".ToCharArray(),
+        "Path".ToCharArray(),
+        "Max-Age".ToCharArray()
+    };
 
     #endregion 字段
 
@@ -24,62 +30,45 @@ public static class CookieUtility
     /// <summary>
     /// 分析指定cookie并返回键值对集合
     /// </summary>
-    /// <param name="cookie"></param>
+    /// <param name="cookieText"></param>
+    /// <param name="mergeSameKey">合并同名 Key，而非使用后出现的值覆盖之前的值</param>
     /// <returns></returns>
-    public static Dictionary<string, string> AnalysisCookieString(string cookie)
+    public static Dictionary<string, string> AnalysisCookieString(string? cookieText, bool mergeSameKey = true)
     {
-        var cookieDic = new Dictionary<string, string>();
+        var cookies = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        if (!string.IsNullOrEmpty(cookie))
+        if (string.IsNullOrWhiteSpace(cookieText))
         {
-            string[] array = cookie.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var item in array)
-            {
-                var str = item.Trim();
-                var cookieKV = GetCookieKVFromString(str);
-                if (!string.IsNullOrEmpty(cookieKV.Key) && !string.IsNullOrEmpty(cookieKV.Value))
-                {
-                    if (cookieDic.ContainsKey(cookieKV.Key))
-                    {
-                        cookieDic[cookieKV.Key] = cookieKV.Value;
-                    }
-                    else
-                    {
-                        cookieDic.Add(cookieKV.Key, cookieKV.Value);
-                    }
-                }
-            }
+            return cookies;
         }
 
-        return cookieDic;
+        AnalysisCookieString(cookies, cookieText, mergeSameKey);
+
+        return cookies;
     }
 
     /// <summary>
     /// 清理Cookie，使其成为KV格式
     /// </summary>
-    /// <param name="cookie"></param>
+    /// <param name="cookieText"></param>
+    /// <param name="mergeSameKey">合并同名 Key，而非使用后出现的值覆盖之前的值</param>
     /// <returns></returns>
-    public static string Clean(string cookie)
+    public static string Clean(string? cookieText, bool mergeSameKey = true)
     {
-        if (string.IsNullOrEmpty(cookie))
+        var cookies = AnalysisCookieString(cookieText, mergeSameKey);
+
+        if (cookies.Count > 0)
         {
-            return string.Empty;
-        }
-
-        var cookieDic = AnalysisCookieString(cookie);
-
-        var cookieBuilder = new StringBuilder(cookie.Length);
-
-        if (cookieDic.Count > 0)
-        {
-            foreach (var item in cookieDic)
+            var cookieBuilder = new StringBuilder(cookieText!.Length);
+            foreach (var item in cookies)
             {
-                cookieBuilder.AppendFormat(CultureInfo.InvariantCulture, "{0}={1}; ", item.Key, item.Value);
+                cookieBuilder.Append($"{item.Key}={item.Value}; ");
             }
             cookieBuilder.Remove(cookieBuilder.Length - 1, 1);
+            return cookieBuilder.ToString();
         }
 
-        return cookieBuilder.ToString();
+        return string.Empty;
     }
 
     /// <summary>
@@ -87,86 +76,109 @@ public static class CookieUtility
     /// </summary>
     /// <param name="srcCookie">源cookie</param>
     /// <param name="addonCookie">附加cookie</param>
+    /// <param name="mergeSameKey">合并同名 Key，而非使用后出现的值覆盖之前的值</param>
     /// <returns></returns>
-    public static string Merge(string srcCookie, string addonCookie)
+    public static string Merge(string? srcCookie, string? addonCookie, bool mergeSameKey = true)
     {
         if (srcCookie == null)
         {
             srcCookie = string.Empty;
         }
-        if (string.IsNullOrEmpty(addonCookie))
+        if (string.IsNullOrWhiteSpace(addonCookie))
         {
             return srcCookie;
         }
 
-        var srcCookieDic = AnalysisCookieString(srcCookie);
-        var addonCookieDic = AnalysisCookieString(addonCookie);
+        var cookies = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var item in addonCookieDic)
-        {
-            if (srcCookieDic.ContainsKey(item.Key))
-            {
-                srcCookieDic[item.Key] = item.Value;
-            }
-            else
-            {
-                srcCookieDic.Add(item.Key, item.Value);
-            }
-        }
+        AnalysisCookieString(cookies, srcCookie, mergeSameKey);
+        AnalysisCookieString(cookies, addonCookie, mergeSameKey);
 
-        var result = string.Empty;
-        if (srcCookieDic.Count > 0)
+        if (cookies.Count > 0)
         {
             var cookieBuilder = new StringBuilder(srcCookie.Length + addonCookie.Length);
-            foreach (var item in srcCookieDic)
+            foreach (var item in cookies)
             {
-                cookieBuilder.AppendFormat(CultureInfo.InvariantCulture, "{0}={1}; ", item.Key, item.Value);
+                cookieBuilder.Append($"{item.Key}={item.Value}; ");
             }
             cookieBuilder.Remove(cookieBuilder.Length - 1, 1);
-            result = cookieBuilder.ToString();
+            return cookieBuilder.ToString();
         }
 
-        return result;
+        return string.Empty;
     }
 
     /// <summary>
-    /// 从一个cookie中获取键值对
+    /// 分析指定cookie并返回键值对集合
     /// </summary>
-    /// <param name="cookie"></param>
+    /// <param name="cookies"></param>
+    /// <param name="cookieText"></param>
+    /// <param name="mergeSameKey">合并同名 Key，而非使用后出现的值覆盖之前的值</param>
     /// <returns></returns>
-    private static KeyValuePair<string, string> GetCookieKVFromString(string cookie)
+    private static void AnalysisCookieString(Dictionary<string, string> cookies, string cookieText, bool mergeSameKey = true)
     {
-        if (!string.IsNullOrEmpty(cookie))
+        var span = cookieText.AsSpan();
+
+        while (!span.IsEmpty)
         {
-            try
+            var semicolonIndex = span.IndexOf(';');
+
+            ReadOnlySpan<char> currentSpan;
+
+            if (semicolonIndex > 0)
             {
-                string[] splitedCookie = cookie.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                currentSpan = span[..semicolonIndex];
+                span = span[(semicolonIndex + 1)..];
+            }
+            else
+            {
+                currentSpan = span;
+                span = ReadOnlySpan<char>.Empty;
+            }
 
-                var dic = new Dictionary<string, string>();
+            var equalIndex = currentSpan.IndexOf('=');
 
-                foreach (var item in splitedCookie)
+            if (equalIndex < 1) //没有等号，跳过当前处理
+            {
+                continue;
+            }
+
+            var keySpan = currentSpan[..equalIndex];
+
+            //移除头部空白
+            keySpan = keySpan[(keySpan.IndexOf(' ') + 1)..];
+
+            if (IsIgnoreKey(keySpan))   //不是正确的Cookie，跳过处理
+            {
+                continue;
+            }
+
+            var valueSpan = currentSpan[(equalIndex + 1)..];
+            if (valueSpan.IsWhiteSpace())
+            {
+                continue;
+            }
+
+            var key = keySpan.ToString();
+
+            var value = valueSpan.ToString();
+
+            if (cookies.TryGetValue(key, out var existedValue))
+            {
+                if (mergeSameKey)
                 {
-                    int index = item.IndexOf("=", StringComparison.OrdinalIgnoreCase);
-                    if (index > 0)
-                    {
-                        dic.Add(item.Substring(0, index), item.Substring(index + 1));
-                    }
+                    cookies[key] = $"{existedValue}; {value}";
                 }
-
-                foreach (var item in dic)
+                else
                 {
-                    if (!IsIgnoreKey(item.Key))
-                    {
-                        return new KeyValuePair<string, string>(item.Key, item.Value);
-                    }
+                    cookies[key] = value;
                 }
             }
-            catch (Exception ex)
+            else
             {
-                throw new ArgumentException($"cookie string:{cookie} analysis fail", ex);
+                cookies.Add(key, value);
             }
         }
-        return new KeyValuePair<string, string>();
     }
 
     /// <summary>
@@ -174,7 +186,7 @@ public static class CookieUtility
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    private static bool IsIgnoreKey(string key)
+    private static bool IsIgnoreKey(ReadOnlySpan<char> key)
     {
         foreach (var ignoreKey in s_ignoreCookieKey)
         {
