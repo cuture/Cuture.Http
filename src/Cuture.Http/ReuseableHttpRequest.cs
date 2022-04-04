@@ -5,161 +5,160 @@ using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace Cuture.Http
+namespace Cuture.Http;
+
+/// <summary>
+/// 可重用的 <see cref="IHttpRequest"/> 实现
+/// <para/>
+/// * 可以重复使用进行请求
+/// </summary>
+public class ReuseableHttpRequest : IHttpRequest
 {
+    #region Private 字段
+
+    private bool _disposedValue;
+    private HttpRequestExecutionOptions? _options;
+
+    #endregion Private 字段
+
+    #region 属性
+
+    /// <inheritdoc/>
+    public bool AllowRedirection { get; set; }
+
+    /// <inheritdoc/>
+    public HttpContent? Content { get; set; }
+
     /// <summary>
-    /// 可重用的 <see cref="IHttpRequest"/> 实现
-    /// <para/>
-    /// * 可以重复使用进行请求
+    /// 禁用Proxy
+    /// <para/>初始值为 <see cref="HttpRequestGlobalOptions.DisableUseDefaultProxyByDefault"/>
     /// </summary>
-    public class ReuseableHttpRequest : IHttpRequest
+    public bool DisableProxy { get; set; } = HttpRequestGlobalOptions.DisableUseDefaultProxyByDefault;
+
+    /// <inheritdoc/>
+    public HttpRequestExecutionOptions ExecutionOptions
     {
-        #region Private 字段
-
-        private bool _disposedValue;
-        private HttpRequestExecutionOptions? _options;
-
-        #endregion Private 字段
-
-        #region 属性
-
-        /// <inheritdoc/>
-        public bool AllowRedirection { get; set; }
-
-        /// <inheritdoc/>
-        public HttpContent? Content { get; set; }
-
-        /// <summary>
-        /// 禁用Proxy
-        /// <para/>初始值为 <see cref="HttpRequestGlobalOptions.DisableUseDefaultProxyByDefault"/>
-        /// </summary>
-        public bool DisableProxy { get; set; } = HttpRequestGlobalOptions.DisableUseDefaultProxyByDefault;
-
-        /// <inheritdoc/>
-        public HttpRequestExecutionOptions ExecutionOptions
+        get
         {
-            get
+            if (_options is null)
             {
-                if (_options is null)
-                {
-                    _options = HttpRequestExecutionOptions.Default.Clone();
-                }
-
-                return _options;
-            }
-            set => _options = value;
-        }
-
-        /// <inheritdoc/>
-        public HttpHeaders Headers => new SimpleHttpRequestHeaders();
-
-        /// <inheritdoc/>
-        public bool IsSetOptions => _options != null;
-
-        /// <inheritdoc/>
-        public int MaxAutomaticRedirections { get; set; } = HttpRequestGlobalOptions.MaxAutomaticRedirections;
-
-        /// <inheritdoc/>
-        public HttpMethod Method { get; set; } = HttpMethod.Get;
-
-        /// <inheritdoc/>
-        public IWebProxy? Proxy { get; set; }
-
-        /// <inheritdoc/>
-        public Uri RequestUri { get; }
-
-        /// <inheritdoc/>
-        public int? Timeout { get; set; }
-
-        /// <inheritdoc/>
-        public CancellationToken Token { get; set; }
-
-        /// <inheritdoc/>
-        public Version? Version { get; set; }
-
-        #endregion 属性
-
-        #region 构造函数
-
-        /// <summary>
-        /// <inheritdoc cref="ReuseableHttpRequest"/>
-        /// </summary>
-        /// <param name="requestUri">请求的Uri</param>
-        public ReuseableHttpRequest(Uri requestUri)
-        {
-            RequestUri = requestUri ?? throw new ArgumentNullException(nameof(requestUri));
-        }
-
-        #endregion 构造函数
-
-        #region 方法
-
-        /// <inheritdoc/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public HttpRequestMessage GetHttpRequestMessage()
-        {
-            var message = new HttpRequestMessage(Method, RequestUri);
-
-            if (Version != null)
-            {
-                message.Version = Version;
+                _options = HttpRequestExecutionOptions.Default.Clone();
             }
 
-            CopyHeaders(message.Headers, Headers);
-
-            //HACK 确认Content是否可重用
-            if (Content != null)
-            {
-                message.Content = Content;
-            }
-
-            return message;
+            return _options;
         }
-
-        private static void CopyHeaders(HttpHeaders target, HttpHeaders source)
-        {
-            foreach (var item in source)
-            {
-                target.TryAddWithoutValidation(item.Key, item.Value);
-            }
-        }
-
-        #endregion 方法
-
-        #region Dispose
-
-        /// <summary>
-        ///
-        /// </summary>
-        ~ReuseableHttpRequest()
-        {
-            Dispose(disposing: false);
-        }
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                _disposedValue = true;
-
-                if (Content is not null)
-                {
-                    Content.Dispose();
-                }
-            }
-        }
-
-        #endregion Dispose
+        set => _options = value;
     }
+
+    /// <inheritdoc/>
+    public HttpHeaders Headers => new SimpleHttpRequestHeaders();
+
+    /// <inheritdoc/>
+    public bool IsSetOptions => _options != null;
+
+    /// <inheritdoc/>
+    public int MaxAutomaticRedirections { get; set; } = HttpRequestGlobalOptions.MaxAutomaticRedirections;
+
+    /// <inheritdoc/>
+    public HttpMethod Method { get; set; } = HttpMethod.Get;
+
+    /// <inheritdoc/>
+    public IWebProxy? Proxy { get; set; }
+
+    /// <inheritdoc/>
+    public Uri RequestUri { get; }
+
+    /// <inheritdoc/>
+    public int? Timeout { get; set; }
+
+    /// <inheritdoc/>
+    public CancellationToken Token { get; set; }
+
+    /// <inheritdoc/>
+    public Version? Version { get; set; }
+
+    #endregion 属性
+
+    #region 构造函数
+
+    /// <summary>
+    /// <inheritdoc cref="ReuseableHttpRequest"/>
+    /// </summary>
+    /// <param name="requestUri">请求的Uri</param>
+    public ReuseableHttpRequest(Uri requestUri)
+    {
+        RequestUri = requestUri ?? throw new ArgumentNullException(nameof(requestUri));
+    }
+
+    #endregion 构造函数
+
+    #region 方法
+
+    /// <inheritdoc/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public HttpRequestMessage GetHttpRequestMessage()
+    {
+        var message = new HttpRequestMessage(Method, RequestUri);
+
+        if (Version != null)
+        {
+            message.Version = Version;
+        }
+
+        CopyHeaders(message.Headers, Headers);
+
+        //HACK 确认Content是否可重用
+        if (Content != null)
+        {
+            message.Content = Content;
+        }
+
+        return message;
+    }
+
+    private static void CopyHeaders(HttpHeaders target, HttpHeaders source)
+    {
+        foreach (var item in source)
+        {
+            target.TryAddWithoutValidation(item.Key, item.Value);
+        }
+    }
+
+    #endregion 方法
+
+    #region Dispose
+
+    /// <summary>
+    ///
+    /// </summary>
+    ~ReuseableHttpRequest()
+    {
+        Dispose(disposing: false);
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="disposing"></param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            _disposedValue = true;
+
+            if (Content is not null)
+            {
+                Content.Dispose();
+            }
+        }
+    }
+
+    #endregion Dispose
 }

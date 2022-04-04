@@ -1,31 +1,30 @@
 ﻿using System.Net.Http;
 
-namespace Cuture.Http.Test
+namespace Cuture.Http.Test;
+
+public class TestHttpMessageInvokerFactory : IHttpMessageInvokerFactory
 {
-    public class TestHttpMessageInvokerFactory : IHttpMessageInvokerFactory
+    private readonly HttpClient _httpClient;
+    private readonly SimpleHttpMessageInvokerFactory _simpleHttpMessageInvokerFactory;
+
+    public TestHttpMessageInvokerFactory(HttpClient httpClient)
     {
-        private readonly HttpClient _httpClient;
-        private readonly SimpleHttpMessageInvokerFactory _simpleHttpMessageInvokerFactory;
+        _httpClient = httpClient;
+        _simpleHttpMessageInvokerFactory = new SimpleHttpMessageInvokerFactory();
+    }
 
-        public TestHttpMessageInvokerFactory(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-            _simpleHttpMessageInvokerFactory = new SimpleHttpMessageInvokerFactory();
-        }
+    public void Dispose()
+    {
+        _simpleHttpMessageInvokerFactory.Dispose();
+        _httpClient.Dispose();
+    }
 
-        public void Dispose()
+    public HttpMessageInvoker GetInvoker(IHttpRequest request)
+    {
+        if (request.DisableProxy || request.Proxy is null)
         {
-            _simpleHttpMessageInvokerFactory.Dispose();
-            _httpClient.Dispose();
+            return _httpClient;
         }
-
-        public HttpMessageInvoker GetInvoker(IHttpRequest request)
-        {
-            if (request.DisableProxy || request.Proxy is null)
-            {
-                return _httpClient;
-            }
-            return _simpleHttpMessageInvokerFactory.GetInvoker(request);
-        }
+        return _simpleHttpMessageInvokerFactory.GetInvoker(request);
     }
 }

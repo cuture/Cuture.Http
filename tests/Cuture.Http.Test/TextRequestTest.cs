@@ -4,23 +4,22 @@ using Cuture.Http.Test.Server;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Cuture.Http.Test
+namespace Cuture.Http.Test;
+
+[TestClass]
+public class TextRequestTest : WebServerHostTestBase
 {
-    [TestClass]
-    public class TextRequestTest : WebServerHostTestBase
+    #region 方法
+
+    public static IHttpRequest GetRequest() => TestWebHost.TestHost.CreateHttpRequest();
+
+    [TestMethod]
+    public async Task ParallelRequestTestAsync()
     {
-        #region 方法
-
-        public static IHttpRequest GetRequest() => TestWebHost.TestHost.CreateHttpRequest();
-
-        [TestMethod]
-        public async Task ParallelRequestTestAsync()
-        {
-            await ParallelRequestAsync(10_000,
-                                       () => GetRequest().TryGetAsStringAsync(),
-                                       result => Assert.AreEqual(Resource.Index, result.Data));
-        }
-
-        #endregion 方法
+        await ParallelRequestAsync(10_000,
+                                   () => GetRequest().TryGetAsStringAsync(),
+                                   result => Assert.AreEqual(Resource.Index, result.Data));
     }
+
+    #endregion 方法
 }

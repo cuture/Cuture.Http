@@ -1,44 +1,43 @@
 ﻿using System.Net.Http;
 using System.Runtime.CompilerServices;
 
-namespace Cuture.Http
+namespace Cuture.Http;
+
+/// <summary>
+/// HttpRequestMessage拓展方法
+/// </summary>
+public static class HttpRequestMessageExtensions
 {
+    #region HttpRequestMessage
+
     /// <summary>
-    /// HttpRequestMessage拓展方法
+    /// 获取请求头的 Cookie 字符串内容
     /// </summary>
-    public static class HttpRequestMessageExtensions
+    /// <param name="requestMessage"></param>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static string GetCookie(this HttpRequestMessage requestMessage) => requestMessage.Headers.TryGetValues(HttpHeaderDefinitions.Cookie, out var cookies) ? string.Join("; ", cookies) : string.Empty;
+
+    /// <summary>
+    /// 获取请求头的 Cookie 字符串内容
+    /// </summary>
+    /// <param name="requestMessage"></param>
+    /// <param name="cookie"></param>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool TryGetCookie(this HttpRequestMessage requestMessage, out string cookie)
     {
-        #region HttpRequestMessage
-
-        /// <summary>
-        /// 获取请求头的 Cookie 字符串内容
-        /// </summary>
-        /// <param name="requestMessage"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string GetCookie(this HttpRequestMessage requestMessage) => requestMessage.Headers.TryGetValues(HttpHeaderDefinitions.Cookie, out var cookies) ? string.Join("; ", cookies) : string.Empty;
-
-        /// <summary>
-        /// 获取请求头的 Cookie 字符串内容
-        /// </summary>
-        /// <param name="requestMessage"></param>
-        /// <param name="cookie"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetCookie(this HttpRequestMessage requestMessage, out string cookie)
+        if (requestMessage.Headers.TryGetValues(HttpHeaderDefinitions.Cookie, out var cookies))
         {
-            if (requestMessage.Headers.TryGetValues(HttpHeaderDefinitions.Cookie, out var cookies))
-            {
-                cookie = string.Join("; ", cookies);
-                return true;
-            }
-            else
-            {
-                cookie = string.Empty;
-                return false;
-            }
+            cookie = string.Join("; ", cookies);
+            return true;
         }
-
-        #endregion HttpRequestMessage
+        else
+        {
+            cookie = string.Empty;
+            return false;
+        }
     }
+
+    #endregion HttpRequestMessage
 }

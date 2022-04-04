@@ -2,46 +2,45 @@
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Cuture.Http
+namespace Cuture.Http;
+
+/// <summary>
+/// 伪造Header的拓展类
+/// </summary>
+public static class HeadersExtension
 {
+    #region 方法
+
     /// <summary>
-    /// 伪造Header的拓展类
+    /// 获取一个随机的IP地址
     /// </summary>
-    public static class HeadersExtension
+    /// <returns></returns>
+    public static string GetRandomIpAddress()
     {
-        #region 方法
+        var sb = new StringBuilder();
 
-        /// <summary>
-        /// 获取一个随机的IP地址
-        /// </summary>
-        /// <returns></returns>
-        public static string GetRandomIpAddress()
-        {
-            var sb = new StringBuilder();
-
-            var random = SharedRandom.Shared;
-            sb.Append(random.Next(11, 240));
-            sb.Append('.');
-            sb.Append(random.Next(1, 250));
-            sb.Append('.');
-            sb.Append(random.Next(1, 240));
-            sb.Append('.');
-            sb.Append(random.Next(1, 240));
-            return sb.ToString();
-        }
-
-        /// <summary>
-        /// 使用随机的X-Forwarded-For标头
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IHttpRequest RandomXFowardFor(this IHttpRequest request)
-        {
-            request.AddHeader("X-Forwarded-For", GetRandomIpAddress());
-            return request;
-        }
-
-        #endregion 方法
+        var random = SharedRandom.Shared;
+        sb.Append(random.Next(11, 240));
+        sb.Append('.');
+        sb.Append(random.Next(1, 250));
+        sb.Append('.');
+        sb.Append(random.Next(1, 240));
+        sb.Append('.');
+        sb.Append(random.Next(1, 240));
+        return sb.ToString();
     }
+
+    /// <summary>
+    /// 使用随机的X-Forwarded-For标头
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IHttpRequest RandomXFowardFor(this IHttpRequest request)
+    {
+        request.AddHeader("X-Forwarded-For", GetRandomIpAddress());
+        return request;
+    }
+
+    #endregion 方法
 }

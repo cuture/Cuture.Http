@@ -1,9 +1,8 @@
-﻿namespace Cuture.Http
+﻿namespace Cuture.Http;
+
+/// <summary>
+/// Json序列化器
+/// </summary>
+public interface IJsonSerializer : ISerializer<string>
 {
-    /// <summary>
-    /// Json序列化器
-    /// </summary>
-    public interface IJsonSerializer : ISerializer<string>
-    {
-    }
 }

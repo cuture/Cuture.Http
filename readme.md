@@ -12,15 +12,8 @@
 - 请求构建工具，直接使用原始请求数据（如从Fiddler中复制）复现请求；
 - 目标框架为`.NetStandard2.0+`可在`.NetFramework4.6.1+`下使用;
 
------
-
-## Break Changes in 2.0
-- 移除了对System.Text.Encoding.CodePages的引用，如需处理相关编码问题参见[官方文档](https://docs.microsoft.com/zh-cn/dotnet/api/system.text.codepagesencodingprovider)；
-- 对不同目标框架的`Json`相关功能进行了区别编译，以减少必要依赖；
-    - 目标框架为`netcoreapp3.1`和`net5.0`时，主项目移除了对`Newtonsoft.Json`的引用，默认使用`System.Text.Json`实现。`Newtonsoft.Json`相关功能移动到了包`Cuture.Http.NewtonsoftJson`中；
-    - 其它目标框架与之前保持一致，使用`Newtonsoft.Json`实现；
-- 移除了IHttpTurboClient接口及相关实现，现在直接使用HttpMessageInvoker；
-- 大量重命名，参见[Pre-release-alpha0001](https://github.com/cuture/Cuture.Http/releases/tag/v2.0.0-alpha0001)、[Pre-release-alpha0002](https://github.com/cuture/Cuture.Http/releases/tag/v2.0.0-alpha0002)
+### Note
+- 编码相关问题的处理参见[官方文档](https://docs.microsoft.com/zh-cn/dotnet/api/system.text.codepagesencodingprovider)；
 
 -----
 

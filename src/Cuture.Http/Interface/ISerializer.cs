@@ -1,39 +1,38 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace Cuture.Http
+namespace Cuture.Http;
+
+/// <summary>
+/// 序列化器
+/// </summary>
+/// <typeparam name="TData"></typeparam>
+public interface ISerializer<TData>
 {
+    #region Public 方法
+
     /// <summary>
-    /// 序列化器
+    /// 反序列化数据到对象
     /// </summary>
-    /// <typeparam name="TData"></typeparam>
-    public interface ISerializer<TData>
-    {
-        #region Public 方法
+    /// <typeparam name="T"></typeparam>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    T? Deserialize<T>(TData data);
 
-        /// <summary>
-        /// 反序列化数据到对象
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        T? Deserialize<T>(TData data);
+    /// <summary>
+    /// 从流反序列化数据到对象
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="stream"></param>
+    /// <returns></returns>
+    Task<T?> DeserializeAsync<T>(Stream stream);
 
-        /// <summary>
-        /// 从流反序列化数据到对象
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="stream"></param>
-        /// <returns></returns>
-        Task<T?> DeserializeAsync<T>(Stream stream);
+    /// <summary>
+    /// 序列化到数据
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    TData Serialize(object value);
 
-        /// <summary>
-        /// 序列化到数据
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        TData Serialize(object value);
-
-        #endregion Public 方法
-    }
+    #endregion Public 方法
 }
