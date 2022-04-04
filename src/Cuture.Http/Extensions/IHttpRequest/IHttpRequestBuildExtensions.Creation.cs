@@ -13,30 +13,6 @@ namespace Cuture.Http
     {
         #region Creation
 
-        #region Obslate
-
-        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Obsolete("使用 CreateHttpRequest 方法替代")]
-        public static IHttpRequest ToHttpRequest(this string requestUri) => requestUri.CreateHttpRequest(HttpRequestGlobalOptions.DefaultHttpRequestCreator);
-
-        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Obsolete("使用 CreateHttpRequest 方法替代")]
-        public static IHttpRequest ToHttpRequest(this string requestUri, IHttpRequestCreator requestCreator) => requestUri.CreateHttpRequest(requestCreator);
-
-        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Obsolete("使用 CreateHttpRequest 方法替代")]
-        public static IHttpRequest ToHttpRequest(this Uri requestUri) => requestUri.CreateHttpRequest(HttpRequestGlobalOptions.DefaultHttpRequestCreator);
-
-        /// <inheritdoc cref="CreateHttpRequest(Uri, IHttpRequestCreator, bool)"/>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [Obsolete("使用 CreateHttpRequest 方法替代")]
-        public static IHttpRequest ToHttpRequest(this Uri requestUri, IHttpRequestCreator requestCreator) => requestUri.CreateHttpRequest(requestCreator);
-
-        #endregion Obslate
-
         #region for string
 
         /// <inheritdoc cref="CreateHttpRequest(string, IHttpRequestCreator, bool)"/>
