@@ -13,24 +13,24 @@ public static class UserAgents
     #region 字段
 
     /// <summary>
-    /// Chrome 88
+    /// Chrome 100
     /// </summary>
-    public const string Chrome = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36";
+    public const string Chrome = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36";
 
     /// <summary>
     /// Edge
     /// </summary>
-    public const string Edge = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.19041";
+    public const string Edge = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.74 Safari/537.36 Edge/18.19041";
 
     /// <summary>
-    /// Edge on Chromium 88
+    /// Edge on Chromium 99
     /// </summary>
-    public const string EdgeChromium = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36 Edg/88.0.705.50";
+    public const string EdgeChromium = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.74 Safari/537.36 Edg/99.0.1150.52";
 
     /// <summary>
-    /// FireFox 85
+    /// FireFox 98
     /// </summary>
-    public const string FireFox = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/85.0";
+    public const string FireFox = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:98.0) Gecko/20100101 Firefox/98.0";
 
     /// <summary>
     /// IE 11
@@ -48,10 +48,10 @@ public static class UserAgents
     /// </summary>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static string RandomChromeVersion()
+    private static string RandomChromeVersion(int minVersion = 49, int maxVersion = 105)
     {
         var random = Random.Shared;
-        return $"Chrome/{random.Next(49, 89)}.0.{random.Next(3000, 5500)}.{random.Next(50, 200)}";
+        return $"Chrome/{random.Next(minVersion, maxVersion)}.0.{random.Next(3000, 600)}.{random.Next(50, 300)}";
     }
 
     /// <summary>
@@ -59,10 +59,10 @@ public static class UserAgents
     /// </summary>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static string RandomEdgeVersion()
+    private static string RandomEdgeVersion(int minVersion = 19, int maxVersion = 30)
     {
         var random = Random.Shared;
-        return $"Edge/{random.Next(15, 19)}.{random.Next(10240, 19200)}";
+        return $"Edge/{random.Next(minVersion, maxVersion)}.{random.Next(10240, 30000)}";
     }
 
     #endregion BrowserVersion
@@ -76,7 +76,7 @@ public static class UserAgents
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string RandomAddOn()
     {
-        return (Random.Shared.Next(2)) switch
+        return Random.Shared.Next(2) switch
         {
             1 => string.Empty,
             _ => "AppleWebKit/537.36",
@@ -90,7 +90,7 @@ public static class UserAgents
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string RandomBrowser()
     {
-        return (Random.Shared.Next(4)) switch
+        return Random.Shared.Next(4) switch
         {
             2 => RandomEdgeVersion(),
             _ => RandomChromeVersion(),
@@ -220,19 +220,25 @@ public static class UserAgents
     /// <summary>
     /// 随机Chrome版本UA
     /// </summary>
+    /// <param name="minVersion">最低版本</param>
+    /// <param name="maxVersion">最高版本（不包含）</param>
+    /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string RandomChromeUserAgent()
+    public static string RandomChromeUserAgent(int minVersion = 49, int maxVersion = 105)
     {
-        return $"Mozilla/5.0 {RandomPlatform()} AppleWebKit/537.36 (KHTML, like Gecko) {RandomChromeVersion()} Safari/537.36";
+        return $"Mozilla/5.0 {RandomPlatform()} AppleWebKit/537.36 (KHTML, like Gecko) {RandomChromeVersion(minVersion, maxVersion)} Safari/537.36";
     }
 
     /// <summary>
     /// 随机Firefox版本UA
     /// </summary>
+    /// <param name="minVersion">最低版本</param>
+    /// <param name="maxVersion">最高版本（不包含）</param>
+    /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string RandomFirefoxUserAgent()
+    public static string RandomFirefoxUserAgent(int minVersion = 60, int maxVersion = 100)
     {
-        var version = Random.Shared.Next(60, 87);
+        var version = Random.Shared.Next(minVersion, maxVersion);
         return $"Mozilla/5.0 {RandomFirefoxPlatform(version)} Gecko/20100101 Firefox/{version}.0";
     }
 
