@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Buffers;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
-using System.Buffers;
 
 namespace Cuture.Http;
 
@@ -16,11 +16,15 @@ public static partial class IHttpRequestBuildExtensions
     /// </summary>
     /// <param name="request"></param>
     /// <param name="httpContent"></param>
+    /// <param name="disposeExisted">释放之前的Content</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IHttpRequest WithContent(this IHttpRequest request, HttpContent httpContent)
+    public static IHttpRequest WithContent(this IHttpRequest request, HttpContent httpContent, bool disposeExisted = true)
     {
-        request.Content?.Dispose();
+        if (disposeExisted)
+        {
+            request.Content?.Dispose();
+        }
         request.Content = httpContent;
         return request;
     }
@@ -40,8 +44,8 @@ public static partial class IHttpRequestBuildExtensions
             throw new ArgumentException($"“{nameof(contentType)}”不能为 Null 或空白", nameof(contentType));
         }
 
-        return request.WithContent(new TypedByteArrayContent(contentLength > 0 ? data.Slice(0, contentLength).ToArray() : data.ToArray(),
-                                                             contentType));
+        var contentData = contentLength > 0 ? data[..contentLength].ToArray() : data.ToArray();
+        return request.WithContent(new TypedByteArrayContent(contentData, contentType));
     }
 
     /// <summary>

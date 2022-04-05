@@ -16,10 +16,6 @@ public static partial class IHttpRequestBuildExtensions
 
     /// <inheritdoc cref="LoadHeadersFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IHttpRequest LoadHeadersFromRawBase64(this IHttpRequest request, string rawBase64String) => request.LoadHeadersFromRaw(Convert.FromBase64String(rawBase64String));
-
-    /// <inheritdoc cref="LoadHeadersFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IHttpRequest LoadHeadersFromRaw(this IHttpRequest request, byte[] rawData) => request.LoadHeadersFromRaw(rawData.AsSpan());
 
     /// <summary>
@@ -42,13 +38,13 @@ public static partial class IHttpRequestBuildExtensions
         return request;
     }
 
+    /// <inheritdoc cref="LoadHeadersFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IHttpRequest LoadHeadersFromRawBase64(this IHttpRequest request, string rawBase64String) => request.LoadHeadersFromRaw(Convert.FromBase64String(rawBase64String));
+
     #endregion Headers
 
     #region Content
-
-    /// <inheritdoc cref="LoadContentFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IHttpRequest LoadContentFromRawBase64(this IHttpRequest request, string rawBase64String) => request.LoadContentFromRaw(Convert.FromBase64String(rawBase64String));
 
     /// <inheritdoc cref="LoadContentFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -71,13 +67,13 @@ public static partial class IHttpRequestBuildExtensions
         return request;
     }
 
+    /// <inheritdoc cref="LoadContentFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IHttpRequest LoadContentFromRawBase64(this IHttpRequest request, string rawBase64String) => request.LoadContentFromRaw(Convert.FromBase64String(rawBase64String));
+
     #endregion Content
 
     #region Headers and Content
-
-    /// <inheritdoc cref="LoadHeadersAndContentFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IHttpRequest LoadHeadersAndContentFromRawBase64(this IHttpRequest request, string rawBase64String) => request.LoadHeadersAndContentFromRaw(Convert.FromBase64String(rawBase64String));
 
     /// <inheritdoc cref="LoadHeadersAndContentFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -106,6 +102,10 @@ public static partial class IHttpRequestBuildExtensions
         return request;
     }
 
+    /// <inheritdoc cref="LoadHeadersAndContentFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IHttpRequest LoadHeadersAndContentFromRawBase64(this IHttpRequest request, string rawBase64String) => request.LoadHeadersAndContentFromRaw(Convert.FromBase64String(rawBase64String));
+
     #endregion Headers and Content
 
     #region Internal
@@ -118,7 +118,7 @@ public static partial class IHttpRequestBuildExtensions
     /// <param name="encoding"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static (int contentLength, string contentType) LoadHeaders(this IHttpRequest request, ref ReadOnlySpan<byte> data, Encoding? encoding = null) 
+    internal static (int contentLength, string contentType) LoadHeaders(this IHttpRequest request, ref ReadOnlySpan<byte> data, Encoding? encoding = null)
         => RequestBuildTool.LoadHeaders(ref data, request.Headers, encoding);
 
     #endregion Internal
