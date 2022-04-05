@@ -29,7 +29,7 @@ public static class HeadersExtension
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IHttpRequest RandomXFowardFor(this IHttpRequest request)
     {
-        request.AddHeader("X-Forwarded-For", GetRandomIpAddress());
+        request.Headers.TryAddWithoutValidation("X-Forwarded-For", GetRandomIpAddress());
         return request;
     }
 

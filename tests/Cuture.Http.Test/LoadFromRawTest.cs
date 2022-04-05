@@ -29,7 +29,7 @@ public class LoadFromRawTest
 
         httpRst = await RawUrl.CreateHttpRequest()
                               .UsePost()
-                              .LoadHeadersFromRaw(RawBase64String)
+                              .LoadHeadersFromRawBase64(RawBase64String)
                               .WithJsonContent(RawContentString)
                               .TryGetAsStringAsync();
 
@@ -41,8 +41,8 @@ public class LoadFromRawTest
     {
         var httpRst = await RawUrl.CreateHttpRequest()
                                   .UsePost()
-                                  .LoadHeadersFromRaw(RawBase64String)
-                                  .LoadContentFromRaw(RawBase64String)
+                                  .LoadHeadersFromRawBase64(RawBase64String)
+                                  .LoadContentFromRawBase64(RawBase64String)
                                   .TryGetAsStringAsync();
 
         Assert.IsTrue(httpRst.IsSuccessStatusCode);
@@ -53,7 +53,7 @@ public class LoadFromRawTest
     {
         var httpRst = await RawUrl.CreateHttpRequest()
                                   .UsePost()
-                                  .LoadHeadersAndContentFromRaw(RawBase64String)
+                                  .LoadHeadersAndContentFromRawBase64(RawBase64String)
                                   .TryGetAsStringAsync();
 
         Assert.IsTrue(httpRst.IsSuccessStatusCode);

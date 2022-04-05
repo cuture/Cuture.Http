@@ -12,8 +12,6 @@ public static class CodecExtension
 {
     #region Url
 
-#pragma warning disable CA1055 // URI 返回值不应是字符串
-
     /// <summary>
     /// 使用<see cref="Encoding.UTF8"/>进行UrlDecode
     /// </summary>
@@ -79,8 +77,6 @@ public static class CodecExtension
         }
         return HttpUtility.UrlEncode(content, encoding);
     }
-
-#pragma warning restore CA1055 // URI 返回值不应是字符串
 
     #endregion Url
 

@@ -16,7 +16,7 @@ public static partial class IHttpRequestBuildExtensions
 
     /// <inheritdoc cref="LoadHeadersFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IHttpRequest LoadHeadersFromRaw(this IHttpRequest request, string rawBase64String) => request.LoadHeadersFromRaw(Convert.FromBase64String(rawBase64String));
+    public static IHttpRequest LoadHeadersFromRawBase64(this IHttpRequest request, string rawBase64String) => request.LoadHeadersFromRaw(Convert.FromBase64String(rawBase64String));
 
     /// <inheritdoc cref="LoadHeadersFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -48,7 +48,7 @@ public static partial class IHttpRequestBuildExtensions
 
     /// <inheritdoc cref="LoadContentFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IHttpRequest LoadContentFromRaw(this IHttpRequest request, string rawBase64String) => request.LoadContentFromRaw(Convert.FromBase64String(rawBase64String));
+    public static IHttpRequest LoadContentFromRawBase64(this IHttpRequest request, string rawBase64String) => request.LoadContentFromRaw(Convert.FromBase64String(rawBase64String));
 
     /// <inheritdoc cref="LoadContentFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -77,7 +77,7 @@ public static partial class IHttpRequestBuildExtensions
 
     /// <inheritdoc cref="LoadHeadersAndContentFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IHttpRequest LoadHeadersAndContentFromRaw(this IHttpRequest request, string rawBase64String) => request.LoadHeadersAndContentFromRaw(Convert.FromBase64String(rawBase64String));
+    public static IHttpRequest LoadHeadersAndContentFromRawBase64(this IHttpRequest request, string rawBase64String) => request.LoadHeadersAndContentFromRaw(Convert.FromBase64String(rawBase64String));
 
     /// <inheritdoc cref="LoadHeadersAndContentFromRaw(IHttpRequest, in ReadOnlySpan{byte})"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
