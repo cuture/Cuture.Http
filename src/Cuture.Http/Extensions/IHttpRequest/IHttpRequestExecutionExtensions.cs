@@ -47,38 +47,41 @@ public static class IHttpRequestExecutionExtensions
 
     internal static Task<HttpResponseMessage> ExecuteAsync(this HttpMessageInvoker messageInvoker, IHttpRequest request)
     {
-        if (request.Timeout.HasValue)
+        var httpRequestMessage = request.GetHttpRequestMessage();
+        var cancellationToken = request.Token;
+        IDisposable disposable1;
+        if (request.Timeout > 0)
         {
             var cts = CancellationTokenSource.CreateLinkedTokenSource(request.Token);
             cts.CancelAfter(request.Timeout.Value);
-
-            var task = request.AllowRedirection
-                        ? messageInvoker.InternalExecuteWithAutoRedirectCoreAsync(request, cts.Token)
-                        : messageInvoker.SendAsync(request.GetHttpRequestMessage(), cts.Token);
-
-            task.ContinueWith(DisposeCancellationTokenSourceInTaskState, cts, TaskContinuationOptions.None);
-
-            return task;
+            disposable1 = cts;
+            cancellationToken = cts.Token;
         }
         else
         {
-            return request.AllowRedirection
-                    ? messageInvoker.InternalExecuteWithAutoRedirectCoreAsync(request, request.Token)
-                    : messageInvoker.SendAsync(request.GetHttpRequestMessage(), request.Token);
+            disposable1 = EmptyDisposable.Instance;
         }
+
+        var task = request.AllowRedirection
+                    ? messageInvoker.InternalExecuteWithAutoRedirectCoreAsync(httpRequestMessage, request.MaxAutomaticRedirections, cancellationToken)
+                    : messageInvoker.SendAsync(httpRequestMessage, cancellationToken);
+
+        task.DisposeAfterTask(httpRequestMessage, disposable1);
+
+        return task;
     }
 
-    internal static async Task<HttpResponseMessage> InternalExecuteWithAutoRedirectCoreAsync(this HttpMessageInvoker messageInvoker, IHttpRequest request, CancellationToken token)
+    internal static async Task<HttpResponseMessage> InternalExecuteWithAutoRedirectCoreAsync(this HttpMessageInvoker messageInvoker, HttpRequestMessage httpRequestMessage, int maxAutomaticRedirections, CancellationToken token)
     {
         Uri? redirectUri;
         HttpResponseMessage tmpResponse = null!;
-        var innerRequest = request.GetHttpRequestMessage();
+        var innerRequest = httpRequestMessage;
 
-        for (int i = 0; i <= request.MaxAutomaticRedirections; i++)
+        for (int i = 0; i <= maxAutomaticRedirections; i++)
         {
             tmpResponse = await messageInvoker.SendAsync(innerRequest, token).ConfigureAwait(false);
 
-            if ((redirectUri = tmpResponse.GetUriForRedirect(request.RequestUri)) != null)
+            if ((redirectUri = tmpResponse.GetUriForRedirect(httpRequestMessage.RequestUri!)) != null)
             {
                 var redirectRequest = new HttpRequestMessage(HttpMethod.Get, redirectUri);
 
@@ -373,10 +376,8 @@ public static class IHttpRequestExecutionExtensions
 
     #region Private 方法
 
-    private static void DisposeCancellationTokenSourceInTaskState(Task _, object? state) => (state as CancellationTokenSource)!.Dispose();
-
     private static TTaskResult SetRequestContinueTaskWithTimeout<TTaskResult>(this Task<HttpResponseMessage> requestTask, IHttpRequest request, Func<Task<HttpResponseMessage>, CancellationToken, TTaskResult> createContinueTaskFunc)
-                where TTaskResult : Task
+        where TTaskResult : Task
     {
         if (request.Timeout.HasValue)
         {
@@ -385,7 +386,7 @@ public static class IHttpRequestExecutionExtensions
 
             var task = createContinueTaskFunc(requestTask, cts.Token);
 
-            task.ContinueWith(DisposeCancellationTokenSourceInTaskState, cts, TaskContinuationOptions.None);
+            task.DisposeAfterTask(cts);
 
             return task;
         }
