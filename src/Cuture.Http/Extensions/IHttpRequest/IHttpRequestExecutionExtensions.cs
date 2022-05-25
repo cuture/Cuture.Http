@@ -45,28 +45,6 @@ public static class IHttpRequestExecutionExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Task<HttpResponseMessage> ExecuteAsync(this IHttpRequest request) => InternalGetHttpMessageInvoker(request).ExecuteAsync(request);
 
-    /// <summary>
-    /// 执行请求
-    /// </summary>
-    /// <param name="request"></param>
-    /// <param name="completionOption"></param>
-    /// <returns></returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<HttpResponseMessage> ExecuteAsync(this IHttpRequest request, HttpCompletionOption completionOption)
-    {
-        if (completionOption == HttpCompletionOption.ResponseHeadersRead)
-        {
-            if (InternalGetHttpMessageInvoker(request) is HttpClient httpClient)
-            {
-                //TODO pool wrapper
-                return new CompletionWithHeadersReadClientWrapper(httpClient, false).ExecuteAsync(request);
-            }
-            throw new NotSupportedException($"Only {nameof(HttpClient)} support {nameof(HttpCompletionOption)}.{nameof(HttpCompletionOption.ResponseHeadersRead)}.");
-        }
-
-        return request.ExecuteAsync();
-    }
-
     internal static Task<HttpResponseMessage> ExecuteAsync(this HttpMessageInvoker messageInvoker, IHttpRequest request)
     {
         if (request.Timeout.HasValue)
@@ -324,7 +302,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="bufferSize"></param>
     /// <returns></returns>
     public static Task DownloadToStreamAsync(this IHttpRequest request, Stream targetStream, int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
-            => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
+            => request.ExecuteAsync()
                       .SetRequestContinueTaskWithTimeout(request, (requestTask, token) => requestTask.DownloadToStreamAsync(targetStream, token, bufferSize));
 
     /// <summary>
@@ -341,7 +319,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="bufferSize"></param>
     /// <returns></returns>
     public static Task DownloadToStreamWithProgressAsync(this IHttpRequest request, Func<long?, long, Task> progressCallback, Stream targetStream, int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
-            => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
+            => request.ExecuteAsync()
                       .SetRequestContinueTaskWithTimeout(request, (requestTask, token) => requestTask.DownloadToStreamWithProgressAsync(targetStream, progressCallback, token, bufferSize));
 
     /// <summary>
@@ -358,7 +336,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="bufferSize"></param>
     /// <returns></returns>
     public static Task DownloadToStreamWithProgressAsync(this IHttpRequest request, Action<long?, long> progressCallback, Stream targetStream, int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
-            => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
+            => request.ExecuteAsync()
                       .SetRequestContinueTaskWithTimeout(request, (requestTask, token) => requestTask.DownloadToStreamWithProgressAsync(targetStream, progressCallback, token, bufferSize));
 
     /// <summary>
@@ -372,7 +350,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="bufferSize"></param>
     /// <returns></returns>
     public static Task<byte[]> DownloadWithProgressAsync(this IHttpRequest request, Func<long?, long, Task> progressCallback, int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
-            => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
+            => request.ExecuteAsync()
                       .SetRequestContinueTaskWithTimeout(request, (requestTask, token) => requestTask.DownloadWithProgressAsync(progressCallback, token, bufferSize));
 
     /// <summary>
@@ -386,7 +364,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="bufferSize"></param>
     /// <returns></returns>
     public static Task<byte[]> DownloadWithProgressAsync(this IHttpRequest request, Action<long?, long> progressCallback, int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
-            => request.ExecuteAsync(HttpCompletionOption.ResponseHeadersRead)
+            => request.ExecuteAsync()
                       .SetRequestContinueTaskWithTimeout(request, (requestTask, token) => requestTask.DownloadWithProgressAsync(progressCallback, token, bufferSize));
 
     #endregion Download
