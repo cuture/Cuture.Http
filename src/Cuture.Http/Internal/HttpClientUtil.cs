@@ -10,72 +10,64 @@ internal static class HttpClientUtil
     #region Public 方法
 
     /// <summary>
-    /// 创建默认的<see cref="HttpClient"/>
-    /// <para/><see cref="HttpClientHandler.UseProxy"/> = true
-    /// <para/><see cref="HttpClientHandler.UseCookies"/> = false
-    /// <para/><see cref="HttpClientHandler.AllowAutoRedirect"/> = false
-    /// <para/><see cref="HttpClientHandler.AutomaticDecompression"/> = <see cref="DecompressionMethods.GZip"/> | <see cref="DecompressionMethods.Deflate"/>
-    /// </summary>
-    /// <returns></returns>
-    public static HttpClient CreateDefaultClient()
-    {
-        return new FinalizeableHttpClient(CreateDefaultClientHandler());
-    }
-
-    /// <summary>
     /// 创建默认的 <see cref="HttpClientHandler"/>
     /// <para/><see cref="HttpClientHandler.UseProxy"/> = true
     /// <para/><see cref="HttpClientHandler.UseCookies"/> = false
     /// <para/><see cref="HttpClientHandler.AllowAutoRedirect"/> = false
-    /// <para/><see cref="HttpClientHandler.AutomaticDecompression"/> = <see cref="DecompressionMethods.GZip"/> | <see cref="DecompressionMethods.Deflate"/>
+    /// <para/><see cref="HttpClientHandler.AutomaticDecompression"/> = <see cref="DecompressionMethods.All"/>
     /// </summary>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static HttpClientHandler CreateDefaultClientHandler()
     {
-        return new HttpClientHandler()
+        return new()
         {
             UseProxy = true,
             UseCookies = false,
             AllowAutoRedirect = false,
-            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+            AutomaticDecompression = DecompressionMethods.All,
         };
     }
 
     /// <summary>
-    /// 创建禁用代理的默认<see cref="HttpClient"/>
-    /// <para/>
+    /// 创建默认的不使用代理 <see cref="HttpClientHandler"/>
     /// <para/><see cref="HttpClientHandler.UseProxy"/> = false
-    /// <para/><see cref="HttpClientHandler.Proxy"/> = null
     /// <para/><see cref="HttpClientHandler.UseCookies"/> = false
     /// <para/><see cref="HttpClientHandler.AllowAutoRedirect"/> = false
-    /// <para/><see cref="HttpClientHandler.AutomaticDecompression"/> = <see cref="DecompressionMethods.GZip"/> | <see cref="DecompressionMethods.Deflate"/>
+    /// <para/><see cref="HttpClientHandler.AutomaticDecompression"/> = <see cref="DecompressionMethods.All"/>
     /// </summary>
     /// <returns></returns>
-    public static HttpClient CreateProxyDisabledDefaultClient()
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static HttpClientHandler CreateNoProxyClientHandler()
     {
-        return new FinalizeableHttpClient(CreateDefaultClientHandler().DisableProxy());
+        return new()
+        {
+            UseProxy = false,
+            UseCookies = false,
+            AllowAutoRedirect = false,
+            AutomaticDecompression = DecompressionMethods.All,
+        };
     }
 
     /// <summary>
-    /// 创建使用代理的<see cref="HttpClient"/>
+    /// 创建使用代理的 <see cref="HttpClientHandler"/>
     /// <para/><see cref="HttpClientHandler.UseProxy"/> = true
     /// <para/><see cref="HttpClientHandler.UseCookies"/> = false
     /// <para/><see cref="HttpClientHandler.AllowAutoRedirect"/> = false
-    /// <para/><see cref="HttpClientHandler.AutomaticDecompression"/> = <see cref="DecompressionMethods.GZip"/> | <see cref="DecompressionMethods.Deflate"/>
+    /// <para/><see cref="HttpClientHandler.AutomaticDecompression"/> = <see cref="DecompressionMethods.All"/>
     /// </summary>
     /// <returns></returns>
-    public static HttpClient CreateProxyedClient(IWebProxy webProxy)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static HttpClientHandler CreateProxyedClientHandler(IWebProxy webProxy)
     {
-        if (webProxy is null)
+        return new()
         {
-            throw new ArgumentNullException(nameof(webProxy));
-        }
-
-        var httpClientHandler = CreateDefaultClientHandler();
-        httpClientHandler.UseProxy = true;
-        httpClientHandler.Proxy = webProxy;
-        return new FinalizeableHttpClient(httpClientHandler);
+            UseProxy = true,
+            Proxy = webProxy ?? throw new ArgumentNullException(nameof(webProxy)),
+            UseCookies = false,
+            AllowAutoRedirect = false,
+            AutomaticDecompression = DecompressionMethods.All,
+        };
     }
 
     #endregion Public 方法

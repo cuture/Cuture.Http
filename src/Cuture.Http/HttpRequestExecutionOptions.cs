@@ -10,7 +10,7 @@ public class HttpRequestExecutionOptions
     #region Internal 字段
 
     internal IJsonSerializer? _jsonSerializer;
-    internal IHttpMessageInvokerFactory? _messageInvokerFactory;
+    internal IHttpMessageInvokerPool? _messageInvokerPool;
 
     #endregion Internal 字段
 
@@ -21,7 +21,7 @@ public class HttpRequestExecutionOptions
     /// </summary>
     public static HttpRequestExecutionOptions Default { get; } = new HttpRequestExecutionOptions()
     {
-        MessageInvokerFactory = HttpRequestGlobalOptions.DefaultHttpMessageInvokerFactory,
+        MessageInvokerPool = HttpRequestGlobalOptions.DefaultHttpMessageInvokerPool,
         JsonSerializer = HttpRequestGlobalOptions.DefaultJsonSerializer,
     };
 
@@ -37,20 +37,20 @@ public class HttpRequestExecutionOptions
     /// <para/>
     /// 选项优先级
     /// <para/>
-    /// <see cref="MessageInvoker"/> > <see cref="MessageInvokerFactory"/>
+    /// <see cref="MessageInvoker"/> > <see cref="MessageInvokerPool"/>
     /// </summary>
     public HttpMessageInvoker? MessageInvoker { get; set; }
 
     /// <summary>
-    /// 用于请求的 <see cref="IHttpMessageInvokerFactory"/>
+    /// 用于请求的 <see cref="IHttpMessageInvokerPool"/>
     /// <para/>
     /// 选项优先级
     /// <para/>
     /// 设置此选项将覆盖自动重定向、代理请求、压缩、Cookie等请求设置
     /// <para/>
-    /// <see cref="MessageInvoker"/> > <see cref="MessageInvokerFactory"/>
+    /// <see cref="MessageInvoker"/> > <see cref="MessageInvokerPool"/>
     /// </summary>
-    public IHttpMessageInvokerFactory? MessageInvokerFactory { get => _messageInvokerFactory; set => _messageInvokerFactory = value; }
+    public IHttpMessageInvokerPool? MessageInvokerPool { get => _messageInvokerPool; set => _messageInvokerPool = value; }
 
     #endregion Public 属性
 

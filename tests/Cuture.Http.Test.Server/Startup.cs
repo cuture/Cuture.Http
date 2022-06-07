@@ -42,17 +42,19 @@ namespace Cuture.Http.Test.Server
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            var data = Resource.Data;
 
             app.Use(async (context, next) =>
             {
+                var cancellationToken = context.RequestAborted;
+
                 if (context.Request.Path == "/")    //首页
                 {
-                    await context.Response.WriteAsync(Resource.Index);
+                    await context.Response.WriteAsync(Resource.Index, cancellationToken);
                 }
                 else if (context.Request.Path == "/data.dat")   //慢速文件下载
                 {
-                    var data = Resource.Data;
-
                     context.Response.ContentType = "application/data";
                     context.Response.ContentLength = data.Length;
 
@@ -65,12 +67,12 @@ namespace Cuture.Http.Test.Server
 
                     for (; index < maxRandomIndex;)
                     {
-                        await Task.Delay(TimeSpan.FromSeconds(0.5));
+                        await Task.Delay(TimeSpan.FromSeconds(0.5), cancellationToken);
                         var randomSize = s_random.Next(minSpanLength, maxSpanLength);
-                        await context.Response.BodyWriter.WriteAsync(md.Slice(index, randomSize));
+                        await context.Response.BodyWriter.WriteAsync(md.Slice(index, randomSize), cancellationToken);
                         index += randomSize;
                     }
-                    await context.Response.BodyWriter.WriteAsync(md.Slice(index, data.Length - index));
+                    await context.Response.BodyWriter.WriteAsync(md.Slice(index, data.Length - index), cancellationToken);
                 }
                 else
                 {

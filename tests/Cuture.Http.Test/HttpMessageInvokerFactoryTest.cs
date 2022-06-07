@@ -7,11 +7,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Cuture.Http.Test;
 
 [TestClass]
-public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInvokerFactory
+public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInvokerPool
 {
     #region 字段
 
-    protected T _factory;
+    protected T _pool;
 
     #endregion 字段
 
@@ -20,7 +20,7 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
     [TestCleanup]
     public void Cleanup()
     {
-        _factory.Dispose();
+        _pool.Dispose();
     }
 
     [TestMethod]
@@ -35,8 +35,8 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
         var request = url.CreateHttpRequest();
         for (int i = 0; i < count; i++)
         {
-            var client = _factory.GetInvoker(request);
-            hashSet.Add(client.GetHashCode());
+            using var owner = _pool.Rent(request);
+            hashSet.Add(owner.Value.GetHashCode());
         }
 
         #region 允许重定向请求
@@ -45,8 +45,8 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
 
         for (int i = 0; i < count; i++)
         {
-            var client = _factory.GetInvoker(request);
-            hashSet.Add(client.GetHashCode());
+            using var owner = _pool.Rent(request);
+            hashSet.Add(owner.Value.GetHashCode());
         }
 
         #endregion 允许重定向请求
@@ -59,8 +59,8 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
                      .UseProxy("http://127.0.0.1:8000");
         for (int i = 0; i < count; i++)
         {
-            var client = _factory.GetInvoker(request);
-            hashSet.Add(client.GetHashCode());
+            using var owner = _pool.Rent(request);
+            hashSet.Add(owner.Value.GetHashCode());
         }
 
         #region 代理允许重定向请求
@@ -71,8 +71,8 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
 
         for (int i = 0; i < count; i++)
         {
-            var client = _factory.GetInvoker(request);
-            hashSet.Add(client.GetHashCode());
+            using var owner = _pool.Rent(request);
+            hashSet.Add(owner.Value.GetHashCode());
         }
 
         #endregion 代理允许重定向请求
@@ -88,8 +88,8 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
                      });
         for (int i = 0; i < count; i++)
         {
-            var client = _factory.GetInvoker(request);
-            hashSet.Add(client.GetHashCode());
+            using var owner = _pool.Rent(request);
+            hashSet.Add(owner.Value.GetHashCode());
         }
 
         #region 有验证的代理允许重定向请求
@@ -103,8 +103,8 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
 
         for (int i = 0; i < count; i++)
         {
-            var client = _factory.GetInvoker(request);
-            hashSet.Add(client.GetHashCode());
+            using var owner = _pool.Rent(request);
+            hashSet.Add(owner.Value.GetHashCode());
         }
 
         #endregion 有验证的代理允许重定向请求
@@ -120,8 +120,8 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
                      });
         for (int i = 0; i < count; i++)
         {
-            var client = _factory.GetInvoker(request);
-            hashSet.Add(client.GetHashCode());
+            using var owner = _pool.Rent(request);
+            hashSet.Add(owner.Value.GetHashCode());
         }
 
         #region 有验证的代理允许重定向请求2
@@ -135,8 +135,8 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
 
         for (int i = 0; i < count; i++)
         {
-            var client = _factory.GetInvoker(request);
-            hashSet.Add(client.GetHashCode());
+            using var owner = _pool.Rent(request);
+            hashSet.Add(owner.Value.GetHashCode());
         }
 
         #endregion 有验证的代理允许重定向请求2
@@ -149,7 +149,7 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
     [TestInitialize]
     public void Init()
     {
-        _factory = CreateFactory();
+        _pool = CreateFactory();
     }
 
     [TestMethod]
@@ -188,11 +188,11 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
             var proxy = proxies[index];
             var request = "http://127.0.0.1/index".CreateHttpRequest().UseProxy(proxy);
 
-            var client = _factory.GetInvoker(request);
+            var owner = _pool.Rent(request);
 
             lock (hashSet)
             {
-                hashSet.Add(client);
+                hashSet.Add(owner.Value);
             }
         });
 
@@ -251,11 +251,11 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
                 default:
                     break;
             }
-            var client = _factory.GetInvoker(request);
+            var owner = _pool.Rent(request);
 
             lock (hashSet)
             {
-                hashSet.Add(client);
+                hashSet.Add(owner.Value);
             }
         });
 

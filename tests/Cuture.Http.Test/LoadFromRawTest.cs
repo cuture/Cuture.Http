@@ -16,7 +16,7 @@ public class LoadFromRawTest
     [TestInitialize]
     public void Init()
     {
-        HttpRequestGlobalOptions.DefaultHttpMessageInvokerFactory = new SimpleHttpMessageInvokerFactory();
+        HttpRequestGlobalOptions.DefaultHttpMessageInvokerPool = new SimpleHttpMessageInvokerPool();
     }
 
     [TestMethod]

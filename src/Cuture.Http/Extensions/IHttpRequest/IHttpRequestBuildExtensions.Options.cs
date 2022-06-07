@@ -183,15 +183,27 @@ public static partial class IHttpRequestBuildExtensions
     }
 
     /// <summary>
-    /// 使用指定的<inheritdoc cref="IHttpMessageInvokerFactory"/>
+    /// 使用指定的<inheritdoc cref="IHttpMessageInvokerPool"/>
     /// </summary>
     /// <param name="request"></param>
     /// <param name="messageInvokerFactory"></param>
     /// <returns></returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IHttpRequest UseInvokerFactory(this IHttpRequest request, IHttpMessageInvokerFactory messageInvokerFactory)
+    [Obsolete("Use UseInvokerPool instead.", true)]
+    public static IHttpRequest UseInvokerFactory(this IHttpRequest request, IHttpMessageInvokerPool messageInvokerFactory)
     {
-        request.ExecutionOptions.MessageInvokerFactory = messageInvokerFactory;
+        request.ExecutionOptions.MessageInvokerPool = messageInvokerFactory;
+        return request;
+    }
+
+    /// <summary>
+    /// 使用指定的<inheritdoc cref="IHttpMessageInvokerPool"/>
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="messageInvokerPool"></param>
+    /// <returns></returns>
+    public static IHttpRequest UseInvokerPool(this IHttpRequest request, IHttpMessageInvokerPool messageInvokerPool)
+    {
+        request.ExecutionOptions.MessageInvokerPool = messageInvokerPool;
         return request;
     }
 

@@ -6,19 +6,19 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Cuture.Http.Test;
 
 [TestClass]
-public class SimpleHttpMessageInvokerFactoryTest : HttpMessageInvokerFactoryTest<SimpleHttpMessageInvokerFactory>
+public class SimpleHttpMessageInvokerFactoryTest : HttpMessageInvokerFactoryTest<SimpleHttpMessageInvokerPool>
 {
     #region Private 字段
 
-    private const int HoldSeconds = 5;
+    private const int HoldSeconds = 2;
 
     #endregion Private 字段
 
     #region Protected 方法
 
-    protected override SimpleHttpMessageInvokerFactory CreateFactory()
+    protected override SimpleHttpMessageInvokerPool CreateFactory()
     {
-        return new SimpleHttpMessageInvokerFactory(true, TimeSpan.FromSeconds(HoldSeconds));
+        return new SimpleHttpMessageInvokerPool(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2));
     }
 
     #endregion Protected 方法
@@ -30,16 +30,18 @@ public class SimpleHttpMessageInvokerFactoryTest : HttpMessageInvokerFactoryTest
     {
         var request = "http://127.0.0.1/index".CreateHttpRequest();
 
-        var firstClientHash = _factory.GetInvoker(request).GetHashCode();
+        var owner = _pool.Rent(request);
+        var firstClientHash = owner.Value.GetHashCode();
+        owner.Dispose();
 
-        Assert.AreEqual(firstClientHash, _factory.GetInvoker(request).GetHashCode());
+        owner = _pool.Rent(request);
+        Assert.AreEqual(firstClientHash, owner.Value.GetHashCode());
+        owner.Dispose();
 
-        await Task.Delay(TimeSpan.FromSeconds(HoldSeconds + 1));
+        await Task.Delay(TimeSpan.FromSeconds(HoldSeconds + HoldSeconds + 1));
 
-        GC.Collect(2, GCCollectionMode.Forced);
-        GC.WaitForPendingFinalizers();
-
-        var lastClientHash = _factory.GetInvoker(request).GetHashCode();
+        owner = _pool.Rent(request);
+        var lastClientHash = owner.Value.GetHashCode();
         Assert.AreNotEqual(firstClientHash, lastClientHash);
     }
 

@@ -21,14 +21,24 @@ public static class IHttpRequestExecutionExtensions
     /// 根据请求获取一个用以执行请求的 <see cref="HttpMessageInvoker"/>
     /// </summary>
     /// <param name="request">请求</param>
+    /// <param name="invoker"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static HttpMessageInvoker InternalGetHttpMessageInvoker(IHttpRequest request)
+    private static IDisposable? InternalGetHttpMessageInvoker(IHttpRequest request, out HttpMessageInvoker invoker)
     {
         var options = request.IsSetOptions ? request.ExecutionOptions : HttpRequestExecutionOptions.Default;
-        return options.MessageInvoker
-                    ?? options.MessageInvokerFactory?.GetInvoker(request)
-                    ?? throw new ArgumentException($"HttpRequestOptions's {nameof(HttpRequestExecutionOptions.MessageInvoker)}、{nameof(HttpRequestExecutionOptions.MessageInvokerFactory)} cannot both be null.");
+        if (options.MessageInvoker is not null)
+        {
+            invoker = options.MessageInvoker;
+            return null;
+        }
+        var owner = options.MessageInvokerPool?.Rent(request);
+        if (owner is not null)
+        {
+            invoker = owner.Value;
+            return owner;
+        }
+        throw new ArgumentException($"HttpRequestOptions's {nameof(HttpRequestExecutionOptions.MessageInvoker)}、{nameof(HttpRequestExecutionOptions.MessageInvokerPool)} cannot both be null.");
     }
 
     #endregion 方法
@@ -43,7 +53,12 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="request"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<HttpResponseMessage> ExecuteAsync(this IHttpRequest request) => InternalGetHttpMessageInvoker(request).ExecuteAsync(request);
+    public static Task<HttpResponseMessage> ExecuteAsync(this IHttpRequest request)
+    {
+        //TODO 释放
+        var disposer = InternalGetHttpMessageInvoker(request, out var invoker);
+        return invoker.ExecuteAsync(request);
+    }
 
     internal static Task<HttpResponseMessage> ExecuteAsync(this HttpMessageInvoker messageInvoker, IHttpRequest request)
     {
@@ -379,7 +394,7 @@ public static class IHttpRequestExecutionExtensions
     private static TTaskResult SetRequestContinueTaskWithTimeout<TTaskResult>(this Task<HttpResponseMessage> requestTask, IHttpRequest request, Func<Task<HttpResponseMessage>, CancellationToken, TTaskResult> createContinueTaskFunc)
         where TTaskResult : Task
     {
-        if (request.Timeout.HasValue)
+        if (request.Timeout > 0)
         {
             var cts = CancellationTokenSource.CreateLinkedTokenSource(request.Token);
             cts.CancelAfter(request.Timeout.Value);

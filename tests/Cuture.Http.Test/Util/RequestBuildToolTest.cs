@@ -55,7 +55,7 @@ public class RequestBuildToolTest
     [TestInitialize]
     public void Init()
     {
-        HttpRequestGlobalOptions.DefaultHttpMessageInvokerFactory = new SimpleHttpMessageInvokerFactory();
+        HttpRequestGlobalOptions.DefaultHttpMessageInvokerPool = new SimpleHttpMessageInvokerPool();
     }
 
     [TestMethod]

@@ -2,29 +2,50 @@
 
 namespace Cuture.Http.Test;
 
-public class TestHttpMessageInvokerFactory : IHttpMessageInvokerFactory
+public sealed class TestHttpMessageInvokerFactory : IHttpMessageInvokerPool
 {
-    private readonly HttpClient _httpClient;
-    private readonly SimpleHttpMessageInvokerFactory _simpleHttpMessageInvokerFactory;
+    private readonly HttpClientOwner _httpClient;
+    private readonly SimpleHttpMessageInvokerPool _simpleHttpMessageInvokerPool;
 
-    public TestHttpMessageInvokerFactory(HttpClient httpClient)
+    public TestHttpMessageInvokerFactory(HttpMessageHandler handler)
     {
-        _httpClient = httpClient;
-        _simpleHttpMessageInvokerFactory = new SimpleHttpMessageInvokerFactory();
+        _httpClient = new HttpClientOwner(handler);
+        _simpleHttpMessageInvokerPool = new();
     }
 
     public void Dispose()
     {
-        _simpleHttpMessageInvokerFactory.Dispose();
+        _simpleHttpMessageInvokerPool.Dispose();
         _httpClient.Dispose();
     }
 
-    public HttpMessageInvoker GetInvoker(IHttpRequest request)
+    public IOwner<HttpMessageInvoker> Rent(IHttpRequest request)
     {
         if (request.DisableProxy || request.Proxy is null)
         {
             return _httpClient;
         }
-        return _simpleHttpMessageInvokerFactory.GetInvoker(request);
+        return _simpleHttpMessageInvokerPool.Rent(request);
+    }
+
+    class HttpClientOwner : IOwner<HttpMessageInvoker>
+    {
+        public HttpMessageInvoker Value { get; }
+
+        public HttpClientOwner(HttpMessageHandler handler)
+        {
+            Value = new MyHttpMessageInvoker(handler);
+        }
+
+        public void Dispose()
+        {
+        }
+
+        class MyHttpMessageInvoker : HttpMessageInvoker
+        {
+            public MyHttpMessageInvoker(HttpMessageHandler handler) : base(handler, false)
+            {
+            }
+        }
     }
 }

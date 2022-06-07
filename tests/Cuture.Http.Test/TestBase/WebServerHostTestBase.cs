@@ -37,27 +37,27 @@ public abstract class WebServerHostTestBase
         {
             await ServerHost?.StopAsync();
         }
-        HttpRequestGlobalOptions.DefaultHttpMessageInvokerFactory.Dispose();
+        HttpRequestGlobalOptions.DefaultHttpMessageInvokerPool.Dispose();
     }
 
     [TestInitialize]
     public virtual async Task InitAsync()
     {
-        IHttpMessageInvokerFactory invokerFactory = null;
+        IHttpMessageInvokerPool invokerFactory = null;
         if (TestWebHost.HostByTestHost)
         {
             var hostBuilder = TestWebHost.CreateHostBuilder(System.Array.Empty<string>(), UseTestServer);
             ServerHost = await hostBuilder.StartAsync();
             if (UseTestServer)
             {
-                invokerFactory = new TestHttpMessageInvokerFactory(ServerHost.GetTestClient());
+                invokerFactory = new TestHttpMessageInvokerFactory(ServerHost.GetTestServer().CreateHandler());
             }
         }
 
-        invokerFactory ??= new SimpleHttpMessageInvokerFactory();
+        invokerFactory ??= new SimpleHttpMessageInvokerPool();
 
         HttpRequestGlobalOptions.DefaultConnectionLimit = 10;
-        HttpRequestGlobalOptions.DefaultHttpMessageInvokerFactory = invokerFactory;
+        HttpRequestGlobalOptions.DefaultHttpMessageInvokerPool = invokerFactory;
     }
 
     /// <summary>

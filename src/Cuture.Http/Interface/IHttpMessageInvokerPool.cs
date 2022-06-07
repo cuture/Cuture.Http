@@ -4,9 +4,9 @@ using System.Net.Http;
 namespace Cuture.Http;
 
 /// <summary>
-/// <see cref="HttpMessageInvoker"/> 工厂
+/// <see cref="HttpMessageInvoker"/> 池
 /// </summary>
-public interface IHttpMessageInvokerFactory : IDisposable
+public interface IHttpMessageInvokerPool : IDisposable
 {
     #region 方法
 
@@ -15,7 +15,7 @@ public interface IHttpMessageInvokerFactory : IDisposable
     /// </summary>
     /// <param name="request">请求</param>
     /// <returns></returns>
-    HttpMessageInvoker GetInvoker(IHttpRequest request);
+    IOwner<HttpMessageInvoker> Rent(IHttpRequest request);
 
     #endregion 方法
 }

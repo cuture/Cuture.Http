@@ -34,9 +34,9 @@ public static class HttpRequestGlobalOptions
     private static IFormDataFormatter s_defaultFormDataFormatter;
 
     /// <summary>
-    /// 全局使用的默认<inheritdoc cref="IHttpMessageInvokerFactory"/>
+    /// 全局使用的默认<inheritdoc cref="IHttpMessageInvokerPool"/>
     /// </summary>
-    private static IHttpMessageInvokerFactory s_defaultHttpMessageInvokerFactory = new SimpleHttpMessageInvokerFactory();
+    private static IHttpMessageInvokerPool s_defaultHttpMessageInvokerPool = new SimpleHttpMessageInvokerPool();
 
     /// <summary>
     /// 全局使用的默认<inheritdoc cref="IHttpRequestCreator"/>
@@ -79,11 +79,11 @@ public static class HttpRequestGlobalOptions
     /// </summary>
     public static IDictionary<string, string> DefaultHttpHeaders { get; } = new Dictionary<string, string>();
 
-    /// <inheritdoc cref="s_defaultHttpMessageInvokerFactory"/>
-    public static IHttpMessageInvokerFactory DefaultHttpMessageInvokerFactory
+    /// <inheritdoc cref="s_defaultHttpMessageInvokerPool"/>
+    public static IHttpMessageInvokerPool DefaultHttpMessageInvokerPool
     {
-        get => s_defaultHttpMessageInvokerFactory;
-        set => SetOption(ref s_defaultHttpMessageInvokerFactory, ref HttpRequestExecutionOptions.Default._messageInvokerFactory, value);
+        get => s_defaultHttpMessageInvokerPool;
+        set => SetOption(ref s_defaultHttpMessageInvokerPool, ref HttpRequestExecutionOptions.Default._messageInvokerPool, value);
     }
 
     /// <inheritdoc cref="s_defaultHttpRequestCreator"/>
@@ -103,7 +103,7 @@ public static class HttpRequestGlobalOptions
     /// <summary>
     /// 禁止默认使用默认Proxy 初始值为 false
     /// <para/>
-    /// 仅对 <see cref="IHttpMessageInvokerFactory"/> 使用 <see cref="SimpleHttpMessageInvokerFactory"/>,
+    /// 仅对 <see cref="IHttpMessageInvokerPool"/> 使用 <see cref="IHttpMessageInvokerPool"/>,
     /// 请求为 <see cref="DefaultHttpRequest"/> 时有效
     /// <para/>
     /// 不满足上述条件时, 根据对应的具体实现来确定是否有效
