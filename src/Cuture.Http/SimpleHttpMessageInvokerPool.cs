@@ -83,10 +83,10 @@ public sealed class SimpleHttpMessageInvokerPool : IHttpMessageInvokerPool
     /// <inheritdoc cref="SimpleHttpMessageInvokerPool"/>
     public SimpleHttpMessageInvokerPool(TimeSpan aliveTime, TimeSpan disposeDelay)
     {
-        StartDisposeLoopTask();
+        _aliveTime = aliveTime > TimeSpan.Zero ? aliveTime : throw new ArgumentOutOfRangeException(nameof(aliveTime));
+        _disposeDelay = disposeDelay > TimeSpan.Zero ? disposeDelay : throw new ArgumentOutOfRangeException(nameof(disposeDelay));
 
-        _aliveTime = aliveTime;
-        _disposeDelay = disposeDelay;
+        StartDisposeLoopTask();
     }
 
     #endregion Public 构造函数
