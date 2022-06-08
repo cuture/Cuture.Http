@@ -2,12 +2,12 @@
 
 namespace Cuture.Http.Test;
 
-public sealed class TestHttpMessageInvokerFactory : IHttpMessageInvokerPool
+public sealed class TestHttpMessageInvokerPool : IHttpMessageInvokerPool
 {
     private readonly HttpClientOwner _httpClient;
     private readonly SimpleHttpMessageInvokerPool _simpleHttpMessageInvokerPool;
 
-    public TestHttpMessageInvokerFactory(HttpMessageHandler handler)
+    public TestHttpMessageInvokerPool(HttpMessageHandler handler)
     {
         _httpClient = new HttpClientOwner(handler);
         _simpleHttpMessageInvokerPool = new();

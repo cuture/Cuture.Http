@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Cuture.Http.Test;
 
 [TestClass]
-public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInvokerPool
+public abstract class HttpMessageInvokerPoolTest<T> where T : IHttpMessageInvokerPool
 {
     #region Private 字段
 
@@ -155,7 +155,7 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
     [TestInitialize]
     public void Init()
     {
-        Pool = CreateFactory();
+        Pool = CreatePool();
     }
 
     [TestMethod]
@@ -214,7 +214,7 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
         }
     }
 
-    protected abstract T CreateFactory();
+    protected abstract T CreatePool();
 
     private int InternalParallelGetClient(int count, int type)
     {

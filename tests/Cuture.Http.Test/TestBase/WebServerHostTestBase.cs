@@ -43,21 +43,21 @@ public abstract class WebServerHostTestBase
     [TestInitialize]
     public virtual async Task InitAsync()
     {
-        IHttpMessageInvokerPool invokerFactory = null;
+        IHttpMessageInvokerPool invokerPool = null;
         if (TestWebHost.HostByTestHost)
         {
             var hostBuilder = TestWebHost.CreateHostBuilder(System.Array.Empty<string>(), UseTestServer);
             ServerHost = await hostBuilder.StartAsync();
             if (UseTestServer)
             {
-                invokerFactory = new TestHttpMessageInvokerFactory(ServerHost.GetTestServer().CreateHandler());
+                invokerPool = new TestHttpMessageInvokerPool(ServerHost.GetTestServer().CreateHandler());
             }
         }
 
-        invokerFactory ??= new SimpleHttpMessageInvokerPool();
+        invokerPool ??= new SimpleHttpMessageInvokerPool();
 
         HttpRequestGlobalOptions.DefaultConnectionLimit = 10;
-        HttpRequestGlobalOptions.DefaultHttpMessageInvokerPool = invokerFactory;
+        HttpRequestGlobalOptions.DefaultHttpMessageInvokerPool = invokerPool;
     }
 
     /// <summary>

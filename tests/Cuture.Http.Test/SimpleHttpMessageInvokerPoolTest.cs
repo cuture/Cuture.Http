@@ -6,11 +6,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Cuture.Http.Test;
 
 [TestClass]
-public class SimpleHttpMessageInvokerFactoryTest : HttpMessageInvokerFactoryTest<SimpleHttpMessageInvokerPool>
+public class SimpleHttpMessageInvokerPoolTest : HttpMessageInvokerPoolTest<SimpleHttpMessageInvokerPool>
 {
     #region Protected 方法
 
-    protected override SimpleHttpMessageInvokerPool CreateFactory()
+    protected override SimpleHttpMessageInvokerPool CreatePool()
     {
         return new SimpleHttpMessageInvokerPool();
     }
