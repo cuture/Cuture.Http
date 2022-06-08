@@ -17,6 +17,10 @@
 
   <ItemGroup>
     <None Include="..\..\readme.md" Link="readme.md" Pack="true" PackagePath="/" />
+  
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>Cuture.Http.Test</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
 
   <!--Buid-->
