@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Cuture.Http;
 
@@ -16,6 +17,7 @@ public class ReuseableHttpRequest : IHttpRequest
 {
     #region Private 字段
 
+    private byte[]? _contentDump;
     private bool _disposedValue;
     private HttpRequestExecutionOptions? _options;
 
@@ -96,7 +98,7 @@ public class ReuseableHttpRequest : IHttpRequest
 
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public HttpRequestMessage GetHttpRequestMessage()
+    public ValueTask<HttpRequestMessage> GetHttpRequestMessageAsync(CancellationToken cancellationToken = default)
     {
         var message = new HttpRequestMessage(Method, RequestUri);
 
@@ -105,23 +107,32 @@ public class ReuseableHttpRequest : IHttpRequest
             message.Version = Version;
         }
 
-        CopyHeaders(message.Headers, Headers);
+        CopyHeaders(Headers, message.Headers);
 
-        //HACK 确认Content是否可重用
-        if (Content != null)
-        {
-            message.Content = Content;
-        }
-
-        return message;
+        return Content is null
+               ? new(message)
+               : DumpContentToHttpRequestMessageAsync(message, cancellationToken);
     }
 
-    private static void CopyHeaders(HttpHeaders target, HttpHeaders source)
+    private static void CopyHeaders(HttpHeaders source, HttpHeaders target)
     {
         foreach (var item in source)
         {
             target.TryAddWithoutValidation(item.Key, item.Value);
         }
+    }
+
+    private async ValueTask<HttpRequestMessage> DumpContentToHttpRequestMessageAsync(HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
+    {
+        _contentDump ??= await Content!.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
+
+        var localContent = new ByteArrayContent(_contentDump);
+
+        CopyHeaders(Content!.Headers, localContent.Headers);
+
+        httpRequestMessage.Content = localContent;
+
+        return httpRequestMessage;
     }
 
     #endregion 方法

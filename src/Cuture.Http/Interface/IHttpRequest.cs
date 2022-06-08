@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Cuture.Http;
 
@@ -83,8 +84,9 @@ public interface IHttpRequest : IDisposable
     /// <summary>
     /// 获取 <see cref="HttpRequestMessage"/>
     /// </summary>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    HttpRequestMessage GetHttpRequestMessage();
+    ValueTask<HttpRequestMessage> GetHttpRequestMessageAsync(CancellationToken cancellationToken = default);
 
     #endregion 方法
 }

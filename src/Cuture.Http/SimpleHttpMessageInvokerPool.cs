@@ -272,6 +272,8 @@ public sealed class SimpleHttpMessageInvokerPool : IHttpMessageInvokerPool
         {
             while (!runningToken.IsCancellationRequested)
             {
+                await Task.Delay(_aliveTime, runningToken).ConfigureAwait(false);
+
                 try
                 {
                     Check(_defaultInvoker);
@@ -286,8 +288,6 @@ public sealed class SimpleHttpMessageInvokerPool : IHttpMessageInvokerPool
                 {
                     Debug.Fail("Check Fail", ex.Message);
                 }
-
-                await Task.Delay(_aliveTime, runningToken).ConfigureAwait(false);
             }
 
             void Check(PlaceHolder<StrictDisposeOwnedHttpMessageInvoker> placeHolder)
@@ -296,6 +296,7 @@ public sealed class SimpleHttpMessageInvokerPool : IHttpMessageInvokerPool
                 if (invoker is not null
                     && invoker.IsOutOfAliveTime())
                 {
+                    placeHolder.Exchange(null);
                     QueueToDispose(invoker);
                 }
             };

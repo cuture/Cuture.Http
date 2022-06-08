@@ -53,37 +53,37 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="request"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<HttpResponseMessage> ExecuteAsync(this IHttpRequest request)
+    public static async Task<HttpResponseMessage> ExecuteAsync(this IHttpRequest request)
     {
         //TODO 释放
-        var disposer = InternalGetHttpMessageInvoker(request, out var invoker);
-        return invoker.ExecuteAsync(request);
-    }
+        var disposer = InternalGetHttpMessageInvoker(request, out var messageInvoker);
 
-    internal static Task<HttpResponseMessage> ExecuteAsync(this HttpMessageInvoker messageInvoker, IHttpRequest request)
-    {
-        var httpRequestMessage = request.GetHttpRequestMessage();
         var cancellationToken = request.Token;
-        IDisposable disposable1;
-        if (request.Timeout > 0)
+
+        using var httpRequestMessage = await request.GetHttpRequestMessageAsync(cancellationToken).ConfigureAwait(false);
+
+        CancellationTokenSource? localTokenSource = null;
+        try
         {
-            var cts = CancellationTokenSource.CreateLinkedTokenSource(request.Token);
-            cts.CancelAfter(request.Timeout.Value);
-            disposable1 = cts;
-            cancellationToken = cts.Token;
+            if (request.Timeout > 0)
+            {
+                localTokenSource = CancellationTokenSource.CreateLinkedTokenSource(request.Token);
+                localTokenSource.CancelAfter(request.Timeout.Value);
+                cancellationToken = localTokenSource.Token;
+            }
+
+            var task = request.AllowRedirection
+                       ? messageInvoker.InternalExecuteWithAutoRedirectCoreAsync(httpRequestMessage, request.MaxAutomaticRedirections, cancellationToken)
+                       : messageInvoker.SendAsync(httpRequestMessage, cancellationToken);
+
+            var result = await task.ConfigureAwait(false);
+
+            return result;
         }
-        else
+        finally
         {
-            disposable1 = EmptyDisposable.Instance;
+            localTokenSource?.Dispose();
         }
-
-        var task = request.AllowRedirection
-                    ? messageInvoker.InternalExecuteWithAutoRedirectCoreAsync(httpRequestMessage, request.MaxAutomaticRedirections, cancellationToken)
-                    : messageInvoker.SendAsync(httpRequestMessage, cancellationToken);
-
-        task.DisposeAfterTask(httpRequestMessage, disposable1);
-
-        return task;
     }
 
     internal static async Task<HttpResponseMessage> InternalExecuteWithAutoRedirectCoreAsync(this HttpMessageInvoker messageInvoker, HttpRequestMessage httpRequestMessage, int maxAutomaticRedirections, CancellationToken token)

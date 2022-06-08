@@ -9,9 +9,15 @@ namespace Cuture.Http.Test;
 [TestClass]
 public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInvokerPool
 {
+    #region Private 字段
+
+    protected const int TypeCount = 6;
+
+    #endregion Private 字段
+
     #region 字段
 
-    protected T _pool;
+    protected T Pool;
 
     #endregion 字段
 
@@ -20,7 +26,7 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
     [TestCleanup]
     public void Cleanup()
     {
-        _pool.Dispose();
+        Pool.Dispose();
     }
 
     [TestMethod]
@@ -35,7 +41,7 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
         var request = url.CreateHttpRequest();
         for (int i = 0; i < count; i++)
         {
-            using var owner = _pool.Rent(request);
+            using var owner = Pool.Rent(request);
             hashSet.Add(owner.Value.GetHashCode());
         }
 
@@ -45,7 +51,7 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
 
         for (int i = 0; i < count; i++)
         {
-            using var owner = _pool.Rent(request);
+            using var owner = Pool.Rent(request);
             hashSet.Add(owner.Value.GetHashCode());
         }
 
@@ -59,7 +65,7 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
                      .UseProxy("http://127.0.0.1:8000");
         for (int i = 0; i < count; i++)
         {
-            using var owner = _pool.Rent(request);
+            using var owner = Pool.Rent(request);
             hashSet.Add(owner.Value.GetHashCode());
         }
 
@@ -71,7 +77,7 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
 
         for (int i = 0; i < count; i++)
         {
-            using var owner = _pool.Rent(request);
+            using var owner = Pool.Rent(request);
             hashSet.Add(owner.Value.GetHashCode());
         }
 
@@ -88,7 +94,7 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
                      });
         for (int i = 0; i < count; i++)
         {
-            using var owner = _pool.Rent(request);
+            using var owner = Pool.Rent(request);
             hashSet.Add(owner.Value.GetHashCode());
         }
 
@@ -103,7 +109,7 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
 
         for (int i = 0; i < count; i++)
         {
-            using var owner = _pool.Rent(request);
+            using var owner = Pool.Rent(request);
             hashSet.Add(owner.Value.GetHashCode());
         }
 
@@ -120,7 +126,7 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
                      });
         for (int i = 0; i < count; i++)
         {
-            using var owner = _pool.Rent(request);
+            using var owner = Pool.Rent(request);
             hashSet.Add(owner.Value.GetHashCode());
         }
 
@@ -135,7 +141,7 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
 
         for (int i = 0; i < count; i++)
         {
-            using var owner = _pool.Rent(request);
+            using var owner = Pool.Rent(request);
             hashSet.Add(owner.Value.GetHashCode());
         }
 
@@ -149,13 +155,13 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
     [TestInitialize]
     public void Init()
     {
-        _pool = CreateFactory();
+        Pool = CreateFactory();
     }
 
     [TestMethod]
     public void ParallelGetClient()
     {
-        for (int type = 0; type < 6; type++)
+        for (int type = 0; type < TypeCount; type++)
         {
             var count = InternalParallelGetClient(1_000_000, type);
             Assert.AreEqual(1, count, $"类型：{type}失败");
@@ -180,23 +186,32 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
             new WebProxy("http://127.0.0.2:3277"){ Credentials = new NetworkCredential(){ UserName="uesr1",Password="psw" } },  //1
         };
 
+        //预热，避免并发执行导致创建多个
+        for (int i = 0; i < proxies.Length; i++)
+        {
+            LocalRentInvoker(i % proxies.Length, new());
+        }
+
         var hashSet = new HashSet<object>();
 
         Parallel.For(0, count, i =>
         {
-            var index = i % proxies.Length;
+            LocalRentInvoker(i % proxies.Length, hashSet);
+        });
+
+        Assert.AreEqual(7, hashSet.Count);
+
+        void LocalRentInvoker(int index, HashSet<object> hashSet)
+        {
             var proxy = proxies[index];
             var request = "http://127.0.0.1/index".CreateHttpRequest().UseProxy(proxy);
-
-            var owner = _pool.Rent(request);
+            using var owner = Pool.Rent(request);
 
             lock (hashSet)
             {
                 hashSet.Add(owner.Value);
             }
-        });
-
-        Assert.AreEqual(7, hashSet.Count);
+        }
     }
 
     protected abstract T CreateFactory();
@@ -211,11 +226,24 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
             "https://127.0.0.1/index",
             "https://127.0.0.2/index",
         };
+
+        //预热，避免并发执行导致创建多个
+        for (int i = 0; i < TypeCount; i++)
+        {
+            LocalRentInvoker(i % TypeCount, new());
+        }
+
         var hashSet = new HashSet<object>();
 
         Parallel.For(0, count, i =>
         {
-            var index = type == -1 ? i % 6 : type;
+            LocalRentInvoker(type == -1 ? i % TypeCount : type, hashSet);
+        });
+
+        return hashSet.Count;
+
+        void LocalRentInvoker(int index, HashSet<object> hashSet)
+        {
             var request = urls[index].CreateHttpRequest();
             switch (index)
             {
@@ -251,15 +279,13 @@ public abstract class HttpMessageInvokerFactoryTest<T> where T : IHttpMessageInv
                 default:
                     break;
             }
-            var owner = _pool.Rent(request);
+            using var owner = Pool.Rent(request);
 
             lock (hashSet)
             {
                 hashSet.Add(owner.Value);
             }
-        });
-
-        return hashSet.Count;
+        }
     }
 
     #endregion 方法

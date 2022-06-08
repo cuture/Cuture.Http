@@ -4,6 +4,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
+
+#pragma warning disable CS8766 // 返回类型中引用类型的为 Null 性与隐式实现的成员不匹配(可能是由于为 Null 性特性)。
+#pragma warning disable CS8767 // 参数类型中引用类型的为 Null 性与隐式实现的成员不匹配(可能是由于为 Null 性特性)。
 
 namespace Cuture.Http;
 
@@ -14,14 +18,12 @@ namespace Cuture.Http;
 /// <para/>
 /// * 请求后会被释放，不可重复使用进行请求
 /// </summary>
-#pragma warning disable CS8766 // 返回类型中引用类型的为 Null 性与隐式实现的成员不匹配(可能是由于为 Null 性特性)。
-#pragma warning disable CS8767 // 参数类型中引用类型的为 Null 性与隐式实现的成员不匹配(可能是由于为 Null 性特性)。
 
 public class DefaultHttpRequest : HttpRequestMessage, IHttpRequest
-#pragma warning restore CS8767 // 参数类型中引用类型的为 Null 性与隐式实现的成员不匹配(可能是由于为 Null 性特性)。
-#pragma warning restore CS8766 // 返回类型中引用类型的为 Null 性与隐式实现的成员不匹配(可能是由于为 Null 性特性)。
 {
     #region Private 字段
+
+    private int _hasGetHttpRequestMessage = 0;
 
     private HttpRequestExecutionOptions? _options;
 
@@ -39,15 +41,6 @@ public class DefaultHttpRequest : HttpRequestMessage, IHttpRequest
     public bool DisableProxy { get; set; } = HttpRequestGlobalOptions.DisableUseDefaultProxyByDefault;
 
     /// <inheritdoc/>
-    public bool IsSetOptions => _options != null;
-
-    /// <inheritdoc/>
-    public int MaxAutomaticRedirections { get; set; } = HttpRequestGlobalOptions.MaxAutomaticRedirections;
-
-    /// <inheritdoc/>
-    public IWebProxy? Proxy { get; set; }
-
-    /// <inheritdoc/>
     public HttpRequestExecutionOptions ExecutionOptions
     {
         get
@@ -61,6 +54,15 @@ public class DefaultHttpRequest : HttpRequestMessage, IHttpRequest
         }
         set => _options = value;
     }
+
+    /// <inheritdoc/>
+    public bool IsSetOptions => _options != null;
+
+    /// <inheritdoc/>
+    public int MaxAutomaticRedirections { get; set; } = HttpRequestGlobalOptions.MaxAutomaticRedirections;
+
+    /// <inheritdoc/>
+    public IWebProxy? Proxy { get; set; }
 
     /// <inheritdoc/>
     public int? Timeout { get; set; }
@@ -90,7 +92,14 @@ public class DefaultHttpRequest : HttpRequestMessage, IHttpRequest
 
     /// <inheritdoc/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public HttpRequestMessage GetHttpRequestMessage() => this;
+    public ValueTask<HttpRequestMessage> GetHttpRequestMessageAsync(CancellationToken cancellationToken = default)
+    {
+        if (Interlocked.CompareExchange(ref _hasGetHttpRequestMessage, 1, 0) == 1)
+        {
+            throw new InvalidOperationException("Method GetHttpRequestMessage can only be called once.");
+        }
+        return new(this);
+    }
 
     #endregion 方法
 }

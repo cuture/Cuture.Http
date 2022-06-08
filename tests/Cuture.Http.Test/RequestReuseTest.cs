@@ -25,11 +25,11 @@ public class RequestReuseTest : WebServerHostTestBase
                                                                .UsePost()
                                                                .WithJsonContent(user);
 
-        var firstRequestResult = await request.TryGetAsStringAsync();
+        using var firstRequestResult = await request.TryGetAsStringAsync();
 
         Assert.IsTrue(firstRequestResult.IsSuccessStatusCode);
 
-        await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => request.TryGetAsStringAsync());
+        await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => request.GetAsStringAsync());
     }
 
     [TestMethod]
@@ -46,7 +46,7 @@ public class RequestReuseTest : WebServerHostTestBase
 
         for (int i = 0; i < 10; i++)
         {
-            var requestResult = await request.TryGetAsObjectAsync<UserInfo>();
+            using var requestResult = await request.TryGetAsObjectAsync<UserInfo>();
 
             Assert.IsTrue(requestResult.IsSuccessStatusCode);
 

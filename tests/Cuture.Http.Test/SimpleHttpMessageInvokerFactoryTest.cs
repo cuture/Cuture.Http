@@ -8,17 +8,11 @@ namespace Cuture.Http.Test;
 [TestClass]
 public class SimpleHttpMessageInvokerFactoryTest : HttpMessageInvokerFactoryTest<SimpleHttpMessageInvokerPool>
 {
-    #region Private 字段
-
-    private const int HoldSeconds = 2;
-
-    #endregion Private 字段
-
     #region Protected 方法
 
     protected override SimpleHttpMessageInvokerPool CreateFactory()
     {
-        return new SimpleHttpMessageInvokerPool(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2));
+        return new SimpleHttpMessageInvokerPool();
     }
 
     #endregion Protected 方法
@@ -28,19 +22,22 @@ public class SimpleHttpMessageInvokerFactoryTest : HttpMessageInvokerFactoryTest
     [TestMethod]
     public async Task AutoReleaseTest()
     {
+        const double HoldSeconds = 1.5;
+
+        var pool = new SimpleHttpMessageInvokerPool(TimeSpan.FromSeconds(HoldSeconds), TimeSpan.FromSeconds(HoldSeconds));
         var request = "http://127.0.0.1/index".CreateHttpRequest();
 
-        var owner = _pool.Rent(request);
+        var owner = pool.Rent(request);
         var firstClientHash = owner.Value.GetHashCode();
         owner.Dispose();
 
-        owner = _pool.Rent(request);
+        owner = pool.Rent(request);
         Assert.AreEqual(firstClientHash, owner.Value.GetHashCode());
+
         owner.Dispose();
+        await Task.Delay(TimeSpan.FromSeconds((HoldSeconds + HoldSeconds) * 2));
 
-        await Task.Delay(TimeSpan.FromSeconds(HoldSeconds + HoldSeconds + 1));
-
-        owner = _pool.Rent(request);
+        owner = pool.Rent(request);
         var lastClientHash = owner.Value.GetHashCode();
         Assert.AreNotEqual(firstClientHash, lastClientHash);
     }
