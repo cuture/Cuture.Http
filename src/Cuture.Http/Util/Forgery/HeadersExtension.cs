@@ -14,10 +14,10 @@ public static class HeadersExtension
     /// 获取一个随机的IP地址
     /// </summary>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetRandomIpAddress()
     {
         var random = Random.Shared;
-
         return $"{random.Next(11, 240)}.{random.Next(1, 250)}.{random.Next(1, 240)}.{random.Next(1, 240)}";
     }
 

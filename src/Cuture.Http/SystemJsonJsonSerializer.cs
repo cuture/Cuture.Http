@@ -12,7 +12,7 @@ public class SystemJsonJsonSerializer : IJsonSerializer
 {
     #region Private 字段
 
-    private readonly JsonSerializerOptions? _options;
+    private readonly JsonSerializerOptions _options;
 
     #endregion Private 字段
 

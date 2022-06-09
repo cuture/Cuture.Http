@@ -23,14 +23,14 @@ public static class UserAgents
     public const string Edge = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.74 Safari/537.36 Edge/18.19041";
 
     /// <summary>
-    /// Edge on Chromium 99
+    /// Edge on Chromium 102
     /// </summary>
-    public const string EdgeChromium = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.74 Safari/537.36 Edg/99.0.1150.52";
+    public const string EdgeChromium = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36 Edg/102.0.1245.33";
 
     /// <summary>
-    /// FireFox 98
+    /// FireFox 101
     /// </summary>
-    public const string FireFox = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:98.0) Gecko/20100101 Firefox/98.0";
+    public const string FireFox = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:101.0) Gecko/20100101 Firefox/101.0";
 
     /// <summary>
     /// IE 11

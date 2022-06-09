@@ -13,7 +13,7 @@ public class SystemJsonFormDataFormatter : IFormDataFormatter
     #region Private 字段
 
     private readonly JsonDocumentOptions _jsonDocumentOptions;
-    private readonly JsonSerializerOptions? _jsonSerializerOptions;
+    private readonly JsonSerializerOptions _jsonSerializerOptions;
 
     #endregion Private 字段
 
