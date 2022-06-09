@@ -33,59 +33,6 @@ internal abstract class JsonDynamicAccessor : DynamicObject
 
     #region Protected 方法
 
-    private static readonly object s_false = false;
-    private static readonly object s_true = true;
-
-    protected static object? CreateNodeAccessValue(JsonNode? jsonNode)
-    {
-        if (jsonNode is JsonValue jsonValue)
-        {
-            var jsonValueElement = jsonValue.GetValue<JsonElement>();
-
-            return jsonValueElement.ValueKind switch
-            {
-                JsonValueKind.Object or JsonValueKind.Array => throw new InvalidOperationException(),
-                JsonValueKind.String => jsonValueElement.GetString(),
-                JsonValueKind.Number => GetNumberValue(jsonValueElement),
-                JsonValueKind.True => s_true,
-                JsonValueKind.False => s_false,
-                _ => null,
-            };
-        }
-        else if (jsonNode is JsonArray jsonArray)
-        {
-            return new JsonArrayDynamicAccessor(jsonArray);
-        }
-
-        return jsonNode is null ? null : new JsonObjectDynamicAccessor(jsonNode);
-
-        static object GetNumberValue(JsonElement jsonValueElement)
-        {
-            var rawText = jsonValueElement.GetRawText().Trim('\"');
-            var valueSpan = rawText.AsSpan();
-
-            if (valueSpan.Contains('.')
-                && double.TryParse(valueSpan, out var vDouble))
-            {
-                return vDouble;
-            }
-            else if (int.TryParse(valueSpan, out var vInt32))
-            {
-                return vInt32;
-            }
-            else if (long.TryParse(valueSpan, out var vInt64))
-            {
-                return vInt64;
-            }
-            else if (decimal.TryParse(valueSpan, out var vDecimal))
-            {
-                return vDecimal;
-            }
-
-            return rawText;
-        }
-    }
-
     protected static object GetIndex(object[] indexes)
     {
         if (indexes.Length > 1)

@@ -18,6 +18,7 @@ public static class JSON
     private static readonly JsonSerializerOptions s_jsonSerializerOptions = new()
     {
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        AllowTrailingCommas = true,
         PropertyNameCaseInsensitive = false,
     };
 
@@ -50,12 +51,23 @@ public static class JSON
     public static dynamic? parse(string? json)
     {
         if (string.IsNullOrEmpty(json)
-            || string.Equals("null", json, StringComparison.OrdinalIgnoreCase))
+            || string.Equals("null", json, StringComparison.OrdinalIgnoreCase)
+            || string.Equals("\"null\"", json, StringComparison.OrdinalIgnoreCase))
         {
             return null;
         }
 
         var jsonNode = JsonSerializer.Deserialize<JsonNode>(json, s_jsonSerializerOptions)!;
+
+        if (jsonNode is JsonArray jsonArray)
+        {
+            return new JsonArrayDynamicAccessor(jsonArray);
+        }
+        else if (jsonNode is JsonValue jsonValue)
+        {
+            return JsonNodeUtil.GetJsonValueValue(jsonValue);
+        }
+
         return new JsonObjectDynamicAccessor(jsonNode);
     }
 

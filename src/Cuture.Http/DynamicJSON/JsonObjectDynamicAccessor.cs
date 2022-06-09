@@ -64,7 +64,7 @@ internal class JsonObjectDynamicAccessor : JsonDynamicAccessor
     {
         if (_jsonObject.TryGetPropertyValue(propertyName, out var jsonNode))
         {
-            result = CreateNodeAccessValue(jsonNode);
+            result = JsonNodeUtil.GetNodeAccessValue(jsonNode);
             return true;
         }
         result = null;

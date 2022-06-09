@@ -34,7 +34,7 @@ internal class JsonArrayDynamicAccessor : JsonDynamicAccessor, IEnumerable
         var index = GetIndex(indexes);
         if (index is int intIndex)
         {
-            result = CreateNodeAccessValue(_jsonArray[intIndex]);
+            result = JsonNodeUtil.GetNodeAccessValue(_jsonArray[intIndex]);
             return true;
         }
 
@@ -85,7 +85,7 @@ internal class JsonArrayDynamicAccessor : JsonDynamicAccessor, IEnumerable
 
         #region Public 属性
 
-        public object Current => CreateNodeAccessValue(_jsonArray[_index])!;
+        public object Current => JsonNodeUtil.GetNodeAccessValue(_jsonArray[_index])!;
 
         #endregion Public 属性
 
