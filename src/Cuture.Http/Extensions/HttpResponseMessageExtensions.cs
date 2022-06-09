@@ -13,7 +13,7 @@ namespace Cuture.Http;
 /// <summary>
 /// HttpResponseMessage拓展方法
 /// </summary>
-public static class HttpResponseMessageExtensions
+public static partial class HttpResponseMessageExtensions
 {
     #region Task<HttpResponseMessage>
 

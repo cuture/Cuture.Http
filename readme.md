@@ -45,9 +45,10 @@ var request = "http://www.domain.com/api".ToHttpRequest();
 var response = await request.TryGetAsStringAsync();
 Console.WriteLine($"response:{response.Data}");
 ```
-* 请求方法包括直接返回请求结果的方法 `GetAsBytesAsync`、`GetAsJsonDocumentAsync`、`GetAsObjectAsync<T>`、`GetAsStringAsync` 和内部吞掉异常的 `TryGetAsBytesAsync`、`TryGetAsJsonDocumentAsync`、`TryGetAsObjectAsync<T>`、`TryGetAsStringAsync` ; 
+* 请求方法包括直接返回请求结果的方法 `GetAsBytesAsync`、`GetAsJsonDocumentAsync`、`GetAsObjectAsync<T>`、`GetAsStringAsync`、`GetAsDynamicJsonAsync` 和内部吞掉异常的 `TryGetAsBytesAsync`、`TryGetAsJsonDocumentAsync`、`TryGetAsObjectAsync<T>`、`TryGetAsStringAsync`、`TryGetAsDynamicJsonAsync` ; 
 * `GetAsJsonDocumentAsync` 将返回以 `System.Text.Json.JsonDocument.Parse` 转换请求结果后的 `JsonDocument` 对象;
 * `GetAsObjectAsync<T>` 将返回以 `System.Text.Json.JsonSerializer.DeserializeAsync<T>` 反序列化请求结果后的 `T` 对象;
+* `GetAsDynamicJsonAsync` 将返回一个基于 JSON 的可动态访问的 `dynamic` 对象;
 
 ## 使用示例
 

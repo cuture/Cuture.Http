@@ -220,7 +220,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="request"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<byte[]> GetAsBytesAsync(this IHttpRequest request) => request.ExecuteAsync().ReceiveAsBytesAsync();
+    public static Task<byte[]> GetAsBytesAsync(this IHttpRequest request) => request.ExecuteAsync().ReceiveAsBytesAsync(request.Token);
 
     /// <summary>
     /// 执行请求并尝试以
@@ -230,7 +230,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="request"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<HttpOperationResult<byte[]>> TryGetAsBytesAsync(this IHttpRequest request) => request.ExecuteAsync().TryReceiveAsBytesAsync();
+    public static Task<HttpOperationResult<byte[]>> TryGetAsBytesAsync(this IHttpRequest request) => request.ExecuteAsync().TryReceiveAsBytesAsync(request.Token);
 
     #endregion bytes
 
@@ -244,7 +244,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="request"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<string> GetAsStringAsync(this IHttpRequest request) => request.ExecuteAsync().ReceiveAsStringAsync();
+    public static Task<string> GetAsStringAsync(this IHttpRequest request) => request.ExecuteAsync().ReceiveAsStringAsync(request.Token);
 
     /// <summary>
     /// 执行请求并尝试以
@@ -254,7 +254,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="request"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<HttpOperationResult<string>> TryGetAsStringAsync(this IHttpRequest request) => request.ExecuteAsync().TryReceiveAsStringAsync();
+    public static Task<HttpOperationResult<string>> TryGetAsStringAsync(this IHttpRequest request) => request.ExecuteAsync().TryReceiveAsStringAsync(request.Token);
 
     #endregion String
 
@@ -267,7 +267,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="jsonDocumentOptions"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<JsonDocument?> GetAsJsonDocumentAsync(this IHttpRequest request, JsonDocumentOptions jsonDocumentOptions = default) => request.ExecuteAsync().ReceiveAsJsonDocumentAsync(jsonDocumentOptions);
+    public static Task<JsonDocument?> GetAsJsonDocumentAsync(this IHttpRequest request, JsonDocumentOptions jsonDocumentOptions = default) => request.ExecuteAsync().ReceiveAsJsonDocumentAsync(jsonDocumentOptions, request.Token);
 
     /// <summary>
     /// 执行请求并尝试以 json 接收返回数据，并解析为 <see cref="JsonDocument"/> 对象
@@ -276,7 +276,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="jsonDocumentOptions"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<TextHttpOperationResult<JsonDocument>> TryGetAsJsonDocumentAsync(this IHttpRequest request, JsonDocumentOptions jsonDocumentOptions = default) => request.ExecuteAsync().TryReceiveAsJsonDocumentAsync(jsonDocumentOptions);
+    public static Task<TextHttpOperationResult<JsonDocument>> TryGetAsJsonDocumentAsync(this IHttpRequest request, JsonDocumentOptions jsonDocumentOptions = default) => request.ExecuteAsync().TryReceiveAsJsonDocumentAsync(jsonDocumentOptions, false, request.Token);
 
     #endregion json as jsonDocument
 
@@ -292,7 +292,7 @@ public static class IHttpRequestExecutionExtensions
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Task<T?> GetAsObjectAsync<T>(this IHttpRequest request)
-            => request.ExecuteAsync().ReceiveAsObjectAsync<T>(request.GetJsonSerializerOrDefault());
+            => request.ExecuteAsync().ReceiveAsObjectAsync<T>(request.GetJsonSerializerOrDefault(), request.Token);
 
     /// <summary>
     /// 执行请求并尝试以 json 接收返回数据，并解析为类型
@@ -304,9 +304,29 @@ public static class IHttpRequestExecutionExtensions
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Task<TextHttpOperationResult<T>> TryGetAsObjectAsync<T>(this IHttpRequest request)
-            => request.ExecuteAsync().TryReceiveAsObjectAsync<T>(request.GetJsonSerializerOrDefault());
+            => request.ExecuteAsync().TryReceiveAsObjectAsync<T>(request.GetJsonSerializerOrDefault(), false, request.Token);
 
     #endregion json as object
+
+    #region json as DynamicJson
+
+    /// <summary>
+    /// 执行请求并以 json 接收返回数据，并解析为可动态访问的 dynamic 对象
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<dynamic?> GetAsDynamicJsonAsync(this IHttpRequest request) => request.ExecuteAsync().ReceiveAsDynamicJsonAsync(request.Token);
+
+    /// <summary>
+    /// 执行请求并尝试以 json 接收返回数据，并解析为可动态访问的 dynamic 对象
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Task<TextHttpOperationResult<dynamic>> TryGetAsDynamicJsonAsync(this IHttpRequest request) => request.ExecuteAsync().TryReceiveAsDynamicJsonAsync(false, request.Token);
+
+    #endregion json as DynamicJson
 
     #endregion Result
 
