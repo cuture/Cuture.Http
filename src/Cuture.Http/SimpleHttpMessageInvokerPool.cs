@@ -404,6 +404,18 @@ public sealed class SimpleHttpMessageInvokerPool : IHttpMessageInvokerPool
 
         #endregion Public 构造函数
 
+        #region Private 析构函数
+
+        /// <summary>
+        ///
+        /// </summary>
+        ~StrictDisposeOwnedHttpMessageInvoker()
+        {
+            Dispose(false);
+        }
+
+        #endregion Private 析构函数
+
         #region Internal 方法
 
         internal bool IsOutOfAliveTime()
@@ -414,7 +426,7 @@ public sealed class SimpleHttpMessageInvokerPool : IHttpMessageInvokerPool
         internal void RealDispose()
         {
             _handler.Dispose();
-            base.Dispose(false);
+            base.Dispose(true);
         }
 
         internal void Reference() => Interlocked.Increment(ref _referenceCount);
@@ -432,7 +444,8 @@ public sealed class SimpleHttpMessageInvokerPool : IHttpMessageInvokerPool
                 _pool.QueueToDispose(this);
                 return;
             }
-            if (currentReferenceCount < 0)
+            if (disposing
+                && currentReferenceCount < 0)
             {
                 throw new InvalidOperationException("Wrong number of dispose calls");
             }

@@ -28,10 +28,10 @@ public static class HttpResponseMessageExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<byte[]> ReceiveAsBytesAsync(this Task<HttpResponseMessage> requestTask, CancellationToken cancellationToken = default)
+    public static async Task<byte[]> ReceiveAsBytesAsync(this Task<HttpRequestExecuteState> requestTask, CancellationToken cancellationToken = default)
     {
-        using var response = await requestTask.ConfigureAwait(false);
-        return await response.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
+        using var executeState = await requestTask.ConfigureAwait(false);
+        return await executeState.HttpResponseMessage.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -43,12 +43,13 @@ public static class HttpResponseMessageExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<HttpOperationResult<byte[]>> TryReceiveAsBytesAsync(this Task<HttpResponseMessage> requestTask, CancellationToken cancellationToken = default)
+    public static async Task<HttpOperationResult<byte[]>> TryReceiveAsBytesAsync(this Task<HttpRequestExecuteState> requestTask, CancellationToken cancellationToken = default)
     {
         var result = new HttpOperationResult<byte[]>();
         try
         {
-            result.ResponseMessage = await requestTask.ConfigureAwait(false);
+            using var executeState = await requestTask.ConfigureAwait(false);
+            result.ResponseMessage = executeState.HttpResponseMessage;
             result.Data = await result.ResponseMessage.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -63,35 +64,32 @@ public static class HttpResponseMessageExtensions
     #region String
 
     /// <summary>
-    /// 以
-    /// <see cref="string"/>
-    /// 接收返回数据
+    /// 以 <see cref="string"/> 接收返回数据
     /// </summary>
     /// <param name="requestTask"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<string> ReceiveAsStringAsync(this Task<HttpResponseMessage> requestTask, CancellationToken cancellationToken = default)
+    public static async Task<string> ReceiveAsStringAsync(this Task<HttpRequestExecuteState> requestTask, CancellationToken cancellationToken = default)
     {
-        using var response = await requestTask.ConfigureAwait(false);
-        return await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+        using var executeState = await requestTask.ConfigureAwait(false);
+        return await executeState.HttpResponseMessage.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
-    /// 尝试以
-    /// <see cref="string"/>
-    /// 接收返回数据
+    /// 尝试以 <see cref="string"/> 接收返回数据
     /// </summary>
     /// <param name="requestTask"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<HttpOperationResult<string>> TryReceiveAsStringAsync(this Task<HttpResponseMessage> requestTask, CancellationToken cancellationToken = default)
+    public static async Task<HttpOperationResult<string>> TryReceiveAsStringAsync(this Task<HttpRequestExecuteState> requestTask, CancellationToken cancellationToken = default)
     {
         var result = new HttpOperationResult<string>();
         try
         {
-            result.ResponseMessage = await requestTask.ConfigureAwait(false);
+            using var executeState = await requestTask.ConfigureAwait(false);
+            result.ResponseMessage = executeState.HttpResponseMessage;
             result.Data = await result.ResponseMessage.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -113,10 +111,10 @@ public static class HttpResponseMessageExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<JsonDocument?> ReceiveAsJsonDocumentAsync(this Task<HttpResponseMessage> requestTask, JsonDocumentOptions jsonDocumentOptions = default, CancellationToken cancellationToken = default)
+    public static async Task<JsonDocument?> ReceiveAsJsonDocumentAsync(this Task<HttpRequestExecuteState> requestTask, JsonDocumentOptions jsonDocumentOptions = default, CancellationToken cancellationToken = default)
     {
-        using var response = await requestTask.ConfigureAwait(false);
-        return await response.ReceiveAsJsonDocumentAsync(jsonDocumentOptions, cancellationToken).ConfigureAwait(false);
+        using var executeState = await requestTask.ConfigureAwait(false);
+        return await executeState.HttpResponseMessage.ReceiveAsJsonDocumentAsync(jsonDocumentOptions, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -128,12 +126,14 @@ public static class HttpResponseMessageExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<TextHttpOperationResult<JsonDocument>> TryReceiveAsJsonDocumentAsync(this Task<HttpResponseMessage> requestTask, JsonDocumentOptions jsonDocumentOptions = default, bool textRequired = false, CancellationToken cancellationToken = default)
+    public static async Task<TextHttpOperationResult<JsonDocument>> TryReceiveAsJsonDocumentAsync(this Task<HttpRequestExecuteState> requestTask, JsonDocumentOptions jsonDocumentOptions = default, bool textRequired = false, CancellationToken cancellationToken = default)
     {
         var result = new TextHttpOperationResult<JsonDocument>();
         try
         {
-            result.ResponseMessage = await requestTask.ConfigureAwait(false);
+            using var executeState = await requestTask.ConfigureAwait(false);
+
+            result.ResponseMessage = executeState.HttpResponseMessage;
 
             if (!textRequired)
             {
@@ -172,10 +172,10 @@ public static class HttpResponseMessageExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<T?> ReceiveAsObjectAsync<T>(this Task<HttpResponseMessage> requestTask, ISerializer<string>? serializer = null, CancellationToken cancellationToken = default)
+    public static async Task<T?> ReceiveAsObjectAsync<T>(this Task<HttpRequestExecuteState> requestTask, ISerializer<string>? serializer = null, CancellationToken cancellationToken = default)
     {
-        using var response = await requestTask.ConfigureAwait(false);
-        return await response.ReceiveAsObjectAsync<T>(serializer ?? HttpRequestGlobalOptions.DefaultJsonSerializer, cancellationToken).ConfigureAwait(false);
+        using var executeState = await requestTask.ConfigureAwait(false);
+        return await executeState.HttpResponseMessage.ReceiveAsObjectAsync<T>(serializer ?? HttpRequestGlobalOptions.DefaultJsonSerializer, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -190,12 +190,14 @@ public static class HttpResponseMessageExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<TextHttpOperationResult<T>> TryReceiveAsObjectAsync<T>(this Task<HttpResponseMessage> requestTask, ISerializer<string>? serializer = null, bool textRequired = false, CancellationToken cancellationToken = default)
+    public static async Task<TextHttpOperationResult<T>> TryReceiveAsObjectAsync<T>(this Task<HttpRequestExecuteState> requestTask, ISerializer<string>? serializer = null, bool textRequired = false, CancellationToken cancellationToken = default)
     {
         var result = new TextHttpOperationResult<T>();
         try
         {
-            result.ResponseMessage = await requestTask.ConfigureAwait(false);
+            using var executeState = await requestTask.ConfigureAwait(false);
+
+            result.ResponseMessage = executeState.HttpResponseMessage;
 
             if (!textRequired)
             {
@@ -236,7 +238,7 @@ public static class HttpResponseMessageExtensions
     /// <param name="token"></param>
     /// <param name="bufferSize"></param>
     /// <returns></returns>
-    public static async Task DownloadToStreamAsync(this Task<HttpResponseMessage> requestTask,
+    public static async Task DownloadToStreamAsync(this Task<HttpRequestExecuteState> requestTask,
                                                    Stream targetStream,
                                                    CancellationToken token,
                                                    int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
@@ -256,7 +258,9 @@ public static class HttpResponseMessageExtensions
             throw new ArgumentException($"{nameof(targetStream)} must can write");
         }
 
-        using var response = await requestTask.ConfigureAwait(false);
+        using var executeState = await requestTask.ConfigureAwait(false);
+
+        using var response = executeState.HttpResponseMessage;
 
         var contentLength = response.Content.Headers.ContentLength;
 
@@ -299,7 +303,7 @@ public static class HttpResponseMessageExtensions
     /// <param name="token"></param>
     /// <param name="bufferSize"></param>
     /// <returns></returns>
-    public static async Task DownloadToStreamWithProgressAsync(this Task<HttpResponseMessage> requestTask,
+    public static async Task DownloadToStreamWithProgressAsync(this Task<HttpRequestExecuteState> requestTask,
                                                                Stream targetStream,
                                                                Func<long?, long, Task> progressCallback,
                                                                CancellationToken token,
@@ -325,7 +329,9 @@ public static class HttpResponseMessageExtensions
             throw new ArgumentException($"{nameof(targetStream)} must can write");
         }
 
-        using var response = await requestTask.ConfigureAwait(false);
+        using var executeState = await requestTask.ConfigureAwait(false);
+
+        using var response = executeState.HttpResponseMessage;
 
         var contentLength = response.Content.Headers.ContentLength;
 
@@ -366,7 +372,7 @@ public static class HttpResponseMessageExtensions
     /// <param name="bufferSize"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<byte[]> DownloadWithProgressAsync(this Task<HttpResponseMessage> requestTask,
+    public static async Task<byte[]> DownloadWithProgressAsync(this Task<HttpRequestExecuteState> requestTask,
                                                                Func<long?, long, Task> progressCallback,
                                                                CancellationToken token,
                                                                int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
@@ -398,7 +404,7 @@ public static class HttpResponseMessageExtensions
     /// <param name="token"></param>
     /// <param name="bufferSize"></param>
     /// <returns></returns>
-    public static async Task DownloadToStreamWithProgressAsync(this Task<HttpResponseMessage> requestTask,
+    public static async Task DownloadToStreamWithProgressAsync(this Task<HttpRequestExecuteState> requestTask,
                                                                Stream targetStream,
                                                                Action<long?, long> progressCallback,
                                                                CancellationToken token,
@@ -424,9 +430,9 @@ public static class HttpResponseMessageExtensions
             throw new ArgumentException($"{nameof(targetStream)} must can write");
         }
 
-        using var response = await requestTask.ConfigureAwait(false);
+        using var executeState = await requestTask.ConfigureAwait(false);
 
-        token.ThrowIfCancellationRequested();
+        using var response = executeState.HttpResponseMessage;
 
         var contentLength = response.Content.Headers.ContentLength;
 
@@ -469,7 +475,7 @@ public static class HttpResponseMessageExtensions
     /// <param name="bufferSize"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<byte[]> DownloadWithProgressAsync(this Task<HttpResponseMessage> requestTask,
+    public static async Task<byte[]> DownloadWithProgressAsync(this Task<HttpRequestExecuteState> requestTask,
                                                                Action<long?, long> progressCallback,
                                                                CancellationToken token,
                                                                int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
@@ -585,7 +591,7 @@ public static class HttpResponseMessageExtensions
     {
         using (responseMessage)
         {
-            var stream = await responseMessage.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+            using var stream = await responseMessage.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
             return await JsonDocument.ParseAsync(stream, jsonDocumentOptions, cancellationToken).ConfigureAwait(false);
         }
     }

@@ -24,7 +24,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="invoker"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static IDisposable? InternalGetHttpMessageInvoker(IHttpRequest request, out HttpMessageInvoker invoker)
+    private static IOwner<HttpMessageInvoker>? InternalGetHttpMessageInvoker(IHttpRequest request, out HttpMessageInvoker invoker)
     {
         var options = request.IsSetOptions ? request.ExecutionOptions : HttpRequestExecutionOptions.Default;
         if (options.MessageInvoker is not null)
@@ -53,18 +53,16 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="request"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static async Task<HttpResponseMessage> ExecuteAsync(this IHttpRequest request)
+    public static async Task<HttpRequestExecuteState> ExecuteAsync(this IHttpRequest request)
     {
-        //TODO 释放
-        var disposer = InternalGetHttpMessageInvoker(request, out var messageInvoker);
-
-        var cancellationToken = request.Token;
-
-        using var httpRequestMessage = await request.GetHttpRequestMessageAsync(cancellationToken).ConfigureAwait(false);
+        var invokerOwner = InternalGetHttpMessageInvoker(request, out var messageInvoker);
 
         CancellationTokenSource? localTokenSource = null;
+
         try
         {
+            var cancellationToken = request.Token;
+            using var httpRequestMessage = await request.GetHttpRequestMessageAsync(cancellationToken).ConfigureAwait(false);
             if (request.Timeout > 0)
             {
                 localTokenSource = CancellationTokenSource.CreateLinkedTokenSource(request.Token);
@@ -78,7 +76,12 @@ public static class IHttpRequestExecutionExtensions
 
             var result = await task.ConfigureAwait(false);
 
-            return result;
+            return new(result, invokerOwner);
+        }
+        catch
+        {
+            invokerOwner?.Dispose();
+            throw;
         }
         finally
         {
@@ -144,7 +147,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="content"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<HttpResponseMessage> PostJsonAsync(this IHttpRequest request, object content)
+    public static Task<HttpRequestExecuteState> PostJsonAsync(this IHttpRequest request, object content)
             => request.UsePost().WithJsonContent(content).ExecuteAsync();
 
     /// <summary>
@@ -155,7 +158,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="jsonSerializer"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<HttpResponseMessage> PostJsonAsync(this IHttpRequest request, object content, IJsonSerializer jsonSerializer)
+    public static Task<HttpRequestExecuteState> PostJsonAsync(this IHttpRequest request, object content, IJsonSerializer jsonSerializer)
             => request.UsePost().WithJsonContent(content, jsonSerializer).ExecuteAsync();
 
     /// <summary>
@@ -165,7 +168,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="json"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<HttpResponseMessage> PostJsonAsync(this IHttpRequest request, string json)
+    public static Task<HttpRequestExecuteState> PostJsonAsync(this IHttpRequest request, string json)
             => request.UsePost().WithJsonContent(json).ExecuteAsync();
 
     #endregion Json
@@ -179,7 +182,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="content"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<HttpResponseMessage> PostFormAsync(this IHttpRequest request, object content)
+    public static Task<HttpRequestExecuteState> PostFormAsync(this IHttpRequest request, object content)
             => request.UsePost().WithFormContent(content).ExecuteAsync();
 
     /// <summary>
@@ -190,7 +193,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="formatter"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<HttpResponseMessage> PostFormAsync(this IHttpRequest request, object content, IFormDataFormatter formatter)
+    public static Task<HttpRequestExecuteState> PostFormAsync(this IHttpRequest request, object content, IFormDataFormatter formatter)
             => request.UsePost().WithFormContent(content, formatter).ExecuteAsync();
 
     /// <summary>
@@ -200,7 +203,7 @@ public static class IHttpRequestExecutionExtensions
     /// <param name="content"></param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Task<HttpResponseMessage> PostFormAsync(this IHttpRequest request, string content)
+    public static Task<HttpRequestExecuteState> PostFormAsync(this IHttpRequest request, string content)
             => request.UsePost().WithFormContent(content).ExecuteAsync();
 
     #endregion Form
@@ -391,7 +394,7 @@ public static class IHttpRequestExecutionExtensions
 
     #region Private 方法
 
-    private static TTaskResult SetRequestContinueTaskWithTimeout<TTaskResult>(this Task<HttpResponseMessage> requestTask, IHttpRequest request, Func<Task<HttpResponseMessage>, CancellationToken, TTaskResult> createContinueTaskFunc)
+    private static TTaskResult SetRequestContinueTaskWithTimeout<TTaskResult>(this Task<HttpRequestExecuteState> requestTask, IHttpRequest request, Func<Task<HttpRequestExecuteState>, CancellationToken, TTaskResult> createContinueTaskFunc)
         where TTaskResult : Task
     {
         if (request.Timeout > 0)
