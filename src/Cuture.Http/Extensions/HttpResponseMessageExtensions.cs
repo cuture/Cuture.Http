@@ -17,6 +17,17 @@ public static partial class HttpResponseMessageExtensions
 {
     #region Task<HttpResponseMessage>
 
+    /// <summary>
+    /// 将 <see cref="HttpResponseMessage"/> 任务包装为 <see cref="HttpRequestExecuteState"/> 任务，以支持相关的后续处理拓展方法
+    /// </summary>
+    /// <param name="requestTask"></param>
+    /// <returns></returns>
+    public static async Task<HttpRequestExecuteState> WrapAsExecuteState(this Task<HttpResponseMessage> requestTask)
+    {
+        var responseMessage = await requestTask.ConfigureAwait(false);
+        return new(responseMessage);
+    }
+
     #region bytes
 
     /// <summary>

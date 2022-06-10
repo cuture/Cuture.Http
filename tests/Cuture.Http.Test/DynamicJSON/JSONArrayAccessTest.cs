@@ -1,0 +1,49 @@
+﻿using System;
+using System.Runtime.CompilerServices;
+
+using Cuture.Http.DynamicJSON;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Cuture.Http.Test.DynamicJSON;
+
+[TestClass]
+public class JSONArrayAccessTest
+{
+    #region Public 方法
+
+    [TestMethod]
+    public void ShouldThrowOutOfRangeException()
+    {
+        var origin = new DynamicJSONTestClass();
+        var json = JSON.create(origin);
+        origin.Check(json);
+
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => Access(json.MyProperty6[json.MyProperty6.length + 1]));
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => Access(json.MyProperty6[-1]));
+    }
+
+    [TestMethod]
+    public void ShouldAccessSuccessfulByForeach()
+    {
+        var origin = new DynamicJSONTestClass();
+        var json = JSON.create(origin);
+        origin.Check(json);
+        var index = 0;
+        foreach (var item in json.MyProperty6)
+        {
+            Assert.AreEqual(origin.MyProperty6[index++], item);
+        }
+    }
+
+
+    #endregion Public 方法
+
+    #region Private 方法
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static void Access(object? obj)
+    { }
+
+    #endregion Private 方法
+}

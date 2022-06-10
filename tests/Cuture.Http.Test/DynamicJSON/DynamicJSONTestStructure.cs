@@ -23,6 +23,8 @@ internal struct DynamicJSONTestStructure
         }
     };
 
+    public string[] MyProperty6 { get; set; } = new[] { "1", "2", "3" };
+    
     #endregion Public 属性
 
     #region Public 构造函数
@@ -44,6 +46,14 @@ internal struct DynamicJSONTestStructure
         Assert.AreEqual(2, json.MyProperty4.b);
         Assert.AreEqual("3", json.MyProperty4.c.a);
         Assert.AreEqual("4", json.MyProperty4.c.b);
+
+        if (MyProperty6?.Length > 0)
+        {
+            for (int i = 0; i < MyProperty6.Length; i++)
+            {
+                Assert.AreEqual(MyProperty6[i], json.MyProperty6[i]);
+            }
+        }
     }
 
     #endregion Public 方法
