@@ -42,7 +42,10 @@ public static partial class HttpResponseMessageExtensions
     public static async Task<byte[]> ReceiveAsBytesAsync(this Task<HttpRequestExecuteState> requestTask, CancellationToken cancellationToken = default)
     {
         using var executeState = await requestTask.ConfigureAwait(false);
-        return await executeState.HttpResponseMessage.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
+        return await executeState.HttpResponseMessage.EnsureSuccessStatusCode()
+                                                     .Content
+                                                     .ReadAsByteArrayAsync(cancellationToken)
+                                                     .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -60,8 +63,12 @@ public static partial class HttpResponseMessageExtensions
         try
         {
             using var executeState = await requestTask.ConfigureAwait(false);
-            result.ResponseMessage = executeState.HttpResponseMessage;
-            result.Data = await result.ResponseMessage.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
+
+            var responseMessage = executeState.HttpResponseMessage;
+            result.ResponseMessage = responseMessage;
+            responseMessage.EnsureSuccessStatusCode();
+
+            result.Data = await responseMessage.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -84,7 +91,10 @@ public static partial class HttpResponseMessageExtensions
     public static async Task<string> ReceiveAsStringAsync(this Task<HttpRequestExecuteState> requestTask, CancellationToken cancellationToken = default)
     {
         using var executeState = await requestTask.ConfigureAwait(false);
-        return await executeState.HttpResponseMessage.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+        return await executeState.HttpResponseMessage.EnsureSuccessStatusCode()
+                                                     .Content
+                                                     .ReadAsStringAsync(cancellationToken)
+                                                     .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -100,8 +110,12 @@ public static partial class HttpResponseMessageExtensions
         try
         {
             using var executeState = await requestTask.ConfigureAwait(false);
-            result.ResponseMessage = executeState.HttpResponseMessage;
-            result.Data = await result.ResponseMessage.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+
+            var responseMessage = executeState.HttpResponseMessage;
+            result.ResponseMessage = responseMessage;
+            responseMessage.EnsureSuccessStatusCode();
+
+            result.Data = await responseMessage.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -125,7 +139,9 @@ public static partial class HttpResponseMessageExtensions
     public static async Task<JsonDocument?> ReceiveAsJsonDocumentAsync(this Task<HttpRequestExecuteState> requestTask, JsonDocumentOptions jsonDocumentOptions = default, CancellationToken cancellationToken = default)
     {
         using var executeState = await requestTask.ConfigureAwait(false);
-        return await executeState.HttpResponseMessage.ReceiveAsJsonDocumentAsync(jsonDocumentOptions, cancellationToken).ConfigureAwait(false);
+        return await executeState.HttpResponseMessage.EnsureSuccessStatusCode()
+                                                     .ReceiveAsJsonDocumentAsync(jsonDocumentOptions, cancellationToken)
+                                                     .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -144,15 +160,17 @@ public static partial class HttpResponseMessageExtensions
         {
             using var executeState = await requestTask.ConfigureAwait(false);
 
-            result.ResponseMessage = executeState.HttpResponseMessage;
+            var responseMessage = executeState.HttpResponseMessage;
+            result.ResponseMessage = responseMessage;
+            responseMessage.EnsureSuccessStatusCode();
 
             if (!textRequired)
             {
-                result.Data = await result.ResponseMessage.ReceiveAsJsonDocumentAsync(jsonDocumentOptions, cancellationToken).ConfigureAwait(false);
+                result.Data = await responseMessage.ReceiveAsJsonDocumentAsync(jsonDocumentOptions, cancellationToken).ConfigureAwait(false);
             }
             else
             {
-                var json = await result.ResponseMessage.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                var json = await responseMessage.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
                 result.Text = json;
 
                 if (!string.IsNullOrEmpty(json))
@@ -186,7 +204,9 @@ public static partial class HttpResponseMessageExtensions
     public static async Task<T?> ReceiveAsObjectAsync<T>(this Task<HttpRequestExecuteState> requestTask, ISerializer<string>? serializer = null, CancellationToken cancellationToken = default)
     {
         using var executeState = await requestTask.ConfigureAwait(false);
-        return await executeState.HttpResponseMessage.ReceiveAsObjectAsync<T>(serializer ?? HttpRequestGlobalOptions.DefaultJsonSerializer, cancellationToken).ConfigureAwait(false);
+        return await executeState.HttpResponseMessage.EnsureSuccessStatusCode()
+                                                     .ReceiveAsObjectAsync<T>(serializer ?? HttpRequestGlobalOptions.DefaultJsonSerializer, cancellationToken)
+                                                     .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -208,15 +228,17 @@ public static partial class HttpResponseMessageExtensions
         {
             using var executeState = await requestTask.ConfigureAwait(false);
 
-            result.ResponseMessage = executeState.HttpResponseMessage;
-
+            var responseMessage = executeState.HttpResponseMessage;
+            result.ResponseMessage = responseMessage;
+            responseMessage.EnsureSuccessStatusCode();
+            
             if (!textRequired)
             {
-                result.Data = await result.ResponseMessage.ReceiveAsObjectAsync<T>(serializer, cancellationToken).ConfigureAwait(false);
+                result.Data = await responseMessage.ReceiveAsObjectAsync<T>(serializer, cancellationToken).ConfigureAwait(false);
             }
             else
             {
-                var json = await result.ResponseMessage.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                var json = await responseMessage.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
                 result.Text = json;
 
                 if (!string.IsNullOrEmpty(json))
@@ -271,7 +293,7 @@ public static partial class HttpResponseMessageExtensions
 
         using var executeState = await requestTask.ConfigureAwait(false);
 
-        using var response = executeState.HttpResponseMessage;
+        using var response = executeState.HttpResponseMessage.EnsureSuccessStatusCode();
 
         var contentLength = response.Content.Headers.ContentLength;
 
@@ -342,7 +364,7 @@ public static partial class HttpResponseMessageExtensions
 
         using var executeState = await requestTask.ConfigureAwait(false);
 
-        using var response = executeState.HttpResponseMessage;
+        using var response = executeState.HttpResponseMessage.EnsureSuccessStatusCode();
 
         var contentLength = response.Content.Headers.ContentLength;
 
@@ -443,7 +465,7 @@ public static partial class HttpResponseMessageExtensions
 
         using var executeState = await requestTask.ConfigureAwait(false);
 
-        using var response = executeState.HttpResponseMessage;
+        using var response = executeState.HttpResponseMessage.EnsureSuccessStatusCode();
 
         var contentLength = response.Content.Headers.ContentLength;
 
@@ -582,7 +604,7 @@ public static partial class HttpResponseMessageExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static async Task<byte[]> ReceiveAsBytesAsync(this HttpResponseMessage responseMessage, CancellationToken cancellationToken = default)
     {
-        using (responseMessage)
+        using (responseMessage.EnsureSuccessStatusCode())
         {
             return await responseMessage.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
         }
@@ -600,7 +622,7 @@ public static partial class HttpResponseMessageExtensions
                                                                        JsonDocumentOptions jsonDocumentOptions = default,
                                                                        CancellationToken cancellationToken = default)
     {
-        using (responseMessage)
+        using (responseMessage.EnsureSuccessStatusCode())
         {
             using var stream = await responseMessage.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
             return await JsonDocument.ParseAsync(stream, jsonDocumentOptions, cancellationToken).ConfigureAwait(false);
@@ -620,7 +642,7 @@ public static partial class HttpResponseMessageExtensions
                                                          ISerializer<string>? serializer = null,
                                                          CancellationToken cancellationToken = default)
     {
-        using (responseMessage)
+        using (responseMessage.EnsureSuccessStatusCode())
         {
             using var stream = await responseMessage.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
             return await (serializer ?? HttpRequestGlobalOptions.DefaultJsonSerializer).DeserializeAsync<T>(stream, cancellationToken).ConfigureAwait(false);
@@ -636,7 +658,7 @@ public static partial class HttpResponseMessageExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static async Task<string> ReceiveAsStringAsync(this HttpResponseMessage responseMessage, CancellationToken cancellationToken = default)
     {
-        using (responseMessage)
+        using (responseMessage.EnsureSuccessStatusCode())
         {
             return await responseMessage.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
         }
