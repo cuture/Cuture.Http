@@ -26,7 +26,7 @@ Install-Package Cuture.Http
 
 1. 创建请求
 ```C#
-var request = "http://www.domain.com/api".ToHttpRequest();
+var request = "http://www.domain.com/api".CreateHttpRequest();
 ```
 
 2. 设置请求
@@ -54,24 +54,33 @@ Console.WriteLine($"response:{response.Data}");
 
 ### 获取网页数据
 ```C#
-var response = await "http://www.baidu.com".ToHttpRequest()
+var response = await "http://www.baidu.com".CreateHttpRequest()
                                             .GetAsStringAsync();
 Console.WriteLine(response);
 ```
 ### 获取并解析接口数据
 ```C#
 var url = "https://docs.microsoft.com/api/privacy/cookieConsent?locale=zh-cn";
-var response = await url.ToHttpRequest()
+var response = await url.CreateHttpRequest()
                         .GetAsJsonDocumentAsync();
 Console.WriteLine(response["message"]["message"]);
 ```
+-------
+使用 `dynamic`:
+```C#
+var url = "https://docs.microsoft.com/api/privacy/cookieConsent?locale=zh-cn";
+var response = await url.CreateHttpRequest()
+                        .GetAsDynamicJsonAsync();
+Console.WriteLine(response.message.message);
+```
+
 ### 需要进度的下载
 ```C#
 var url = "https://download.visualstudio.microsoft.com/download/pr/a16689d1-0872-4ef9-a592-406d3038d8f7/cf4f84504385a599f0cb6a5c113ccb34/aspnetcore-runtime-3.1.0-win-x64.exe";
 try
 {
     using var stream = File.OpenWrite("d:\\runtime.exe");
-    await url.ToHttpRequest()
+    await url.CreateHttpRequest()
              .DownloadToStreamWithProgressAsync((contentLength, downloaded) =>
              {
                  if (contentLength > 0)

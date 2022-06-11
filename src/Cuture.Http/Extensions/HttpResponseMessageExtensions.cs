@@ -25,6 +25,9 @@ public static partial class HttpResponseMessageExtensions
     public static async Task<HttpRequestExecuteState> WrapAsExecuteState(this Task<HttpResponseMessage> requestTask)
     {
         var responseMessage = await requestTask.ConfigureAwait(false);
+        
+        responseMessage.EnsureSuccessStatusCode();
+
         return new(responseMessage);
     }
 

@@ -74,9 +74,11 @@ public static class IHttpRequestExecutionExtensions
                        ? messageInvoker.InternalExecuteWithAutoRedirectCoreAsync(httpRequestMessage, request.MaxAutomaticRedirections, cancellationToken)
                        : messageInvoker.SendAsync(httpRequestMessage, cancellationToken);
 
-            var result = await task.ConfigureAwait(false);
+            var responseMessage = await task.ConfigureAwait(false);
 
-            return new(result, invokerOwner);
+            responseMessage.EnsureSuccessStatusCode();
+
+            return new(responseMessage, invokerOwner);
         }
         catch
         {
