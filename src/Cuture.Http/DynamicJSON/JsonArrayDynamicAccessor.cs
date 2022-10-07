@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Text.Json.Nodes;
 
 namespace Cuture.Http.DynamicJSON;
 
-internal class JsonArrayDynamicAccessor : JsonDynamicAccessor, IEnumerable
+internal class JsonArrayDynamicAccessor
+    : JsonDynamicAccessor
+    , IEnumerable
+    , IDynamicEnumerable
 {
     #region Private 字段
 
@@ -68,6 +72,19 @@ internal class JsonArrayDynamicAccessor : JsonDynamicAccessor, IEnumerable
 
         throw new ArgumentException($"not support for index {index}.");
     }
+
+    #region IDynamicEnumerable
+
+    public IEnumerable<dynamic?> AsEnumerable()
+    {
+        var enumerator = GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            yield return enumerator.Current;
+        }
+    }
+
+    #endregion IDynamicEnumerable
 
     #endregion Public 方法
 

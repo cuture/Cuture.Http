@@ -9,6 +9,7 @@
 - 连接复用，内部使用`System.Net.Http.HttpClient`进行请求; 
 - 使用链式的拓展方法可以配置请求的绝大多数信息;
 - Http相关的常用工具类及拓展方法;
+- DynamicJSON(基于`dynamic`的`json`快速访问);
 - 请求构建工具，直接使用原始请求数据（如从Fiddler中复制）复现请求；
 - 目标框架为`.Net6.0`;
 
@@ -117,6 +118,40 @@ request.LoadHeadersFromRaw(rawBase64Str);
 request.LoadContentFromRaw(rawBase64Str);
 //读取请求头和内容
 request.LoadHeadersAndContentFromRaw(rawBase64Str);
+```
+
+### DynamicJSON
+
+支持访问与修改
+
+```C#
+using Cuture.Http.DynamicJSON;
+
+//使用对象创建
+var json = JSON.create(new object());
+Console.WriteLine(json.Prop1.Array1[0].Prop2);
+
+//使用json字符串创建
+json = JSON.parse("{}");
+Console.WriteLine(json.Prop1.Array1[0].Prop2);
+```
+
+#### IEnumerable
+
+使用`IEnumerable`以支持使用Linq, (C#不支持实现dynamic的接口，所以需要额外的转换)
+
+```C#
+//遍历Array
+//显式赋值类型
+IEnumerable<dynamic> enumerable = json.Array;
+//通过IDynamicEnumerable
+var enumerable = ((IDynamicEnumerable)json.Array).AsEnumerable();
+
+//遍历属性
+//显式赋值类型
+IEnumerable<KeyValuePair<string, dynamic?>> enumerable = json;
+//通过IDynamicKeyValueEnumerable
+var enumerable = ((IDynamicKeyValueEnumerable)json).AsEnumerable();
 ```
 
 ### 部分其它工具拓展示例

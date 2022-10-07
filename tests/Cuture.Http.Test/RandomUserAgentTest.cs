@@ -50,7 +50,6 @@ public class RandomUserAgentTest : WebServerHostTestBase
         await ParallelRequestAsync(() => GetRequest(), () => UserAgents.RandomUserAgent());
     }
 
-    [TestMethod]
     private async Task ParallelRequestAsync(Func<IHttpRequest> getRequest, Func<string> getUserAgent)
     {
         var target = GetTargetResult();

@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Runtime.CompilerServices;
-
-using Cuture.Http.DynamicJSON;
+﻿using System.Runtime.CompilerServices;
 
 using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,15 +13,18 @@ public class JSONFieldAccessTest
     [TestMethod]
     public void ShouldThrowRuntimeBinderExceptionForErrorField()
     {
-        var origin = new DynamicJSONTestClass();
-        var json = JSON.create(origin);
-        origin.Check(json);
+        DynamicJSONTestClass.GetTestValue(out var origin, out var json);
 
         Assert.ThrowsException<RuntimeBinderException>(() => Access(json.notexistfield));
     }
 
     #endregion Public 方法
 
+    #region Private 方法
+
     [MethodImpl(MethodImplOptions.NoInlining)]
-    static void Access(object? obj) { }
+    private static void Access(object? obj)
+    { }
+
+    #endregion Private 方法
 }

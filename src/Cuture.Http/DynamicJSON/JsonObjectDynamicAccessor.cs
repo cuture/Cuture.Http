@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Text.Json.Nodes;
 
 namespace Cuture.Http.DynamicJSON;
 
-internal class JsonObjectDynamicAccessor : JsonDynamicAccessor
+internal class JsonObjectDynamicAccessor 
+    : JsonDynamicAccessor
+    , IDynamicKeyValueEnumerable
 {
     #region Private 字段
 
@@ -50,6 +53,18 @@ internal class JsonObjectDynamicAccessor : JsonDynamicAccessor
         SetProperty(binder.Name, value);
         return true;
     }
+
+    #region IDynamicKeyValueEnumerable
+
+    public IEnumerable<KeyValuePair<string, dynamic?>> AsEnumerable()
+    {
+        foreach (var (key, value) in _jsonObject)
+        {
+            yield return new(key, JSON.create(value));
+        }
+    }
+
+    #endregion IDynamicKeyValueEnumerable
 
     #endregion Public 方法
 

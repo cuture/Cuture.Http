@@ -1,7 +1,5 @@
 ﻿using System.Linq;
 
-using Cuture.Http.DynamicJSON;
-
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Cuture.Http.Test.DynamicJSON;
@@ -14,9 +12,7 @@ public class JSONModifyTest
     [TestMethod]
     public void ShouldModifyArraySuccess()
     {
-        var origin = new DynamicJSONTestClass();
-        var json = JSON.create(origin);
-        origin.Check(json);
+        DynamicJSONTestClass.GetTestValue(out var origin, out var json);
 
         for (int i = 0; i < json.MyProperty6.length; i++)
         {
@@ -37,9 +33,7 @@ public class JSONModifyTest
     [TestMethod]
     public void ShouldModifyFieldSuccess()
     {
-        var origin = new DynamicJSONTestClass();
-        var json = JSON.create(origin);
-        origin.Check(json);
+        DynamicJSONTestClass.GetTestValue(out var origin, out var json);
 
         json.MyProperty1 = origin.MyProperty1 = 2;
         json.MyProperty2 = origin.MyProperty2 = 4;

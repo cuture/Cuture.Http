@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Cuture.Http.DynamicJSON;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Cuture.Http.Test.DynamicJSON;
 
@@ -23,11 +25,18 @@ internal class DynamicJSONTestClass
         }
     };
 
-    public string[] MyProperty6 { get; set; } = new[] { "1", "2", "3" };
+    public string[] MyProperty6 { get; set; } = new[] { "1", "2", "3", "4", "5" };
 
     #endregion Public 属性
-
+   
     #region Public 方法
+
+    public static void GetTestValue(out DynamicJSONTestClass origin, out dynamic json)
+    {
+        origin = new DynamicJSONTestClass();
+        json = JSON.create(origin);
+        origin.Check(json);
+    }
 
     public void Check(dynamic json)
     {

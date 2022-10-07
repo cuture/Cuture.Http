@@ -44,6 +44,29 @@ public static class JSON
     public static dynamic? create(object? obj) => parse(stringify(obj));
 
     /// <summary>
+    /// 将 <paramref name="jsonNode"/> 转换为可动态访问的 JSON 对象
+    /// </summary>
+    /// <param name="jsonNode"></param>
+    /// <returns></returns>
+    public static dynamic? dynamic(JsonNode? jsonNode)
+    {
+        if (jsonNode is null)
+        {
+            return null;
+        }
+        else if (jsonNode is JsonArray jsonArray)
+        {
+            return new JsonArrayDynamicAccessor(jsonArray);
+        }
+        else if (jsonNode is JsonValue jsonValue)
+        {
+            return JsonNodeUtil.GetJsonValueValue(jsonValue);
+        }
+
+        return new JsonObjectDynamicAccessor(jsonNode);
+    }
+
+    /// <summary>
     /// 将 <paramref name="json"/> 转换为可动态访问的 JSON 对象
     /// </summary>
     /// <param name="json"></param>
@@ -59,16 +82,7 @@ public static class JSON
 
         var jsonNode = JsonSerializer.Deserialize<JsonNode>(json, s_jsonSerializerOptions)!;
 
-        if (jsonNode is JsonArray jsonArray)
-        {
-            return new JsonArrayDynamicAccessor(jsonArray);
-        }
-        else if (jsonNode is JsonValue jsonValue)
-        {
-            return JsonNodeUtil.GetJsonValueValue(jsonValue);
-        }
-
-        return new JsonObjectDynamicAccessor(jsonNode);
+        return dynamic(jsonNode);
     }
 
     /// <summary>
