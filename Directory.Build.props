@@ -1,10 +1,18 @@
 ﻿<Project>
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
 
     <LangVersion>latest</LangVersion>
 
-    <McrVersionNet6>6.0.*</McrVersionNet6>
+    <McrDotNetVersion>6.0.*</McrDotNetVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(TargetFramework) == 'net6.0'">
+    <McrDotNetVersion>6.0.*</McrDotNetVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(TargetFramework) == 'net7.0'">
+    <McrDotNetVersion>7.0.0-*</McrDotNetVersion>
   </PropertyGroup>
 
   <!--Package Info-->
@@ -12,7 +20,7 @@
     <PackageIdPrefix>Cuture.Http</PackageIdPrefix>
     <Authors>Stratos</Authors>
 
-    <Version>2.5.0</Version>
+    <Version>2.6.0</Version>
 
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/cuture/Cuture.Http</PackageProjectUrl>
@@ -22,5 +30,4 @@
 
     <PackageTags>http request httprequest httpclient httphelper</PackageTags>
   </PropertyGroup>
-
 </Project>

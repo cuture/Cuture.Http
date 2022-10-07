@@ -18,13 +18,13 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework) == 'net6.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="$(McrVersionNet6)" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="$(McrVersionNet6)" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="$(McrVersionNet6)" />
-    <PackageReference Include="System.IO.Pipelines" Version="$(McrVersionNet6)" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="$(McrDotNetVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="$(McrDotNetVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="$(McrDotNetVersion)" />
+    <PackageReference Include="System.IO.Pipelines" Version="$(McrDotNetVersion)" />
 
-    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="$(McrVersionNet6)" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="$(McrDotNetVersion)" />
   </ItemGroup>
 
   <ItemGroup>
