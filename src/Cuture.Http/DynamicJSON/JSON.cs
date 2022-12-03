@@ -24,6 +24,13 @@ public static class JSON
 
     #endregion Private 字段
 
+    #region Public 字段
+
+    /// <inheritdoc cref="DynamicJSON.Undefined"/>
+    public static readonly dynamic Undefined = DynamicJSON.Undefined.Instance;
+
+    #endregion Public 字段
+
     #region Public 构造函数
 
     static JSON()
@@ -65,6 +72,13 @@ public static class JSON
 
         return new JsonObjectDynamicAccessor(jsonNode);
     }
+
+    /// <summary>
+    /// 是否为 undefined （排除为 null 的情况）
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static bool isUndefined(object? value) => DynamicJSON.Undefined.IsUndefined(value);
 
     /// <summary>
     /// 将 <paramref name="json"/> 转换为可动态访问的 JSON 对象

@@ -27,8 +27,12 @@ internal class DynamicJSONTestClass
 
     public string[] MyProperty6 { get; set; } = new[] { "1", "2", "3", "4", "5" };
 
+    public int? NullableProperty { get; set; } = null;
+
+    public object? NullProperty { get; set; } = null;
+
     #endregion Public 属性
-   
+
     #region Public 方法
 
     public static void GetTestValue(out DynamicJSONTestClass origin, out dynamic json)

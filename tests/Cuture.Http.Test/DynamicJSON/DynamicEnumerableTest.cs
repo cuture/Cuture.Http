@@ -148,7 +148,6 @@ public class DynamicEnumerableTest
                 string key = item.Key;
                 Assert.IsNotNull(key);
                 dynamic value = item.Value;
-                Assert.IsNotNull(value);
 
                 Check(origin, key, value);
             }
@@ -161,7 +160,6 @@ public class DynamicEnumerableTest
             Assert.IsNotNull(originProperty);
 
             var originValue = originProperty.GetValue(origin);
-            Assert.IsNotNull(originValue);
 
             //直接比较有点麻烦。。直接转json字符串比较
             Assert.AreEqual(JsonSerializer.Serialize(originValue), JSON.stringify(value));

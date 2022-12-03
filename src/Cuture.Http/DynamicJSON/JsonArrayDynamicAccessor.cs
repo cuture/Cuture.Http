@@ -52,8 +52,7 @@ internal class JsonArrayDynamicAccessor
             result = _jsonArray.Count;
             return true;
         }
-        result = null;
-        return false;
+        return base.TryGetMember(binder, out result);
     }
 
     public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object? value)

@@ -165,7 +165,8 @@ public static class RequestBuildTool
             throw new ArgumentException("not found “url” in data. Please check the raw data.");
         }
 
-        version = ReadSegmentData(ref data, NewLineSeparatorSpan);
+        var versionValue = ReadSegmentData(ref data, NewLineSeparatorSpan);
+        version = versionValue;
         if (version.IsEmpty)
         {
             throw new ArgumentException("not found “version” in data. Please check the raw data.");

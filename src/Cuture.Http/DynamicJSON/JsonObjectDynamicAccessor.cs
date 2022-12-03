@@ -5,7 +5,7 @@ using System.Text.Json.Nodes;
 
 namespace Cuture.Http.DynamicJSON;
 
-internal class JsonObjectDynamicAccessor 
+internal class JsonObjectDynamicAccessor
     : JsonDynamicAccessor
     , IDynamicKeyValueEnumerable
 {
@@ -36,7 +36,11 @@ internal class JsonObjectDynamicAccessor
 
     public override bool TryGetMember(GetMemberBinder binder, out object? result)
     {
-        return TryGetMember(binder.Name, out result);
+        if (!TryGetMember(binder.Name, out result))
+        {
+            return base.TryGetMember(binder, out result);
+        }
+        return true;
     }
 
     public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object? value)

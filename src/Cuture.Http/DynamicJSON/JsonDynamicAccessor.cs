@@ -64,6 +64,15 @@ internal abstract class JsonDynamicAccessor : DynamicObject
         }
     }
 
+    public override bool TryGetMember(GetMemberBinder binder, out object? result)
+    {
+        if (!base.TryGetMember(binder, out result))
+        {
+            result = new Undefined(binder.Name);
+        }
+        return true;
+    }
+
     #endregion Public 方法
 
     #region Protected 方法
