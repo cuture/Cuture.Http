@@ -180,12 +180,10 @@ public sealed class SimpleHttpMessageInvokerPool : IHttpMessageInvokerPool
             return InternalRentDefaultInvoker();
         }
 
-        //HACK 此处是否可能有问题?
-        int proxyHash = -1261813833;
-
+        var proxyHash = new HashCode();
         if (proxy is WebProxy webProxy)
         {
-            proxyHash = HashCode.Combine(proxyHash, webProxy.Address);
+            proxyHash.Add(webProxy.Address);
         }
         else
         {
@@ -194,15 +192,17 @@ public sealed class SimpleHttpMessageInvokerPool : IHttpMessageInvokerPool
             {
                 return InternalRentDefaultInvoker();
             }
-            proxyHash = HashCode.Combine(proxyHash, proxyUri);
+            proxyHash.Add(proxyUri);
         }
 
         if (proxy.Credentials?.GetCredential(requestUri, string.Empty) is NetworkCredential credential)
         {
-            proxyHash = HashCode.Combine(proxyHash, credential.UserName, credential.Password, credential.Domain);
+            proxyHash.Add(credential.UserName);
+            proxyHash.Add(credential.Password);
+            proxyHash.Add(credential.Domain);
         }
 
-        var placeHolder = _proxyedInvokers.GetOrAdd(proxyHash, static _ => new());
+        var placeHolder = _proxyedInvokers.GetOrAdd(proxyHash.ToHashCode(), static _ => new());
 
         return InternalRent(placeHolder, () => new(this, HttpClientUtil.CreateProxyedClientHandler(proxy)));
     }

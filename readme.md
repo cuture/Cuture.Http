@@ -136,6 +136,13 @@ json = JSON.parse("{}");
 Console.WriteLine(json.Prop1.Array1[0].Prop2);
 ```
 
+判断是否为未定义字段
+```C#
+json.notexistfield == JSON.Undefined
+
+JSON.isUndefined(json.notexistfield)
+```
+
 #### IEnumerable
 
 使用`IEnumerable`以支持使用Linq, (C#不支持实现dynamic的接口，所以需要额外的转换)
