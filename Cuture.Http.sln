@@ -21,13 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7919F974
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A0B881FB-EC00-4AEC-BA79-E96D4B6D43C8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github", "github", "{825B9007-9121-440C-9A2A-BC7128BB9F78}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{2E74B385-B74D-46BC-A7E5-2C3CD6433879}"
-	ProjectSection(SolutionItems) = preProject
-		.github\workflows\PublishNugetPackage.yml = .github\workflows\PublishNugetPackage.yml
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,7 +47,6 @@ Global
 		{3456EFFC-BC71-4B15-806F-52986D81B541} = {A0B881FB-EC00-4AEC-BA79-E96D4B6D43C8}
 		{D0923D42-8D04-48D8-88B9-1B652735CEDB} = {7919F974-50C9-4046-90D8-0869B72752D2}
 		{74200310-7C28-41F8-9484-4F27A59820FB} = {7919F974-50C9-4046-90D8-0869B72752D2}
-		{2E74B385-B74D-46BC-A7E5-2C3CD6433879} = {825B9007-9121-440C-9A2A-BC7128BB9F78}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {51BA2EAC-5B89-4D64-9A32-C1662333F156}

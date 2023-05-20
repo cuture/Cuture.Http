@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,6 +32,16 @@ namespace Cuture.Http.Test.Server.Controllers
                 Method = Request.Method,
                 Url = Request.GetEncodedUrl(),
             });
+        }
+
+        [Route("hashcontent")]
+        [HttpPost]
+        public async Task<string> HashContentAsync()
+        {
+            using var stream = new MemoryStream();
+            await Request.Body.CopyToAsync(stream);
+            var data = stream.ToArray();
+            return Convert.ToHexString(MD5.HashData(data));
         }
 
         [Route("post")]

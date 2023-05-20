@@ -13,9 +13,9 @@ public static class UserAgents
     #region 字段
 
     /// <summary>
-    /// Chrome 100
+    /// Chrome 111
     /// </summary>
-    public const string Chrome = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36";
+    public const string Chrome = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36";
 
     /// <summary>
     /// Edge
@@ -23,14 +23,14 @@ public static class UserAgents
     public const string Edge = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.74 Safari/537.36 Edge/18.19041";
 
     /// <summary>
-    /// Edge on Chromium 102
+    /// Edge on Chromium 113
     /// </summary>
-    public const string EdgeChromium = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36 Edg/102.0.1245.33";
+    public const string EdgeChromium = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.42";
 
     /// <summary>
-    /// FireFox 101
+    /// FireFox 113
     /// </summary>
-    public const string FireFox = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:101.0) Gecko/20100101 Firefox/101.0";
+    public const string FireFox = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0";
 
     /// <summary>
     /// IE 11

@@ -37,13 +37,8 @@ public static partial class IHttpRequestBuildExtensions
     /// <param name="contentType">Content-Type</param>
     /// <param name="contentLength">数据长度（如果小于0，则会使用data的全部数据作为Content）</param>
     /// <returns></returns>
-    public static IHttpRequest WithContent(this IHttpRequest request, in ReadOnlySpan<byte> data, string contentType, int contentLength = -1)
+    public static IHttpRequest WithContent(this IHttpRequest request, in ReadOnlySpan<byte> data, string? contentType, int contentLength = -1)
     {
-        if (string.IsNullOrWhiteSpace(contentType))
-        {
-            throw new ArgumentException($"“{nameof(contentType)}”不能为 Null 或空白", nameof(contentType));
-        }
-
         var contentData = contentLength > 0 ? data[..contentLength].ToArray() : data.ToArray();
         return request.WithContent(new TypedByteArrayContent(contentData, contentType));
     }
@@ -56,16 +51,11 @@ public static partial class IHttpRequestBuildExtensions
     /// <param name="contentType">Content-Type</param>
     /// <param name="memoryOwner"></param>
     /// <returns></returns>
-    internal static IHttpRequest WithContent(this IHttpRequest request, in ReadOnlyMemory<byte> data, string contentType, IMemoryOwner<byte>? memoryOwner = null)
+    internal static IHttpRequest WithContent(this IHttpRequest request, in ReadOnlyMemory<byte> data, string? contentType, IMemoryOwner<byte>? memoryOwner = null)
     {
         if (memoryOwner is null)
         {
             return request.WithContent(data.Span, contentType, -1);
-        }
-
-        if (string.IsNullOrWhiteSpace(contentType))
-        {
-            throw new ArgumentException($"“{nameof(contentType)}”不能为 Null 或空白", nameof(contentType));
         }
 
         return request.WithContent(new TypedMemoryOwnedContent(memoryOwner, data, contentType));

@@ -18,31 +18,6 @@ public static class RequestBuildTool
 
     /// <inheritdoc cref="FromRaw(ReadOnlyMemory{byte}, IMemoryOwner{byte}?)"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IHttpRequest FromRawBase64(string rawBase64String)
-    {
-        var length = Base64.GetMaxDecodedFromUtf8Length(rawBase64String.Length);
-        var memoryOwner = MemoryPool<byte>.Shared.Rent(length);
-
-        if (Convert.TryFromBase64String(rawBase64String, memoryOwner.Memory.Span, out var bytesWritten))
-        {
-            try
-            {
-                return FromRaw(memoryOwner.Memory.Slice(0, bytesWritten), memoryOwner);
-            }
-            catch
-            {
-                memoryOwner.Dispose();
-                throw;
-            }
-        }
-
-        memoryOwner.Dispose();
-
-        throw new ArgumentException($"无法正确解析base64数据", nameof(rawBase64String));
-    }
-
-    /// <inheritdoc cref="FromRaw(ReadOnlyMemory{byte}, IMemoryOwner{byte}?)"/>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IHttpRequest FromRaw(byte[] data) => FromRaw(data.AsMemory(), null);
 
     /// <summary>
@@ -50,15 +25,8 @@ public static class RequestBuildTool
     /// </summary>
     /// <param name="data">请求的原始数据</param>
     /// <returns></returns>
-    public static IHttpRequest FromRaw(ReadOnlySpan<byte> data) => FromRaw(data.ToArray().AsMemory(), null);
-
-    /// <summary>
-    /// 读取存放原始请求信息的文件，<inheritdoc cref="FromRaw(ReadOnlyMemory{byte}, IMemoryOwner{byte}?)"/>
-    /// </summary>
-    /// <param name="filePath"></param>
-    /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IHttpRequest FromRawFile(string filePath) => FromRaw(File.ReadAllBytes(filePath).AsMemory(), null);
+    public static IHttpRequest FromRaw(ReadOnlySpan<byte> data) => FromRaw(data.ToArray().AsMemory(), null);
 
     /// <summary>
     /// 从请求的原始数据构建请求
@@ -93,6 +61,39 @@ public static class RequestBuildTool
         return request;
     }
 
+    /// <inheritdoc cref="FromRaw(ReadOnlyMemory{byte}, IMemoryOwner{byte}?)"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IHttpRequest FromRawBase64(string rawBase64String)
+    {
+        var length = Base64.GetMaxDecodedFromUtf8Length(rawBase64String.Length);
+        var memoryOwner = MemoryPool<byte>.Shared.Rent(length);
+
+        if (Convert.TryFromBase64String(rawBase64String, memoryOwner.Memory.Span, out var bytesWritten))
+        {
+            try
+            {
+                return FromRaw(memoryOwner.Memory.Slice(0, bytesWritten), memoryOwner);
+            }
+            catch
+            {
+                memoryOwner.Dispose();
+                throw;
+            }
+        }
+
+        memoryOwner.Dispose();
+
+        throw new ArgumentException($"无法正确解析base64数据", nameof(rawBase64String));
+    }
+
+    /// <summary>
+    /// 读取存放原始请求信息的文件，<inheritdoc cref="FromRaw(ReadOnlyMemory{byte}, IMemoryOwner{byte}?)"/>
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IHttpRequest FromRawFile(string filePath) => FromRaw(File.ReadAllBytes(filePath).AsMemory(), null);
+
     #endregion Public 方法
 
     #region Internal 方法
@@ -106,11 +107,11 @@ public static class RequestBuildTool
     /// <param name="headers"></param>
     /// <param name="encoding"></param>
     /// <returns></returns>
-    internal static (int contentLength, string contentType) LoadHeaders(ref ReadOnlySpan<byte> data, System.Net.Http.Headers.HttpHeaders? headers, Encoding? encoding)
+    internal static (int contentLength, string? contentType) LoadHeaders(ref ReadOnlySpan<byte> data, System.Net.Http.Headers.HttpHeaders? headers, Encoding? encoding)
     {
         var newLineSeparator = NewLineSeparatorSpan;
         var contentLength = -1;
-        var contentType = string.Empty;
+        string? contentType = null;
         encoding ??= Encoding.UTF8;
 
         while (data.Length > 0)
