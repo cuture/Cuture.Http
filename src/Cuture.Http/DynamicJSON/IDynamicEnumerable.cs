@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Cuture.Http.DynamicJSON;
+﻿namespace Cuture.Http.DynamicJSON;
 
 /// <summary>
 /// 以 <see cref="IEnumerable{T}"/> 访问数组对象元素

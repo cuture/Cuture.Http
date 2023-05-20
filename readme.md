@@ -120,7 +120,7 @@ request.LoadContentFromRaw(rawBase64Str);
 request.LoadHeadersAndContentFromRaw(rawBase64Str);
 ```
 
-### DynamicJSON
+### [DynamicJSON](https://github.com/cuture/Cuture.Extensions.SystemTextJson.Dynamic)
 
 支持访问与修改
 

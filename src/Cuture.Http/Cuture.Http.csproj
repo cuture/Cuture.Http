@@ -4,6 +4,7 @@
     
     <PackageReadmeFile>readme.md</PackageReadmeFile>
 
+		<ImplicitUsings>true</ImplicitUsings>
     <Nullable>enable</Nullable>
 
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -21,6 +22,8 @@
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>Cuture.Http.Test</_Parameter1>
     </AssemblyAttribute>
+
+		<Using Include="System.Text.Json"/>
   </ItemGroup>
 
   <!--Buid-->

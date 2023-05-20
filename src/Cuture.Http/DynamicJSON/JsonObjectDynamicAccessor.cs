@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
+﻿using System.Dynamic;
 using System.Text.Json.Nodes;
 
 namespace Cuture.Http.DynamicJSON;
@@ -25,6 +23,24 @@ internal class JsonObjectDynamicAccessor
     #endregion Public 构造函数
 
     #region Public 方法
+
+    public override IEnumerable<string> GetDynamicMemberNames()
+    {
+        foreach (var item in _jsonObject)
+        {
+            yield return item.Key;
+        }
+    }
+
+    public override bool TryConvert(ConvertBinder binder, out object? result)
+    {
+        if (binder.ReturnType == typeof(JsonObject))
+        {
+            result = _jsonObject;
+            return true;
+        }
+        return base.TryConvert(binder, out result);
+    }
 
     public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object? result)
     {
@@ -62,9 +78,9 @@ internal class JsonObjectDynamicAccessor
 
     public IEnumerable<KeyValuePair<string, dynamic?>> AsEnumerable()
     {
-        foreach (var (key, value) in _jsonObject)
+        foreach (var item in _jsonObject)
         {
-            yield return new(key, JSON.create(value));
+            yield return new(item.Key, JSON.create(item.Value));
         }
     }
 

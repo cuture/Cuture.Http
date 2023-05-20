@@ -1,5 +1,4 @@
-﻿using System;
-using System.Dynamic;
+﻿using System.Dynamic;
 
 namespace Cuture.Http.DynamicJSON;
 
@@ -8,6 +7,16 @@ namespace Cuture.Http.DynamicJSON;
 /// </summary>
 public sealed class Undefined : DynamicObject
 {
+    #region Undefined访问传播
+
+    /// <summary>
+    /// <see cref="Undefined"/> 访问传播 (可以访问 <see cref="Undefined"/> 的成员并返回为 <see cref="Undefined"/>)
+    /// </summary>
+    [ThreadStatic]
+    private static bool s_undefinedPropagation;
+
+    #endregion Undefined访问传播
+
     #region Private 字段
 
     private readonly string _name;
@@ -41,14 +50,36 @@ public sealed class Undefined : DynamicObject
     #region Public 方法
 
     /// <summary>
+    /// 是否为 undefined （排除为 null 的情况）<br/>
+    /// 委托 <paramref name="proprytyAccessDelegate"/> 中可以访问 <see cref="Undefined"/> 的成员并返回为 <see cref="Undefined"/><br/>
+    /// eg:<br/>
+    /// 检查对象 user - {"name":"name","age":1} 是否定义了 box1.box2.box3 <br/>
+    /// IsUndefined(() => user.box1.box2.box3)
+    /// </summary>
+    /// <param name="proprytyAccessDelegate">属性访问委托</param>
+    /// <returns></returns>
+    public static bool IsUndefined(in Func<object?> proprytyAccessDelegate)
+    {
+        try
+        {
+            s_undefinedPropagation = true;
+
+            var value = proprytyAccessDelegate();
+
+            return IsUndefined(value);
+        }
+        finally
+        {
+            s_undefinedPropagation = false;
+        }
+    }
+
+    /// <summary>
     /// 是否为 undefined （排除为 null 的情况）
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    public static bool IsUndefined(object? value)
-    {
-        return value is Undefined;
-    }
+    public static bool IsUndefined(in object? value) => value is Undefined;
 
     /// <summary>
     ///
@@ -96,13 +127,30 @@ public sealed class Undefined : DynamicObject
     public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object? result) => throw GetInvalidOperationException();
 
     /// <inheritdoc/>
-    public override bool TryGetMember(GetMemberBinder binder, out object? result) => throw GetInvalidOperationException();
+    public override bool TryGetMember(GetMemberBinder binder, out object? result)
+    {
+        if (s_undefinedPropagation)
+        {
+            result = this;
+            return true;
+        }
+        throw GetInvalidOperationException();
+    }
 
     /// <inheritdoc/>
     public override bool TryInvoke(InvokeBinder binder, object?[]? args, out object? result) => throw GetInvalidOperationException();
 
     /// <inheritdoc/>
-    public override bool TryInvokeMember(InvokeMemberBinder binder, object?[]? args, out object? result) => throw GetInvalidOperationException();
+    public override bool TryInvokeMember(InvokeMemberBinder binder, object?[]? args, out object? result)
+    {
+        if ((args is null || args.Length == 0)
+            && string.Equals(nameof(IsUndefined), binder.Name, StringComparison.OrdinalIgnoreCase))
+        {
+            result = JsonNodeUtil.ObjectTrue;
+            return true;
+        }
+        throw GetInvalidOperationException();
+    }
 
     /// <inheritdoc/>
     public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object? value) => throw GetInvalidOperationException();
@@ -111,7 +159,22 @@ public sealed class Undefined : DynamicObject
     public override bool TrySetMember(SetMemberBinder binder, object? value) => throw GetInvalidOperationException();
 
     /// <inheritdoc/>
-    public override bool TryUnaryOperation(UnaryOperationBinder binder, out object? result) => throw GetInvalidOperationException();
+    public override bool TryUnaryOperation(UnaryOperationBinder binder, out object? result)
+    {
+        return binder.Operation switch
+        {
+            System.Linq.Expressions.ExpressionType.IsTrue => Result(false, out result),
+            System.Linq.Expressions.ExpressionType.IsFalse => Result(true, out result),
+            System.Linq.Expressions.ExpressionType.Not => Result(true, out result),
+            _ => throw GetInvalidOperationException(),
+        };
+
+        static bool Result(object? resultValue, out object? result)
+        {
+            result = resultValue;
+            return true;
+        }
+    }
 
     private Exception GetInvalidOperationException() => new InvalidOperationException($"\"{_name}\" is undefined.");
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text.Encodings.Web;
-using System.Text.Json;
+﻿using System.Text.Encodings.Web;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
@@ -13,21 +11,25 @@ namespace Cuture.Http.DynamicJSON;
 /// </summary>
 public static class JSON
 {
-    #region Private 字段
+    #region Internal 字段
 
-    private static readonly JsonSerializerOptions s_jsonSerializerOptions = new()
+    internal static readonly JsonSerializerOptions s_defaultJsonSerializerOptions = new()
     {
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         AllowTrailingCommas = true,
         PropertyNameCaseInsensitive = false,
+        NumberHandling = JsonNumberHandling.AllowReadingFromString,
+        IncludeFields = true,
+        ReadCommentHandling = JsonCommentHandling.Skip,
+        UnknownTypeHandling = JsonUnknownTypeHandling.JsonNode,
     };
 
-    #endregion Private 字段
+    #endregion Internal 字段
 
     #region Public 字段
 
-    /// <inheritdoc cref="DynamicJSON.Undefined"/>
-    public static readonly dynamic Undefined = DynamicJSON.Undefined.Instance;
+    /// <inheritdoc cref="Cuture.Http.DynamicJSON.Undefined"/>
+    public static readonly dynamic Undefined = Cuture.Http.DynamicJSON.Undefined.Instance;
 
     #endregion Public 字段
 
@@ -35,8 +37,8 @@ public static class JSON
 
     static JSON()
     {
-        s_jsonSerializerOptions.Converters.Add(new DynamicJsonConverter<JsonObjectDynamicAccessor>());
-        s_jsonSerializerOptions.Converters.Add(new DynamicJsonConverter<JsonArrayDynamicAccessor>());
+        s_defaultJsonSerializerOptions.Converters.Add(new DynamicJsonConverter<JsonObjectDynamicAccessor>());
+        s_defaultJsonSerializerOptions.Converters.Add(new DynamicJsonConverter<JsonArrayDynamicAccessor>());
     }
 
     #endregion Public 构造函数
@@ -73,12 +75,11 @@ public static class JSON
         return new JsonObjectDynamicAccessor(jsonNode);
     }
 
-    /// <summary>
-    /// 是否为 undefined （排除为 null 的情况）
-    /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public static bool isUndefined(object? value) => DynamicJSON.Undefined.IsUndefined(value);
+    /// <inheritdoc cref="Undefined.IsUndefined(in object?)"/>
+    public static bool isUndefined(object? value) => Cuture.Http.DynamicJSON.Undefined.IsUndefined(value);
+
+    /// <inheritdoc cref="Undefined.IsUndefined(in Func{object?})"/>
+    public static bool isUndefined(in Func<object?> proprytyAccessDelegate) => Cuture.Http.DynamicJSON.Undefined.IsUndefined(proprytyAccessDelegate);
 
     /// <summary>
     /// 将 <paramref name="json"/> 转换为可动态访问的 JSON 对象
@@ -94,7 +95,7 @@ public static class JSON
             return null;
         }
 
-        var jsonNode = JsonSerializer.Deserialize<JsonNode>(json, s_jsonSerializerOptions)!;
+        var jsonNode = JsonSerializer.Deserialize<JsonNode>(json!, s_defaultJsonSerializerOptions)!;
 
         return dynamic(jsonNode);
     }
@@ -113,11 +114,11 @@ public static class JSON
 
         if (obj is JsonDynamicAccessor jsonDynamicAccessor)
         {
-            return jsonDynamicAccessor.Node.ToJsonString(s_jsonSerializerOptions);
+            return jsonDynamicAccessor.Node.ToJsonString(s_defaultJsonSerializerOptions);
         }
         else
         {
-            return JsonSerializer.Serialize(obj, obj.GetType(), s_jsonSerializerOptions);
+            return JsonSerializer.Serialize(obj, obj.GetType(), s_defaultJsonSerializerOptions);
         }
     }
 

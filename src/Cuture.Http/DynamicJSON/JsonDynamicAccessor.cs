@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
+﻿using System.Dynamic;
 using System.Text.Json.Nodes;
 
 namespace Cuture.Http.DynamicJSON;
@@ -38,22 +36,27 @@ internal abstract class JsonDynamicAccessor : DynamicObject
                 if (this is IDynamicEnumerable dynamicEnumerable)
                 {
                     result = dynamicEnumerable.AsEnumerable();
-                    return true;
                 }
                 else if (this is IDynamicKeyValueEnumerable dynamicKeyValueEnumerable)
                 {
                     result = EnumerateKeyValueToObject(dynamicKeyValueEnumerable.AsEnumerable());
-                    return true;
                 }
             }
             else if (binder.ReturnType == typeof(IEnumerable<KeyValuePair<string, dynamic?>>)
                      && this is IDynamicKeyValueEnumerable dynamicKeyValueEnumerable)
             {
                 result = dynamicKeyValueEnumerable.AsEnumerable();
-                return true;
+            }
+            else if (binder.ReturnType == typeof(JsonNode))
+            {
+                result = Node;
+            }
+            else
+            {
+                result = Node.Deserialize(binder.ReturnType, JSON.s_defaultJsonSerializerOptions);
             }
         }
-        return false;
+        return true;
 
         static IEnumerable<dynamic> EnumerateKeyValueToObject(IEnumerable<KeyValuePair<string, dynamic?>> keyValueEnumerable)
         {
@@ -71,6 +74,23 @@ internal abstract class JsonDynamicAccessor : DynamicObject
             result = new Undefined(binder.Name);
         }
         return true;
+    }
+
+    public override bool TryUnaryOperation(UnaryOperationBinder binder, out object? result)
+    {
+        return binder.Operation switch
+        {
+            System.Linq.Expressions.ExpressionType.IsTrue => Result(true, out result),
+            System.Linq.Expressions.ExpressionType.IsFalse => Result(false, out result),
+            System.Linq.Expressions.ExpressionType.Not => Result(false, out result),
+            _ => base.TryUnaryOperation(binder, out result),
+        };
+
+        static bool Result(object? resultValue, out object? result)
+        {
+            result = resultValue;
+            return true;
+        }
     }
 
     #endregion Public 方法

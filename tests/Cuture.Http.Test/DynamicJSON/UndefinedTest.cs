@@ -37,7 +37,6 @@ public class UndefinedTest
         Assert.ThrowsException<InvalidOperationException>(() => json.notexistfield << 1);
         Assert.ThrowsException<InvalidOperationException>(() => json.notexistfield >> 1);
         Assert.ThrowsException<InvalidOperationException>(() => ~json.notexistfield);
-        Assert.ThrowsException<InvalidOperationException>(() => !json.notexistfield);
     }
 
     [TestMethod]
@@ -57,6 +56,6 @@ public class UndefinedTest
 
         Assert.IsFalse(JSON.isUndefined(json.NullableProperty));
         Assert.IsFalse(JSON.isUndefined(json.NullProperty));
-        Assert.IsFalse(JSON.isUndefined(null));
+        Assert.IsFalse(JSON.isUndefined((object)null));
     }
 }
