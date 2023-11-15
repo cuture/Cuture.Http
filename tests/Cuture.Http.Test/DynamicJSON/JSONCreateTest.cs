@@ -42,8 +42,8 @@ public class JSONCreateTest
     [TestMethod]
     public void ShouldSuccessForNull()
     {
-        Assert.AreEqual(null, JSON.create(null));
-        Assert.AreEqual(null, JSON.create("null"));
+        Assert.AreEqual<dynamic>(null, JSON.create(null));
+        Assert.AreEqual<dynamic>(null, JSON.create("null"));
     }
 
     [TestMethod]

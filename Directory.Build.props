@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
 
     <LangVersion>latest</LangVersion>
 
@@ -14,13 +14,17 @@
   <PropertyGroup Condition="$(TargetFramework) == 'net7.0'">
     <McrDotNetVersion>7.0.*</McrDotNetVersion>
   </PropertyGroup>
-
+	
+	<PropertyGroup Condition="$(TargetFramework) == 'net8.0'">
+		<McrDotNetVersion>8.0.*</McrDotNetVersion>
+	</PropertyGroup>
+	
   <!--Package Info-->
   <PropertyGroup>
     <PackageIdPrefix>Cuture.Http</PackageIdPrefix>
     <Authors>Stratos</Authors>
 
-    <Version>2.7.2</Version>
+    <Version>2.8.0</Version>
 
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/cuture/Cuture.Http</PackageProjectUrl>

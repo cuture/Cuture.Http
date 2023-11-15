@@ -12,8 +12,8 @@ public class JSONParseTest
     [TestMethod]
     public void ShouldSuccessForNull()
     {
-        Assert.AreEqual(null, JSON.parse(null));
-        Assert.AreEqual(null, JSON.parse("null"));
+        Assert.AreEqual<dynamic>(null, JSON.parse(null));
+        Assert.AreEqual<dynamic>(null, JSON.parse("null"));
     }
 
     [TestMethod]

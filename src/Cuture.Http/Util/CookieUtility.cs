@@ -80,10 +80,7 @@ public static class CookieUtility
     /// <returns></returns>
     public static string Merge(string? srcCookie, string? addonCookie, bool mergeSameKey = true)
     {
-        if (srcCookie == null)
-        {
-            srcCookie = string.Empty;
-        }
+        srcCookie ??= string.Empty;
         if (string.IsNullOrWhiteSpace(addonCookie))
         {
             return srcCookie;

@@ -43,15 +43,7 @@ public class DefaultHttpRequest : HttpRequestMessage, IHttpRequest
     /// <inheritdoc/>
     public HttpRequestExecutionOptions ExecutionOptions
     {
-        get
-        {
-            if (_options is null)
-            {
-                _options = HttpRequestExecutionOptions.Default.Clone();
-            }
-
-            return _options;
-        }
+        get => _options ??= HttpRequestExecutionOptions.Default.Clone();
         set => _options = value;
     }
 

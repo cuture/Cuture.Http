@@ -176,7 +176,7 @@ public sealed class Undefined : DynamicObject
         }
     }
 
-    private Exception GetInvalidOperationException() => new InvalidOperationException($"\"{_name}\" is undefined.");
+    private InvalidOperationException GetInvalidOperationException() => new InvalidOperationException($"\"{_name}\" is undefined.");
 
     #endregion Override
 

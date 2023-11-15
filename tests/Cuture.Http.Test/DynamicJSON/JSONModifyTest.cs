@@ -23,7 +23,7 @@ public class JSONModifyTest
 
         json.MyProperty6 = null;
 
-        Assert.AreEqual(null, json.MyProperty6);
+        Assert.AreEqual<dynamic>(null, json.MyProperty6);
 
         json.MyProperty6 = origin.MyProperty6.ToArray();
 

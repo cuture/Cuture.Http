@@ -276,10 +276,7 @@ public static partial class HttpResponseMessageExtensions
                                                    CancellationToken token,
                                                    int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
     {
-        if (requestTask is null)
-        {
-            throw new ArgumentNullException(nameof(requestTask));
-        }
+        ArgumentNullException.ThrowIfNull(requestTask);
 
         if (bufferSize < 1)
         {
@@ -342,15 +339,8 @@ public static partial class HttpResponseMessageExtensions
                                                                CancellationToken token,
                                                                int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
     {
-        if (requestTask is null)
-        {
-            throw new ArgumentNullException(nameof(requestTask));
-        }
-
-        if (progressCallback is null)
-        {
-            throw new ArgumentNullException(nameof(progressCallback));
-        }
+        ArgumentNullException.ThrowIfNull(requestTask);
+        ArgumentNullException.ThrowIfNull(progressCallback);
 
         if (bufferSize < 1)
         {
@@ -443,15 +433,8 @@ public static partial class HttpResponseMessageExtensions
                                                                CancellationToken token,
                                                                int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
     {
-        if (requestTask is null)
-        {
-            throw new ArgumentNullException(nameof(requestTask));
-        }
-
-        if (progressCallback is null)
-        {
-            throw new ArgumentNullException(nameof(progressCallback));
-        }
+        ArgumentNullException.ThrowIfNull(requestTask);
+        ArgumentNullException.ThrowIfNull(progressCallback);
 
         if (bufferSize < 1)
         {
