@@ -3,6 +3,7 @@
     <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
 
     <LangVersion>latest</LangVersion>
+    <ImplicitUsings>true</ImplicitUsings>
 
     <McrDotNetVersion>6.0.*</McrDotNetVersion>
   </PropertyGroup>
@@ -24,7 +25,7 @@
     <PackageIdPrefix>Cuture.Http</PackageIdPrefix>
     <Authors>Stratos</Authors>
 
-    <Version>2.8.0</Version>
+    <Version>2.8.1</Version>
 
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/cuture/Cuture.Http</PackageProjectUrl>

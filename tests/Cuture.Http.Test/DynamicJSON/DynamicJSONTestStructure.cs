@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace Cuture.Http.Test.DynamicJSON;
+﻿namespace Cuture.Http.Test.DynamicJSON;
 
 internal struct DynamicJSONTestStructure
 {
@@ -24,7 +22,7 @@ internal struct DynamicJSONTestStructure
     };
 
     public string[] MyProperty6 { get; set; } = new[] { "1", "2", "3" };
-    
+
     #endregion Public 属性
 
     #region Public 构造函数

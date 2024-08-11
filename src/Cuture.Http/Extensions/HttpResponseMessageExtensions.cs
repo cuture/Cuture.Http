@@ -1,12 +1,6 @@
-﻿using System;
-using System.Buffers;
-using System.IO;
+﻿using System.Buffers;
 using System.Net;
-using System.Net.Http;
 using System.Runtime.CompilerServices;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Cuture.Http;
 
@@ -231,7 +225,7 @@ public static partial class HttpResponseMessageExtensions
             var responseMessage = executeState.HttpResponseMessage;
             result.ResponseMessage = responseMessage;
             responseMessage.EnsureSuccessStatusCode();
-            
+
             if (!textRequired)
             {
                 result.Data = await responseMessage.ReceiveAsObjectAsync<T>(serializer, cancellationToken).ConfigureAwait(false);

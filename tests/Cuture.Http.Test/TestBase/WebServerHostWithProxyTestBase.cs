@@ -1,8 +1,4 @@
-﻿using System.Threading.Tasks;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace Cuture.Http.Test;
+﻿namespace Cuture.Http.Test;
 
 /// <summary>
 /// host webapi服务以及代理服务的测试基类

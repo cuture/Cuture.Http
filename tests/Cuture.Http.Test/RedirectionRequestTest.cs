@@ -1,8 +1,4 @@
-﻿using System.Threading.Tasks;
-
-using Cuture.Http.Test.Server;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Cuture.Http.Test.Server;
 
 namespace Cuture.Http.Test;
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Buffers;
-using System.Net.Http;
+﻿using System.Buffers;
 using System.Runtime.CompilerServices;
 
 namespace Cuture.Http;

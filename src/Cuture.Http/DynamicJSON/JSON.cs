@@ -13,16 +13,13 @@ public static class JSON
 {
     #region Internal 字段
 
-    internal static readonly JsonSerializerOptions s_defaultJsonSerializerOptions = new()
-    {
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        AllowTrailingCommas = true,
-        PropertyNameCaseInsensitive = false,
-        NumberHandling = JsonNumberHandling.AllowReadingFromString,
-        IncludeFields = true,
-        ReadCommentHandling = JsonCommentHandling.Skip,
-        UnknownTypeHandling = JsonUnknownTypeHandling.JsonNode,
-    };
+    internal static readonly JsonDocumentOptions s_defaultJsonDocumentOptions;
+
+    internal static readonly JsonNodeOptions s_defaultJsonNodeOptions;
+
+    internal static readonly JsonSerializerOptions s_defaultJsonSerializerOptions;
+
+    internal static readonly JsonWriterOptions s_defaultJsonWriterOptions;
 
     #endregion Internal 字段
 
@@ -37,8 +34,38 @@ public static class JSON
 
     static JSON()
     {
+        s_defaultJsonSerializerOptions = new()
+        {
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            AllowTrailingCommas = true,
+            PropertyNameCaseInsensitive = false,
+            NumberHandling = JsonNumberHandling.AllowReadingFromString,
+            IncludeFields = true,
+            ReadCommentHandling = JsonCommentHandling.Skip,
+            UnknownTypeHandling = JsonUnknownTypeHandling.JsonNode,
+        };
+
         s_defaultJsonSerializerOptions.Converters.Add(new DynamicJsonConverter<JsonObjectDynamicAccessor>());
         s_defaultJsonSerializerOptions.Converters.Add(new DynamicJsonConverter<JsonArrayDynamicAccessor>());
+
+        s_defaultJsonDocumentOptions = new JsonDocumentOptions()
+        {
+            AllowTrailingCommas = s_defaultJsonSerializerOptions.AllowTrailingCommas,
+            CommentHandling = s_defaultJsonSerializerOptions.ReadCommentHandling,
+            MaxDepth = s_defaultJsonSerializerOptions.MaxDepth,
+        };
+
+        s_defaultJsonWriterOptions = new JsonWriterOptions()
+        {
+            Encoder = s_defaultJsonSerializerOptions.Encoder,
+            Indented = s_defaultJsonSerializerOptions.WriteIndented,
+            SkipValidation = false,
+        };
+
+        s_defaultJsonNodeOptions = new JsonNodeOptions()
+        {
+            PropertyNameCaseInsensitive = s_defaultJsonSerializerOptions.PropertyNameCaseInsensitive,
+        };
     }
 
     #endregion Public 构造函数

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Cuture.Http.Util;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Cuture.Http.Util;
 
 namespace Cuture.Http.Test.Util;
 

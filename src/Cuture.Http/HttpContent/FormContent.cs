@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Cuture.Http;
@@ -20,7 +18,7 @@ public class FormContent : ByteArrayContent
     /// <summary>
     /// 空的Content
     /// </summary>
-    private static readonly byte[] EmptyContent = Array.Empty<byte>();
+    private static readonly byte[] s_emptyContent = Array.Empty<byte>();
 
     #endregion 字段
 
@@ -97,7 +95,7 @@ public class FormContent : ByteArrayContent
     {
         if (content is null)
         {
-            return EmptyContent;
+            return s_emptyContent;
         }
         else if (content is string str)
         {
@@ -119,7 +117,7 @@ public class FormContent : ByteArrayContent
     {
         if (string.IsNullOrEmpty(data))
         {
-            return EmptyContent;
+            return s_emptyContent;
         }
         return encoding.GetBytes(data.Replace("%20", "+", StringComparison.Ordinal));
     }

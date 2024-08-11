@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System.Net;
 
 using Cuture.Http.Test.Server;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Cuture.Http.Test;
 

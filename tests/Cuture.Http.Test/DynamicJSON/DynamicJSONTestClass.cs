@@ -1,7 +1,5 @@
 ﻿using Cuture.Http.DynamicJSON;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 namespace Cuture.Http.Test.DynamicJSON;
 
 internal class DynamicJSONTestClass

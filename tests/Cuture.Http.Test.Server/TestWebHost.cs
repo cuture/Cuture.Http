@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Hosting;
+锘縰sing Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
 
@@ -6,15 +6,15 @@ namespace Cuture.Http.Test.Server
 {
     public class TestWebHost
     {
-        #region 字段
+        #region Private 瀛楁
 
         public static bool HostByTestHost = true;
 
         public static string TestHost = $"http://{Resource.ServerAddress}:{Resource.ServerPort}";
 
-        #endregion 字段
+        #endregion Private 瀛楁
 
-        #region 方法
+        #region Public 鏂规硶
 
         public static IHostBuilder CreateHostBuilder(string[] args, bool useTestServer) =>
             Host.CreateDefaultBuilder(args)
@@ -33,6 +33,6 @@ namespace Cuture.Http.Test.Server
             CreateHostBuilder(args, false).Build().Run();
         }
 
-        #endregion 方法
+        #endregion Public 鏂规硶
     }
 }

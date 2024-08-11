@@ -1,10 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace Cuture.Http.Test;
+﻿namespace Cuture.Http.Test;
 
 [TestClass]
 public class SimpleHttpMessageInvokerPoolTest : HttpMessageInvokerPoolTest<SimpleHttpMessageInvokerPool>

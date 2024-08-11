@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 using Cuture.Http.Test.Server;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 using Titanium.Web.Proxy;
 using Titanium.Web.Proxy.EventArguments;
 using Titanium.Web.Proxy.Http;
@@ -38,7 +32,7 @@ public class ProxyTestServer
 {
     #region 字段
 
-    public const int ProxyPort = 3277;
+    public const int ProxyPort = 32777;
     public const string ThroughProxy = "Through-Proxy";
     private readonly ExplicitProxyEndPoint _explicitProxy = new ExplicitProxyEndPoint(IPAddress.Loopback, ProxyPort, false);
 

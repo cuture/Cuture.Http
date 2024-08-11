@@ -97,14 +97,17 @@ internal abstract class JsonDynamicAccessor : DynamicObject
 
     #region Protected 方法
 
-    protected static object GetIndex(object[] indexes)
+    protected static string GetSingleStringIndex(object[] indexes)
     {
         if (indexes.Length > 1)
         {
             throw new ArgumentOutOfRangeException(nameof(indexes));
         }
 
-        return indexes[0];
+        var index = indexes[0];
+
+        return index as string
+               ?? index.ToString()!;
     }
 
     #endregion Protected 方法

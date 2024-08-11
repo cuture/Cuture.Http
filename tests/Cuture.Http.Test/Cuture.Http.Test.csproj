@@ -1,16 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="MSTest.Sdk">
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.*" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.*" />
     <PackageReference Include="Titanium.Web.Proxy" Version="3.1.*" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\..\tests\Cuture.Http.Test.Server\Cuture.Http.Test.Server.csproj" />
     <ProjectReference Include="..\..\src\Cuture.Http\Cuture.Http.csproj" />

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net.Http;
-
-namespace Cuture.Http;
+﻿namespace Cuture.Http;
 
 /// <summary>
 /// http请求结果

@@ -4,7 +4,6 @@
     
     <PackageReadmeFile>readme.md</PackageReadmeFile>
 
-		<ImplicitUsings>true</ImplicitUsings>
     <Nullable>enable</Nullable>
 
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -28,7 +27,7 @@
 
   <!--Buid-->
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.*" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.*" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">

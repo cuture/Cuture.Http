@@ -1,8 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-using Cuture.Http.DynamicJSON;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Cuture.Http.DynamicJSON;
 
 namespace Cuture.Http.Test.DynamicJSON;
 
@@ -22,12 +18,4 @@ public class JSONFieldAccessTest
     }
 
     #endregion Public 方法
-
-    #region Private 方法
-
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    private static void Access(object? obj)
-    { }
-
-    #endregion Private 方法
 }

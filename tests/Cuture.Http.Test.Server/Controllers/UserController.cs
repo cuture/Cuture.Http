@@ -25,7 +25,7 @@ namespace Cuture.Http.Test.Server.Controllers
         [HttpPost]
         public JsonResult Update(UserInfo userInfo)
         {
-            Response.Headers.Add("R-Content-Type", Request.ContentType);
+            Response.Headers.Append("R-Content-Type", Request.ContentType);
             return new JsonResult(userInfo);
         }
 
@@ -33,7 +33,7 @@ namespace Cuture.Http.Test.Server.Controllers
         [HttpPost]
         public ContentResult Update()
         {
-            Response.Headers.Add("R-Content-Type", Request.ContentType);
+            Response.Headers.Append("R-Content-Type", Request.ContentType);
             var form = string.Join("&", Request.Form.Select(m => $"{m.Key}={m.Value}"));
             return Content(form);
         }
@@ -42,7 +42,7 @@ namespace Cuture.Http.Test.Server.Controllers
         [HttpPost]
         public string UpdateCallback(UserInfo userInfo)
         {
-            Response.Headers.Add("R-Content-Type", Request.ContentType);
+            Response.Headers.Append("R-Content-Type", Request.ContentType);
             var json = JsonConvert.SerializeObject(userInfo);
             return $"callback_{s_random.Next(100, 20000)}({json})";
         }

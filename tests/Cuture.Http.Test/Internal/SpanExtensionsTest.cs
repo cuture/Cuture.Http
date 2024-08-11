@@ -1,9 +1,4 @@
-﻿using System;
-using System.Linq;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace Cuture.Http.Test.Internal;
+﻿namespace Cuture.Http.Test.Internal;
 
 [TestClass]
 public class SpanExtensionsTest

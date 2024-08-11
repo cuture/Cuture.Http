@@ -1,15 +1,11 @@
-using System.Threading.Tasks;
-
-using Cuture.Http.Test.Server;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+锘縰sing Cuture.Http.Test.Server;
 
 namespace Cuture.Http.Test;
 
 [TestClass]
 public class TextRequestTest : WebServerHostTestBase
 {
-    #region 方法
+    #region Public 鏂规硶
 
     public static IHttpRequest GetRequest() => TestWebHost.TestHost.CreateHttpRequest();
 
@@ -21,5 +17,5 @@ public class TextRequestTest : WebServerHostTestBase
                                    result => Assert.AreEqual(Resource.Index, result.Data));
     }
 
-    #endregion 方法
+    #endregion Public 鏂规硶
 }

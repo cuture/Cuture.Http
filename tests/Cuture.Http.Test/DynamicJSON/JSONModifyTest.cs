@@ -1,8 +1,4 @@
-﻿using System.Linq;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace Cuture.Http.Test.DynamicJSON;
+﻿namespace Cuture.Http.Test.DynamicJSON;
 
 [TestClass]
 public class JSONModifyTest
@@ -23,7 +19,7 @@ public class JSONModifyTest
 
         json.MyProperty6 = null;
 
-        Assert.AreEqual<dynamic>(null, json.MyProperty6);
+        Assert.AreEqual<object?>(null, json.MyProperty6);
 
         json.MyProperty6 = origin.MyProperty6.ToArray();
 
@@ -41,6 +37,10 @@ public class JSONModifyTest
         json.MyProperty6 = origin.MyProperty6 = new[] { "new", "new", "new", "new" };
 
         origin.Check(json);
+
+        json.MyProperty111 = new { value = "6" };
+
+        Assert.AreEqual("6", json.MyProperty111.value);
     }
 
     #endregion Public 方法

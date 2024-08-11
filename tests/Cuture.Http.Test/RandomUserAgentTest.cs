@@ -1,18 +1,12 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Cuture.Http.Test.Server;
+锘縰sing Cuture.Http.Test.Server;
 using Cuture.Http.Test.Server.Entity;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Cuture.Http.Test;
 
 [TestClass]
 public class RandomUserAgentTest : WebServerHostTestBase
 {
-    #region 方法
+    #region Public 鏂规硶
 
     public IHttpRequest GetRequest() => $"{TestWebHost.TestHost}/api/customrequest/get".CreateHttpRequest();
 
@@ -78,5 +72,5 @@ public class RandomUserAgentTest : WebServerHostTestBase
         });
     }
 
-    #endregion 方法
+    #endregion Public 鏂规硶
 }

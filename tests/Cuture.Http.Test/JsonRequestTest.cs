@@ -1,11 +1,7 @@
 ﻿using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
 using Cuture.Http.Test.Server;
 using Cuture.Http.Test.Server.Entity;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Newtonsoft.Json;
 

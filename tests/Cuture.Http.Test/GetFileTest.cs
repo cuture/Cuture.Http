@@ -1,26 +1,21 @@
-using System;
-using System.Diagnostics;
-using System.Linq;
+ï»¿using System.Diagnostics;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
 
 using Cuture.Http.Test.Server;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Cuture.Http.Test;
 
 [TestClass]
 public class GetFileTest : WebServerHostTestBase
 {
-    #region ×Ö¶Î
+    #region Private å­—æ®µ
 
     private readonly string _hash;
     private readonly string _url = $"{TestWebHost.TestHost}/icon.png";
 
-    #endregion ×Ö¶Î
+    #endregion Private å­—æ®µ
 
-    #region ¹¹Ôìº¯Êı
+    #region Public æ„é€ å‡½æ•°
 
     public GetFileTest()
     {
@@ -30,12 +25,12 @@ public class GetFileTest : WebServerHostTestBase
         Debug.WriteLine($"Sha256:{_hash}");
     }
 
-    #endregion ¹¹Ôìº¯Êı
+    #endregion Public æ„é€ å‡½æ•°
 
-    #region ·½·¨
+    #region Public æ–¹æ³•
 
     /// <summary>
-    /// »ñÈ¡ÇëÇó
+    /// è·å–è¯·æ±‚
     /// </summary>
     /// <returns></returns>
     public IHttpRequest GetRequest() => _url.CreateHttpRequest().UseGet().AddHeader("Cache-Control", "no-cache");
@@ -58,5 +53,5 @@ public class GetFileTest : WebServerHostTestBase
         });
     }
 
-    #endregion ·½·¨
+    #endregion Public æ–¹æ³•
 }

@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Builder;
@@ -12,28 +12,28 @@ namespace Cuture.Http.Test.Server
 {
     public class Startup
     {
-        #region ×Ö¶Î
+        #region Private å­—æ®µ
 
         private static readonly Random s_random = new Random();
 
-        #endregion ×Ö¶Î
+        #endregion Private å­—æ®µ
 
-        #region ÊôÐÔ
+        #region Public æ–¹æ³•
 
         public IConfiguration Configuration { get; }
 
-        #endregion ÊôÐÔ
+        #endregion Public æ–¹æ³•
 
-        #region ¹¹Ôìº¯Êý
+        #region Public æž„é€ å‡½æ•°
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        #endregion ¹¹Ôìº¯Êý
+        #endregion Public æž„é€ å‡½æ•°
 
-        #region ·½·¨
+        #region Public æ–¹æ³•
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -42,18 +42,18 @@ namespace Cuture.Http.Test.Server
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             var data = Resource.Data;
 
             app.Use(async (context, next) =>
             {
                 var cancellationToken = context.RequestAborted;
 
-                if (context.Request.Path == "/")    //Ê×Ò³
+                if (context.Request.Path == "/")
                 {
                     await context.Response.WriteAsync(Resource.Index, cancellationToken);
                 }
-                else if (context.Request.Path == "/data.dat")   //ÂýËÙÎÄ¼þÏÂÔØ
+                else if (context.Request.Path == "/data.dat")
                 {
                     context.Response.ContentType = "application/data";
                     context.Response.ContentLength = data.Length;
@@ -76,7 +76,7 @@ namespace Cuture.Http.Test.Server
                 }
                 else
                 {
-                    if (context.Request.Method == "CUSTOM") //×Ô¶¨ÒåMethod
+                    if (context.Request.Method == "CUSTOM") //ï¿½Ô¶ï¿½ï¿½ï¿½Method
                     {
                         context.Request.Method = "POST";
                     }
@@ -102,6 +102,6 @@ namespace Cuture.Http.Test.Server
             services.AddControllers().AddNewtonsoftJson();
         }
 
-        #endregion ·½·¨
+        #endregion Public æ–¹æ³•
     }
 }

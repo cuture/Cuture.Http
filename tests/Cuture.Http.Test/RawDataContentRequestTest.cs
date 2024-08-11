@@ -1,10 +1,6 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
+﻿using System.Security.Cryptography;
 
 using Cuture.Http.Test.Server;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Cuture.Http.Test;
 

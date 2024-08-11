@@ -44,8 +44,7 @@ internal class JsonObjectDynamicAccessor
 
     public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object? result)
     {
-        var index = GetIndex(indexes);
-        var propertyName = index as string ?? index.ToString()!;
+        var propertyName = GetSingleStringIndex(indexes);
 
         return TryGetMember(propertyName, out result);
     }
@@ -61,8 +60,7 @@ internal class JsonObjectDynamicAccessor
 
     public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object? value)
     {
-        var index = GetIndex(indexes);
-        var propertyName = index as string ?? index.ToString()!;
+        var propertyName = GetSingleStringIndex(indexes);
 
         SetProperty(propertyName, value);
         return true;

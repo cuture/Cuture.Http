@@ -1,8 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Threading.Tasks;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Text;
 
 namespace Cuture.Http.Test.Util;
 

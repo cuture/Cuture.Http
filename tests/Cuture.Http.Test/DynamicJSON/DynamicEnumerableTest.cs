@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 using Cuture.Http.DynamicJSON;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Cuture.Http.Test.DynamicJSON;
 
@@ -133,9 +128,9 @@ public class DynamicEnumerableTest
         {
             var enumerable = ((IDynamicKeyValueEnumerable)json).AsEnumerable();
 
-            foreach (var (key, value) in enumerable)
+            foreach (var item in enumerable)
             {
-                Check(origin, key, value);
+                Check(origin, item.Key, item.Value);
             }
         }
 

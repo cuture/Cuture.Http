@@ -1,6 +1,4 @@
-﻿using System.Net.Http;
-
-namespace Cuture.Http.Test;
+﻿namespace Cuture.Http.Test;
 
 public sealed class TestHttpMessageInvokerPool : IHttpMessageInvokerPool
 {

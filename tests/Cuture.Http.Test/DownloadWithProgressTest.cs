@@ -1,29 +1,23 @@
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+ï»¿using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 using Cuture.Http.Test.Server;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Cuture.Http.Test;
 
 [TestClass]
 public class DownloadWithProgressTest : WebServerHostTestBase
 {
-    #region ×Ö¶Î
+    #region Private å­—æ®µ
 
     private readonly string _hash;
+
     private readonly string _url = $"{TestWebHost.TestHost}/data.dat";
 
-    #endregion ×Ö¶Î
+    #endregion Private å­—æ®µ
 
-    #region ¹¹Ôìº¯Êı
+    #region Public æ„é€ å‡½æ•°
 
     public DownloadWithProgressTest()
     {
@@ -33,9 +27,9 @@ public class DownloadWithProgressTest : WebServerHostTestBase
         Debug.WriteLine($"Sha256:{_hash}");
     }
 
-    #endregion ¹¹Ôìº¯Êı
+    #endregion Public æ„é€ å‡½æ•°
 
-    #region ·½·¨
+    #region Public æ–¹æ³•
 
     [TestMethod]
     public async Task DownloadTimeOutTestAsync()
@@ -54,7 +48,7 @@ public class DownloadWithProgressTest : WebServerHostTestBase
     }
 
     /// <summary>
-    /// »ñÈ¡ÇëÇó
+    /// è·å–è¯·æ±‚
     /// </summary>
     /// <returns></returns>
     public IHttpRequest GetRequest() => _url.CreateHttpRequest().UseGet().AddHeader("Cache-Control", "no-cache");
@@ -104,5 +98,5 @@ public class DownloadWithProgressTest : WebServerHostTestBase
         Assert.AreEqual(_hash, hash);
     }
 
-    #endregion ·½·¨
+    #endregion Public æ–¹æ³•
 }

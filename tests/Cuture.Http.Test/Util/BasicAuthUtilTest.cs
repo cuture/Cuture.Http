@@ -2,8 +2,6 @@
 
 using Cuture.Http.Util;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 namespace Cuture.Http.Test.Util;
 
 [TestClass]

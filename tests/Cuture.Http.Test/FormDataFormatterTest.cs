@@ -1,9 +1,4 @@
-﻿using System;
-using System.Linq;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace Cuture.Http.Test;
+﻿namespace Cuture.Http.Test;
 
 [TestClass]
 public abstract class FormDataFormatterTest

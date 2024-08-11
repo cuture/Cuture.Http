@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Cuture.Http;
+﻿namespace Cuture.Http;
 
 /// <summary>
 /// <see cref="IHttpRequest"/> 创建器

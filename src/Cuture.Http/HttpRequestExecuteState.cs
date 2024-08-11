@@ -1,8 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading;
-
-namespace Cuture.Http;
+﻿namespace Cuture.Http;
 
 /// <summary>
 /// Http请求执行状态

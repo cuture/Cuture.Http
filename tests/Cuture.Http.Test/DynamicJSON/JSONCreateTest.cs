@@ -1,9 +1,4 @@
-﻿using System;
-using System.Linq;
-
-using Cuture.Http.DynamicJSON;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Cuture.Http.DynamicJSON;
 
 namespace Cuture.Http.Test.DynamicJSON;
 
@@ -15,9 +10,10 @@ public class JSONCreateTest
     [TestMethod]
     public void ShouldSuccessForArray()
     {
+        var random = new Random();
         for (int size = 0; size < 100; size++)
         {
-            var array = Enumerable.Range(0, size).Select(_ => Random.Shared.Next()).ToArray();
+            var array = Enumerable.Range(0, size).Select(_ => random.Next()).ToArray();
 
             var jsonArray = JSON.create(array);
 
@@ -42,8 +38,8 @@ public class JSONCreateTest
     [TestMethod]
     public void ShouldSuccessForNull()
     {
-        Assert.AreEqual<dynamic>(null, JSON.create(null));
-        Assert.AreEqual<dynamic>(null, JSON.create("null"));
+        Assert.AreEqual<object?>(null, JSON.create(null));
+        Assert.AreEqual<object?>(null, JSON.create("null"));
     }
 
     [TestMethod]
@@ -61,7 +57,7 @@ public class JSONCreateTest
         Assert.AreEqual(false, JSON.create(false));
         Assert.AreEqual(1, JSON.create(1));
         Assert.AreEqual(1, JSON.create((float)1.0));
-        Assert.AreEqual(1, JSON.create((double)1.0));
+        Assert.AreEqual(1, JSON.create(1.0));
         Assert.AreEqual("1", JSON.create('1'));
         Assert.AreEqual("1", JSON.create("1"));
     }
