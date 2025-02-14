@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿#pragma warning disable IDE0130
+
+using System.Runtime.CompilerServices;
 
 namespace Cuture.Http;
 

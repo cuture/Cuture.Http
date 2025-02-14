@@ -1,4 +1,6 @@
-﻿using System.Buffers;
+﻿#pragma warning disable IDE0130
+
+using System.Buffers;
 using System.Net;
 
 namespace Cuture.Http;

@@ -9,7 +9,11 @@ namespace Cuture.Http;
 /// <para/>
 /// * 可以重复使用进行请求
 /// </summary>
-public class ReuseableHttpRequest : IHttpRequest
+/// <remarks>
+/// <inheritdoc cref="ReuseableHttpRequest"/>
+/// </remarks>
+/// <param name="requestUri">请求的Uri</param>
+public class ReuseableHttpRequest(Uri requestUri) : IHttpRequest
 {
     #region Private 字段
 
@@ -56,7 +60,7 @@ public class ReuseableHttpRequest : IHttpRequest
     public IWebProxy? Proxy { get; set; }
 
     /// <inheritdoc/>
-    public Uri RequestUri { get; }
+    public Uri RequestUri { get; } = requestUri ?? throw new ArgumentNullException(nameof(requestUri));
 
     /// <inheritdoc/>
     public int? Timeout { get; set; }
@@ -68,19 +72,6 @@ public class ReuseableHttpRequest : IHttpRequest
     public Version? Version { get; set; }
 
     #endregion 属性
-
-    #region 构造函数
-
-    /// <summary>
-    /// <inheritdoc cref="ReuseableHttpRequest"/>
-    /// </summary>
-    /// <param name="requestUri">请求的Uri</param>
-    public ReuseableHttpRequest(Uri requestUri)
-    {
-        RequestUri = requestUri ?? throw new ArgumentNullException(nameof(requestUri));
-    }
-
-    #endregion 构造函数
 
     #region 方法
 

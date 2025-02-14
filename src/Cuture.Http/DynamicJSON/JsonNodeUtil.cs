@@ -53,8 +53,6 @@ internal static class JsonNodeUtil
     {
         var rawText = jsonValueElement.GetRawText().Trim('\"');
 
-#if NET6_0_OR_GREATER
-
         var valueSpan = rawText.AsSpan();
 
         if (valueSpan.Contains('.')
@@ -76,30 +74,6 @@ internal static class JsonNodeUtil
         }
 
         return rawText;
-
-#else
-
-        if (rawText.Contains('.')
-            && double.TryParse(rawText, out var vDouble))
-        {
-            return vDouble;
-        }
-        else if (int.TryParse(rawText, out var vInt32))
-        {
-            return vInt32;
-        }
-        else if (long.TryParse(rawText, out var vInt64))
-        {
-            return vInt64;
-        }
-        else if (decimal.TryParse(rawText, out var vDecimal))
-        {
-            return vDecimal;
-        }
-
-        return rawText;
-
-#endif
     }
 
     #endregion Public 方法

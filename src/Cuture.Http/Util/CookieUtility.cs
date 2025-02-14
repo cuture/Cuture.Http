@@ -12,14 +12,14 @@ public static class CookieUtility
     /// <summary>
     /// 需要忽略cookie的关键字集合
     /// </summary>
-    private static readonly char[][] s_ignoreCookieKey = new char[][]
-    {
+    private static readonly char[][] s_ignoreCookieKey =
+    [
         "Domain".ToCharArray(),
         "Expires".ToCharArray(),
         "HttpOnly".ToCharArray(),
         "Path".ToCharArray(),
         "Max-Age".ToCharArray()
-    };
+    ];
 
     #endregion 字段
 
@@ -128,7 +128,7 @@ public static class CookieUtility
             else
             {
                 currentSpan = span;
-                span = ReadOnlySpan<char>.Empty;
+                span = [];
             }
 
             var equalIndex = currentSpan.IndexOf('=');

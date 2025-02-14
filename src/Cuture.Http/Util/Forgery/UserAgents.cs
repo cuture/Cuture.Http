@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿#pragma warning disable IDE0130
+
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Cuture.Http;
@@ -11,9 +13,9 @@ public static class UserAgents
     #region 字段
 
     /// <summary>
-    /// Chrome 111
+    /// Chrome 133
     /// </summary>
-    public const string Chrome = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36";
+    public const string Chrome = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36";
 
     /// <summary>
     /// Edge
@@ -21,14 +23,14 @@ public static class UserAgents
     public const string Edge = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.74 Safari/537.36 Edge/18.19041";
 
     /// <summary>
-    /// Edge on Chromium 113
+    /// Edge on Chromium 133
     /// </summary>
-    public const string EdgeChromium = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.42";
+    public const string EdgeChromium = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 Edg/133.0.0.0";
 
     /// <summary>
-    /// FireFox 113
+    /// FireFox 135
     /// </summary>
-    public const string FireFox = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0";
+    public const string FireFox = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:135.0) Gecko/20100101 Firefox/135.0";
 
     /// <summary>
     /// IE 11
@@ -46,7 +48,7 @@ public static class UserAgents
     /// </summary>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static string RandomChromeVersion(int minVersion = 49, int maxVersion = 105)
+    private static string RandomChromeVersion(int minVersion = 49, int maxVersion = 140)
     {
         var random = Random.Shared;
         return $"Chrome/{random.Next(minVersion, maxVersion)}.0.{random.Next(3000, 6000)}.{random.Next(50, 300)}";
@@ -222,7 +224,7 @@ public static class UserAgents
     /// <param name="maxVersion">最高版本（不包含）</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string RandomChromeUserAgent(int minVersion = 49, int maxVersion = 105)
+    public static string RandomChromeUserAgent(int minVersion = 49, int maxVersion = 140)
     {
         return $"Mozilla/5.0 {RandomPlatform()} AppleWebKit/537.36 (KHTML, like Gecko) {RandomChromeVersion(minVersion, maxVersion)} Safari/537.36";
     }
@@ -234,7 +236,7 @@ public static class UserAgents
     /// <param name="maxVersion">最高版本（不包含）</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string RandomFirefoxUserAgent(int minVersion = 60, int maxVersion = 100)
+    public static string RandomFirefoxUserAgent(int minVersion = 60, int maxVersion = 140)
     {
         var version = Random.Shared.Next(minVersion, maxVersion);
         return $"Mozilla/5.0 {RandomFirefoxPlatform(version)} Gecko/20100101 Firefox/{version}.0";
@@ -247,7 +249,7 @@ public static class UserAgents
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string RandomMobileUserAgent()
     {
-        return BuildUserAgent(new string[] {
+        return BuildUserAgent([
             RandomPlatform(),
             RandomAddOn(),
             RandomTag(),
@@ -255,7 +257,7 @@ public static class UserAgents
             RandomLast(),
             RandomModified(),
             "Mobile",
-        });
+        ]);
     }
 
     /// <summary>
@@ -265,13 +267,13 @@ public static class UserAgents
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string RandomModifiedUserAgent()
     {
-        return BuildUserAgent(new string[] {
+        return BuildUserAgent([
             RandomPlatform(),
             "AppleWebKit/537.36 (KHTML, like Gecko)",
             RandomModified(),
             "Safari/537.36",
             RandomModified(),
-        });
+        ]);
     }
 
     /// <summary>
@@ -281,14 +283,14 @@ public static class UserAgents
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string RandomUserAgent()
     {
-        return BuildUserAgent(new string[] {
+        return BuildUserAgent([
             RandomPlatform(),
             RandomAddOn(),
             RandomTag(),
             RandomBrowser(),
             RandomLast(),
             RandomModified(),
-        });
+        ]);
     }
 
     #endregion FullUserAgent

@@ -3,22 +3,13 @@ using System.Text.Json.Nodes;
 
 namespace Cuture.Http.DynamicJSON;
 
-internal abstract class JsonDynamicAccessor : DynamicObject
+internal abstract class JsonDynamicAccessor(JsonNode node) : DynamicObject
 {
     #region Public 属性
 
-    public JsonNode Node { get; }
+    public JsonNode Node { get; } = node ?? throw new ArgumentNullException(nameof(node));
 
     #endregion Public 属性
-
-    #region Public 构造函数
-
-    public JsonDynamicAccessor(JsonNode node)
-    {
-        Node = node ?? throw new ArgumentNullException(nameof(node));
-    }
-
-    #endregion Public 构造函数
 
     #region Public 方法
 

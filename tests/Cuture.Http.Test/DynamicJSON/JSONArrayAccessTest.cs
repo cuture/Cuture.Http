@@ -7,8 +7,6 @@ public class JSONArrayAccessTest
 {
     #region Public 方法
 
-#if NET6_0_OR_GREATER
-
     #region IndexRangeAccess
 
     [TestMethod]
@@ -70,8 +68,6 @@ public class JSONArrayAccessTest
     }
 
     #endregion IndexRangeAccess
-
-#endif
 
     [TestMethod]
     public void ShouldAccessSuccessfulByForeach()

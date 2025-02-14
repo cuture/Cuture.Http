@@ -1,4 +1,6 @@
-﻿namespace Cuture.Http;
+﻿#pragma warning disable IDE0130
+
+namespace Cuture.Http;
 
 /// <summary>
 /// <see cref="HttpMessageInvoker"/> 池

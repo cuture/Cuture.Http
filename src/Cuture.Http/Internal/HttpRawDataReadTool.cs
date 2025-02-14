@@ -27,12 +27,12 @@ internal static class HttpRawDataReadTool
     /// <summary>
     /// Header结束分隔符
     /// </summary>
-    internal static readonly byte[] HeaderEndSeparator = new[] { (byte)'\r', (byte)'\n', (byte)'\r', (byte)'\n' };
+    internal static readonly byte[] HeaderEndSeparator = "\r\n\r\n"u8.ToArray();
 
     /// <summary>
     /// 新行分隔符
     /// </summary>
-    internal static readonly byte[] NewLineSeparator = new[] { (byte)'\r', (byte)'\n' };
+    internal static readonly byte[] NewLineSeparator = "\r\n"u8.ToArray();
 
     #endregion Internal 字段
 
@@ -104,7 +104,7 @@ internal static class HttpRawDataReadTool
         var index = data.IndexOf(terminal);
         if (index < 0)
         {
-            return ReadOnlySpan<byte>.Empty;
+            return [];
         }
         return ReadAndReduceData(ref data, index, 1);
     }
@@ -121,7 +121,7 @@ internal static class HttpRawDataReadTool
         var index = data.IndexOf(terminal);
         if (index < 0)
         {
-            return ReadOnlySpan<byte>.Empty;
+            return [];
         }
         return ReadAndReduceData(ref data, index, terminal.Length);
     }

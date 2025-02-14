@@ -1,8 +1,9 @@
-﻿using System.Runtime.CompilerServices;
+﻿#pragma warning disable CA1068 // CancellationToken 参数必须最后出现
+#pragma warning disable IDE0130
+
+using System.Runtime.CompilerServices;
 
 namespace System.Threading.Tasks;
-
-#pragma warning disable CA1068 // CancellationToken 参数必须最后出现
 
 internal static class TaskExtensions
 {

@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿#pragma warning disable IDE0130
+
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web;
 
@@ -135,6 +137,7 @@ public static class CodecExtension
         {
             return content;
         }
+
         var bytes = encoding.GetBytes(content);
         return Convert.ToBase64String(bytes);
     }

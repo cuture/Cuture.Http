@@ -4,14 +4,14 @@ using System.Text.Json.Nodes;
 
 namespace Cuture.Http.DynamicJSON;
 
-internal class JsonArrayDynamicAccessor
-    : JsonDynamicAccessor
+internal class JsonArrayDynamicAccessor(JsonArray jsonArray)
+    : JsonDynamicAccessor(jsonArray)
     , IEnumerable
     , IDynamicEnumerable
 {
     #region Private 字段
 
-    private readonly JsonArray _jsonArray;
+    private readonly JsonArray _jsonArray = jsonArray ?? throw new ArgumentNullException(nameof(jsonArray));
 
     #endregion Private 字段
 
@@ -20,15 +20,6 @@ internal class JsonArrayDynamicAccessor
     public int Length => _jsonArray.Count;
 
     #endregion Public 属性
-
-    #region Public 构造函数
-
-    public JsonArrayDynamicAccessor(JsonArray jsonArray) : base(jsonArray)
-    {
-        _jsonArray = jsonArray ?? throw new ArgumentNullException(nameof(jsonArray));
-    }
-
-    #endregion Public 构造函数
 
     #region Public 方法
 
@@ -67,8 +58,6 @@ internal class JsonArrayDynamicAccessor
             result = JsonNodeUtil.GetNodeAccessValue(_jsonArray[intIndex]);
             return true;
         }
-
-#if NET6_0_OR_GREATER
 
         //低版本可以靠手动定义 System.Index 和 System.Range 类型进行兼容，但会污染命名空间，容易出现冲突
         else if (index is Index systemIndex)
@@ -110,7 +99,6 @@ internal class JsonArrayDynamicAccessor
             return true;
         }
 
-#endif
         throw new ArgumentException($"not support for index {index}.");
     }
 
@@ -142,7 +130,6 @@ internal class JsonArrayDynamicAccessor
             _jsonArray[intIndex] = JsonNode.Parse(JSON.stringify(value));
             return true;
         }
-#if NET6_0_OR_GREATER
 
         //低版本可以靠手动定义 System.Index 和 System.Range 类型进行兼容，但会污染命名空间，容易出现冲突
         else if (index is Index systemIndex)
@@ -150,7 +137,6 @@ internal class JsonArrayDynamicAccessor
             _jsonArray[systemIndex.GetOffset(_jsonArray.Count)] = JsonNode.Parse(JSON.stringify(value));
             return true;
         }
-#endif
 
         throw new ArgumentException($"not support for index {index}.");
     }
@@ -172,11 +158,9 @@ internal class JsonArrayDynamicAccessor
 
     #region Private 类
 
-    private class JsonArrayEnumerator : IEnumerator
+    private class JsonArrayEnumerator(JsonArray jsonArray) : IEnumerator
     {
         #region Private 字段
-
-        private readonly JsonArray _jsonArray;
 
         private int _index = -1;
 
@@ -184,24 +168,15 @@ internal class JsonArrayDynamicAccessor
 
         #region Public 属性
 
-        public object Current => JsonNodeUtil.GetNodeAccessValue(_jsonArray[_index])!;
+        public object Current => JsonNodeUtil.GetNodeAccessValue(jsonArray[_index])!;
 
         #endregion Public 属性
-
-        #region Public 构造函数
-
-        public JsonArrayEnumerator(JsonArray jsonArray)
-        {
-            _jsonArray = jsonArray;
-        }
-
-        #endregion Public 构造函数
 
         #region Public 方法
 
         public bool MoveNext()
         {
-            if (_index < _jsonArray.Count - 1)
+            if (_index < jsonArray.Count - 1)
             {
                 _index++;
                 return true;

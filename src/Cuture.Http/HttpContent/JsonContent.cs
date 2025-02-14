@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿#pragma warning disable IDE0130
+
+using System.Text;
 
 namespace Cuture.Http;
 

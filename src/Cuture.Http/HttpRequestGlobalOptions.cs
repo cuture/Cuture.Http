@@ -59,6 +59,7 @@ public static class HttpRequestGlobalOptions
     /// 获取或设置 <see cref="ServicePoint"/> 对象所允许的最大并发连接数。
     /// 也可直接设置 <see cref="ServicePointManager.DefaultConnectionLimit"/>
     /// </summary>
+    [Obsolete("参考 System.Net.ServicePointManager")]
     public static int DefaultConnectionLimit
     {
         get => ServicePointManager.DefaultConnectionLimit;

@@ -42,7 +42,7 @@ public abstract class WebServerHostTestBase
         IHttpMessageInvokerPool invokerPool = null;
         if (TestWebHost.HostByTestHost)
         {
-            var hostBuilder = TestWebHost.CreateHostBuilder(System.Array.Empty<string>(), UseTestServer);
+            var hostBuilder = TestWebHost.CreateHostBuilder([], UseTestServer);
             ServerHost = await hostBuilder.StartAsync();
             if (UseTestServer)
             {
@@ -52,7 +52,6 @@ public abstract class WebServerHostTestBase
 
         invokerPool ??= new SimpleHttpMessageInvokerPool();
 
-        HttpRequestGlobalOptions.DefaultConnectionLimit = 10;
         HttpRequestGlobalOptions.DefaultHttpMessageInvokerPool = invokerPool;
     }
 
@@ -75,20 +74,9 @@ public abstract class WebServerHostTestBase
                                                          Func<Task<HttpOperationResult<T>>> getRequestFunc,
                                                          Action<HttpOperationResult<T>> assertAction)
     {
-        if (requestCount < 1)
-        {
-            throw new ArgumentOutOfRangeException(nameof(requestCount));
-        }
-
-        if (getRequestFunc is null)
-        {
-            throw new ArgumentNullException(nameof(getRequestFunc));
-        }
-
-        if (assertAction is null)
-        {
-            throw new ArgumentNullException(nameof(assertAction));
-        }
+        ArgumentOutOfRangeException.ThrowIfLessThan(requestCount, 1);
+        ArgumentNullException.ThrowIfNull(getRequestFunc);
+        ArgumentNullException.ThrowIfNull(assertAction);
 
         Debug.WriteLine($"Start Request, Count: {requestCount}");
 
@@ -120,20 +108,9 @@ public abstract class WebServerHostTestBase
                                                          Func<Task<TextHttpOperationResult<T>>> getRequestFunc,
                                                          Action<TextHttpOperationResult<T>> assertAction)
     {
-        if (requestCount < 1)
-        {
-            throw new ArgumentOutOfRangeException(nameof(requestCount));
-        }
-
-        if (getRequestFunc is null)
-        {
-            throw new ArgumentNullException(nameof(getRequestFunc));
-        }
-
-        if (assertAction is null)
-        {
-            throw new ArgumentNullException(nameof(assertAction));
-        }
+        ArgumentOutOfRangeException.ThrowIfLessThan(requestCount, 1);
+        ArgumentNullException.ThrowIfNull(getRequestFunc);
+        ArgumentNullException.ThrowIfNull(assertAction);
 
         Debug.WriteLine($"Start Request, Count: {requestCount}");
 

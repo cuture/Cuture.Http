@@ -1,4 +1,6 @@
-﻿using System.Buffers;
+﻿#pragma warning disable IDE0130
+
+using System.Buffers;
 using System.Buffers.Text;
 using System.Runtime.CompilerServices;
 using System.Text;

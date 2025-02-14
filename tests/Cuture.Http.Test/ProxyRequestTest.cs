@@ -45,7 +45,6 @@ public class ProxyRequestTest : WebServerHostWithProxyTestBase
     public override async Task InitAsync()
     {
         await base.InitAsync();
-        HttpRequestGlobalOptions.DefaultConnectionLimit = 2;
     }
 
     [TestMethod]

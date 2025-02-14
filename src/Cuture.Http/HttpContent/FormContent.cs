@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿#pragma warning disable IDE0130
+
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Cuture.Http;
@@ -18,7 +20,7 @@ public class FormContent : ByteArrayContent
     /// <summary>
     /// 空的Content
     /// </summary>
-    private static readonly byte[] s_emptyContent = Array.Empty<byte>();
+    private static readonly byte[] s_emptyContent = [];
 
     #endregion 字段
 

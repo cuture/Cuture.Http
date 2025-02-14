@@ -3,24 +3,15 @@ using System.Text.Json.Nodes;
 
 namespace Cuture.Http.DynamicJSON;
 
-internal class JsonObjectDynamicAccessor
-    : JsonDynamicAccessor
+internal class JsonObjectDynamicAccessor(JsonNode jsonNode)
+    : JsonDynamicAccessor(jsonNode)
     , IDynamicKeyValueEnumerable
 {
     #region Private 字段
 
-    private readonly JsonObject _jsonObject;
+    private readonly JsonObject _jsonObject = jsonNode?.AsObject() ?? throw new ArgumentNullException(nameof(jsonNode));
 
     #endregion Private 字段
-
-    #region Public 构造函数
-
-    public JsonObjectDynamicAccessor(JsonNode jsonNode) : base(jsonNode)
-    {
-        _jsonObject = jsonNode?.AsObject() ?? throw new ArgumentNullException(nameof(jsonNode));
-    }
-
-    #endregion Public 构造函数
 
     #region Public 方法
 

@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Headers;
+﻿#pragma warning disable IDE0130
+
+using System.Net.Http.Headers;
 
 namespace Cuture.Http;
 

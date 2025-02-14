@@ -142,10 +142,7 @@ public sealed class SimpleHttpMessageInvokerPool : IHttpMessageInvokerPool
 
     private void CheckDisposed()
     {
-        if (_isDisposed)
-        {
-            throw new ObjectDisposedException(nameof(SimpleHttpMessageInvokerPool));
-        }
+        ObjectDisposedException.ThrowIf(_isDisposed, this);
     }
 
     private StrictDisposeOwnedHttpMessageInvoker InternalRent(PlaceHolder<StrictDisposeOwnedHttpMessageInvoker> placeHolder, Func<StrictDisposeOwnedHttpMessageInvoker> factory)
@@ -295,7 +292,7 @@ public sealed class SimpleHttpMessageInvokerPool : IHttpMessageInvokerPool
                     placeHolder.Exchange(null);
                     QueueToDispose(invoker);
                 }
-            };
+            }
         }, runningToken);
     }
 
@@ -303,24 +300,15 @@ public sealed class SimpleHttpMessageInvokerPool : IHttpMessageInvokerPool
 
     #region Private 类
 
-    private class DisposeQueueItem
+    private class DisposeQueueItem(DateTimeOffset queueTime, SimpleHttpMessageInvokerPool.StrictDisposeOwnedHttpMessageInvoker invoker)
     {
         #region Public 属性
 
-        public StrictDisposeOwnedHttpMessageInvoker Invoker { get; }
-        public DateTimeOffset QueueTime { get; }
+        public StrictDisposeOwnedHttpMessageInvoker Invoker { get; } = invoker;
+
+        public DateTimeOffset QueueTime { get; } = queueTime;
 
         #endregion Public 属性
-
-        #region Public 构造函数
-
-        public DisposeQueueItem(DateTimeOffset queueTime, StrictDisposeOwnedHttpMessageInvoker invoker)
-        {
-            QueueTime = queueTime;
-            Invoker = invoker;
-        }
-
-        #endregion Public 构造函数
     }
 
     private class PlaceHolder<T> where T : class
@@ -368,7 +356,9 @@ public sealed class SimpleHttpMessageInvokerPool : IHttpMessageInvokerPool
         #region Private 字段
 
         private readonly HttpMessageHandler _handler;
+
         private readonly SimpleHttpMessageInvokerPool _pool;
+
         private int _referenceCount = 0;
 
         #endregion Private 字段

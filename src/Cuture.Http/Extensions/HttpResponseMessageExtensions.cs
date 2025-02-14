@@ -9,17 +9,27 @@ namespace Cuture.Http;
 /// </summary>
 public static partial class HttpResponseMessageExtensions
 {
-    #region Task<HttpResponseMessage>
+    #region Task<HttpResponseMessage> / HttpResponseMessage
+
+    /// <summary>
+    /// 将 <see cref="HttpResponseMessage"/> 包装为 <see cref="HttpRequestExecuteState"/> ，以支持相关的后续处理拓展方法
+    /// </summary>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static HttpRequestExecuteState WrapAsExecuteState(this HttpResponseMessage httpResponseMessage)
+    {
+        return new(httpResponseMessage);
+    }
 
     /// <summary>
     /// 将 <see cref="HttpResponseMessage"/> 任务包装为 <see cref="HttpRequestExecuteState"/> 任务，以支持相关的后续处理拓展方法
     /// </summary>
-    /// <param name="requestTask"></param>
+    /// <param name="responseTask"></param>
     /// <returns></returns>
-    public static async Task<HttpRequestExecuteState> WrapAsExecuteState(this Task<HttpResponseMessage> requestTask)
+    public static async Task<HttpRequestExecuteState> WrapAsExecuteState(this Task<HttpResponseMessage> responseTask)
     {
-        var responseMessage = await requestTask.ConfigureAwait(false);
-        return new(responseMessage);
+        var responseMessage = await responseTask.ConfigureAwait(false);
+        return responseMessage.WrapAsExecuteState();
     }
 
     #region bytes
@@ -271,11 +281,7 @@ public static partial class HttpResponseMessageExtensions
                                                    int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
     {
         ArgumentNullException.ThrowIfNull(requestTask);
-
-        if (bufferSize < 1)
-        {
-            throw new ArgumentOutOfRangeException(nameof(bufferSize));
-        }
+        ArgumentOutOfRangeException.ThrowIfLessThan(bufferSize, 1);
 
         if (!targetStream.CanWrite)
         {
@@ -336,10 +342,7 @@ public static partial class HttpResponseMessageExtensions
         ArgumentNullException.ThrowIfNull(requestTask);
         ArgumentNullException.ThrowIfNull(progressCallback);
 
-        if (bufferSize < 1)
-        {
-            throw new ArgumentOutOfRangeException(nameof(bufferSize));
-        }
+        ArgumentOutOfRangeException.ThrowIfLessThan(bufferSize, 1);
 
         if (!targetStream.CanWrite)
         {
@@ -394,11 +397,11 @@ public static partial class HttpResponseMessageExtensions
                                                                CancellationToken token,
                                                                int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
     {
-        using var mStream = new MemoryStream(512_000);
+        using var memoryStream = new MemoryStream(512_000);
 
-        await requestTask.DownloadToStreamWithProgressAsync(mStream, progressCallback, token, bufferSize).ConfigureAwait(false);
+        await requestTask.DownloadToStreamWithProgressAsync(memoryStream, progressCallback, token, bufferSize).ConfigureAwait(false);
 
-        return mStream.ToArray();
+        return memoryStream.ToArray();
     }
 
     #endregion AsyncCallback
@@ -429,11 +432,7 @@ public static partial class HttpResponseMessageExtensions
     {
         ArgumentNullException.ThrowIfNull(requestTask);
         ArgumentNullException.ThrowIfNull(progressCallback);
-
-        if (bufferSize < 1)
-        {
-            throw new ArgumentOutOfRangeException(nameof(bufferSize));
-        }
+        ArgumentOutOfRangeException.ThrowIfLessThan(bufferSize, 1);
 
         if (!targetStream.CanWrite)
         {
@@ -490,11 +489,11 @@ public static partial class HttpResponseMessageExtensions
                                                                CancellationToken token,
                                                                int bufferSize = HttpRequestGlobalOptions.DefaultDownloadBufferSize)
     {
-        using var mStream = new MemoryStream(512_000);
+        using var memoryStream = new MemoryStream(512_000);
 
-        await requestTask.DownloadToStreamWithProgressAsync(mStream, progressCallback, token, bufferSize).ConfigureAwait(false);
+        await requestTask.DownloadToStreamWithProgressAsync(memoryStream, progressCallback, token, bufferSize).ConfigureAwait(false);
 
-        return mStream.ToArray();
+        return memoryStream.ToArray();
     }
 
     #endregion SyncCallback
@@ -503,7 +502,7 @@ public static partial class HttpResponseMessageExtensions
 
     #endregion Download
 
-    #endregion Task<HttpResponseMessage>
+    #endregion Task<HttpResponseMessage> / HttpResponseMessage
 
     #region HttpResponseMessage
 

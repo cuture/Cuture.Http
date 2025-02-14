@@ -1,4 +1,4 @@
-# Cuture.Http
+﻿# Cuture.Http
 
 ## Intro
 用于快速进行Http请求的链式拓展方法库。
@@ -11,7 +11,7 @@
 - Http相关的常用工具类及拓展方法;
 - DynamicJSON(基于`dynamic`的`json`快速访问);
 - 请求构建工具，直接使用原始请求数据（如从Fiddler中复制）复现请求；
-- 目标框架为`.Net6.0+`;
+- 目标框架为`.Net8.0+`;
 
 ### Note
 - 编码相关问题的处理参见[官方文档](https://docs.microsoft.com/zh-cn/dotnet/api/system.text.codepagesencodingprovider)；
@@ -56,7 +56,7 @@ Console.WriteLine($"response:{response.Data}");
 ### 获取网页数据
 ```C#
 var response = await "http://www.baidu.com".CreateHttpRequest()
-                                            .GetAsStringAsync();
+                                           .GetAsStringAsync();
 Console.WriteLine(response);
 ```
 ### 获取并解析接口数据

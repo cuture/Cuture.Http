@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>用于快速进行Http请求的链式拓展方法库</Description>
-    
+
     <PackageReadmeFile>readme.md</PackageReadmeFile>
 
     <Nullable>enable</Nullable>
@@ -17,12 +17,12 @@
 
   <ItemGroup>
     <None Include="..\..\readme.md" Link="readme.md" Pack="true" PackagePath="/" />
-  
+
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>Cuture.Http.Test</_Parameter1>
     </AssemblyAttribute>
 
-		<Using Include="System.Text.Json"/>
+    <Using Include="System.Text.Json"/>
   </ItemGroup>
 
   <!--Buid-->
