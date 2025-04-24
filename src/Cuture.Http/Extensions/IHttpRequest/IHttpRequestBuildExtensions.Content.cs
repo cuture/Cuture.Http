@@ -37,6 +37,7 @@ public static partial class IHttpRequestBuildExtensions
     /// <returns></returns>
     public static IHttpRequest WithContent(this IHttpRequest request, in ReadOnlySpan<byte> data, string? contentType, int contentLength = -1)
     {
+        //TODO use memory pool
         var contentData = contentLength > 0 ? data[..contentLength].ToArray() : data.ToArray();
         return request.WithContent(new TypedByteArrayContent(contentData, contentType));
     }

@@ -105,7 +105,14 @@ catch (Exception ex)
 - 使用从各种抓包工具中复制的原始数据，快速构建等价请求
 ```C#
 var rawBase64Str = "R0VUIGh0dHA6Ly9kZXRlY3Rwb3J0YWwuZmlyZWZveC5jb20vc3VjY2Vzcy50eHQgSFRUUC8xLjENCkhvc3Q6IGRldGVjdHBvcnRhbC5maXJlZm94LmNvbQ0KVXNlci1BZ2VudDogTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NDsgcnY6ODQuMCkgR2Vja28vMjAxMDAxMDEgRmlyZWZveC84NC4wDQpBY2NlcHQ6ICovKg0KQWNjZXB0LUxhbmd1YWdlOiB6aC1DTix6aDtxPTAuOCx6aC1UVztxPTAuNyx6aC1ISztxPTAuNSxlbi1VUztxPTAuMyxlbjtxPTAuMg0KQWNjZXB0LUVuY29kaW5nOiBnemlwLCBkZWZsYXRlDQpDYWNoZS1Db250cm9sOiBuby1jYWNoZQ0KUHJhZ21hOiBuby1jYWNoZQ0KRE5UOiAxDQpDb25uZWN0aW9uOiBrZWVwLWFsaXZlDQoNCg==";
-var request = RequestBuildTool.FromRaw(rawBase64Str);
+var request = RequestBuildTool.FromRawBase64(rawBase64Str);
+
+//从原始请求数据构建 - 抓包工具等复制
+//var request = RequestBuildTool.FromRaw(rawData);
+
+//从curl指令(有限支持的POSIX指令)构建 - 浏览器复制
+//var request = RequestBuildTool.FromCurl(curlCommand);
+
 //进行其他的一些请求设置等，覆盖原始的请求设置
 var result = await request.TryGetAsStringAsync();
 ```

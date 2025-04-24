@@ -2,6 +2,7 @@
 
 using System.Buffers;
 using System.Buffers.Text;
+using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -12,7 +13,7 @@ namespace Cuture.Http;
 /// <summary>
 /// 请求构建工具
 /// </summary>
-public static class RequestBuildTool
+public static partial class RequestBuildTool
 {
     #region Public 方法
 
@@ -26,7 +27,12 @@ public static class RequestBuildTool
     /// <param name="data">请求的原始数据</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IHttpRequest FromRaw(ReadOnlySpan<byte> data) => FromRaw(data.ToArray().AsMemory(), null);
+    public static IHttpRequest FromRaw(ReadOnlySpan<byte> data)
+    {
+        var memoryOwner = MemoryPool<byte>.Shared.Rent(data.Length);
+        data.CopyTo(memoryOwner.Memory.Span);
+        return FromRaw(memoryOwner.Memory.Slice(0, data.Length), memoryOwner);
+    }
 
     /// <summary>
     /// 从请求的原始数据构建请求

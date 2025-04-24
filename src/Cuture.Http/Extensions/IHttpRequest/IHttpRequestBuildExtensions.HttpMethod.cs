@@ -56,6 +56,10 @@ public static partial class IHttpRequestBuildExtensions
         return request;
     }
 
+    /// <inheritdoc cref="UseVerb(IHttpRequest,in ReadOnlySpan{char})"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IHttpRequest UseVerb(this IHttpRequest request, string httpMethod) => InternalUseVerb(request, httpMethod, httpMethod);
+
     /// <summary>
     /// 使用指定的Http动作
     /// <para/>
@@ -65,26 +69,7 @@ public static partial class IHttpRequestBuildExtensions
     /// <param name="httpMethod">Http动作</param>
     /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IHttpRequest UseVerb(this IHttpRequest request, string httpMethod)
-    {
-        if (string.IsNullOrWhiteSpace(httpMethod))
-        {
-            throw new ArgumentNullException(nameof(httpMethod), "must has a value");
-        }
-        var method = httpMethod switch
-        {
-            "GET" => HttpMethod.Get,
-            "POST" => HttpMethod.Post,
-            "DELETE" => HttpMethod.Delete,
-            "PUT" => HttpMethod.Put,
-            "HEAD" => HttpMethod.Head,
-            "OPTIONS" => HttpMethod.Options,
-            _ => new HttpMethod(httpMethod)
-        };
-
-        request.Method = method;
-        return request;
-    }
+    public static IHttpRequest UseVerb(this IHttpRequest request, in ReadOnlySpan<char> httpMethod) => InternalUseVerb(request, httpMethod, null);
 
     /// <summary>
     /// 使用指定的Http动作
@@ -96,6 +81,28 @@ public static partial class IHttpRequestBuildExtensions
     public static IHttpRequest UseVerb(this IHttpRequest request, HttpMethod httpMethod)
     {
         request.Method = httpMethod;
+        return request;
+    }
+
+    private static IHttpRequest InternalUseVerb(this IHttpRequest request, in ReadOnlySpan<char> httpMethod, string? httpMethodString)
+    {
+        if (httpMethod.IsWhiteSpace())
+        {
+            throw new ArgumentNullException(nameof(httpMethod), "must has a value");
+        }
+
+        var method = httpMethod switch
+        {
+            "GET" => HttpMethod.Get,
+            "POST" => HttpMethod.Post,
+            "DELETE" => HttpMethod.Delete,
+            "PUT" => HttpMethod.Put,
+            "HEAD" => HttpMethod.Head,
+            "OPTIONS" => HttpMethod.Options,
+            _ => new HttpMethod(httpMethodString ?? httpMethod.ToString())
+        };
+
+        request.Method = method;
         return request;
     }
 

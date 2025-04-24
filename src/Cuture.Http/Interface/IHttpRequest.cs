@@ -75,6 +75,9 @@ public interface IHttpRequest : IDisposable
     /// <inheritdoc cref="HttpVersion"/>
     Version? Version { get; set; }
 
+    /// <inheritdoc cref="HttpRequestMessage.Options"/>
+    HttpRequestOptions Options { get; }
+
     #endregion 属性
 
     #region 方法

@@ -18,7 +18,11 @@ public class ReuseableHttpRequest(Uri requestUri) : IHttpRequest
     #region Private 字段
 
     private byte[]? _contentDump;
+
     private bool _disposedValue;
+
+    private HttpRequestOptions? _httpRequestOptions;
+
     private HttpRequestExecutionOptions? _options;
 
     #endregion Private 字段
@@ -57,6 +61,9 @@ public class ReuseableHttpRequest(Uri requestUri) : IHttpRequest
     public HttpMethod Method { get; set; } = HttpMethod.Get;
 
     /// <inheritdoc/>
+    public HttpRequestOptions Options => _httpRequestOptions ??= new();
+
+    /// <inheritdoc/>
     public IWebProxy? Proxy { get; set; }
 
     /// <inheritdoc/>
@@ -87,6 +94,14 @@ public class ReuseableHttpRequest(Uri requestUri) : IHttpRequest
         }
 
         CopyHeaders(Headers, message.Headers);
+
+        if (_httpRequestOptions is { } httpRequestOptions)
+        {
+            foreach (var (key, value) in httpRequestOptions)
+            {
+                message.Options.Set(new(key), value);
+            }
+        }
 
         return Content is null
                ? new(message)
